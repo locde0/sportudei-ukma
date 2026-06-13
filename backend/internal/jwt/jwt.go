@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -8,19 +9,20 @@ import (
 )
 
 type TokenClaims struct {
-	UserID string `json:"user_id"`
+	Type string `json:"typ"`
 	jwt.RegisteredClaims
 }
 
 func GenerateTokenPair(userID string, secret string, accessExp, refreshExp int) (string, string, error) {
 	secretKey := []byte(secret)
+	now := time.Now()
 
-	accessTokenExp := time.Now().Add(time.Duration(accessExp) * time.Hour * 24)
 	accessClaims := TokenClaims{
-		UserID: userID,
+		Type: "access",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(accessTokenExp),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			Subject:   userID,
+			ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(accessExp) * time.Hour * 24)),
+			IssuedAt:  jwt.NewNumericDate(now),
 		},
 	}
 
@@ -30,11 +32,13 @@ func GenerateTokenPair(userID string, secret string, accessExp, refreshExp int) 
 		return "", "", fmt.Errorf("failed to sign access token: %w", err)
 	}
 
-	refreshTokenExp := time.Now().Add(time.Duration(refreshExp) * time.Hour * 24)
-	refreshClaims := jwt.RegisteredClaims{
-		Subject:   userID,
-		ExpiresAt: jwt.NewNumericDate(refreshTokenExp),
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
+	refreshClaims := TokenClaims{
+		Type: "refresh",
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   userID,
+			ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(refreshExp) * time.Hour * 24)),
+			IssuedAt:  jwt.NewNumericDate(now),
+		},
 	}
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
@@ -44,4 +48,26 @@ func GenerateTokenPair(userID string, secret string, accessExp, refreshExp int) 
 	}
 
 	return accessTokenString, refreshTokenString, nil
+}
+
+func ParseToken(tokenString string, secret string, expectedType string) (string, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secret), nil
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if claims, ok := token.Claims.(*TokenClaims); ok && token.Valid {
+		if claims.Type != expectedType {
+			return "", errors.New("invalid token type")
+		}
+		return claims.Subject, nil
+	}
+
+	return "", errors.New("invalid token format")
 }

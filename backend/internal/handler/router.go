@@ -1,10 +1,11 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/locde0/sportudei-ukma/backend/internal/middleware"
 )
 
 func NewRouter(jwtSecret string) *chi.Mux {
@@ -23,6 +24,9 @@ func NewRouter(jwtSecret string) *chi.Mux {
 	r.Use(chimiddleware.Logger)
 	r.Use(chimiddleware.Recoverer)
 
+	fs := http.FileServer(http.Dir("uploads"))
+	r.Handle("/uploads/*", http.StripPrefix("/uploads/", fs))
+
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/health", Health())
 
@@ -32,17 +36,12 @@ func NewRouter(jwtSecret string) *chi.Mux {
 		//	// r.Get("/{id}", GetEventByID)
 		//})
 
-		r.Route("/admin", func(r chi.Router) {
-			r.Use(middleware.Auth(jwtSecret))
-
-			// r.Post("/events", CreateEvent)
-			// r.Put("/events/{id}", UpdateEvent)
-			// r.Delete("/events/{id}", DeleteEvent)
-		})
-
-		//r.Route("/auth", func(r chi.Router) {
-		//	r.Post("/login", authHandler.LoginAndSendOTP)
-		//	// r.Post("/refresh", RefreshToken)
+		//r.Route("/admin", func(r chi.Router) {
+		//	r.Use(middleware.Auth(jwtSecret))
+		//
+		//	// r.Post("/events", CreateEvent)
+		//	// r.Put("/events/{id}", UpdateEvent)
+		//	// r.Delete("/events/{id}", DeleteEvent)
 		//})
 	})
 

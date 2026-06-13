@@ -20,6 +20,7 @@ import (
 var (
 	ErrInvalidCredentials = errors.New("invalid email or password")
 	ErrInvalidOTP         = errors.New("invalid or expired verification code")
+	ErrInvalidToken       = errors.New("invalid or expired token")
 )
 
 type AuthService struct {
@@ -77,7 +78,7 @@ func (s *AuthService) LoginAndSendOTP(ctx context.Context, email, password strin
 	return nil
 }
 
-func (s *AuthService) VerifyOTP(ctx context.Context, email, code string) (string, string, error) {
+func (s *AuthService) Verify(ctx context.Context, email, code string) (string, string, error) {
 	user, err := s.store.GetUserByEmail(ctx, email)
 	if err != nil || !user.OtpCode.Valid || !user.OtpExpiresAt.Valid {
 		return "", "", ErrInvalidOTP
@@ -90,5 +91,16 @@ func (s *AuthService) VerifyOTP(ctx context.Context, email, code string) (string
 	_ = s.store.ClearUserOTP(ctx, email)
 
 	userIDStr := strconv.Itoa(int(user.ID))
+	return jwt.GenerateTokenPair(userIDStr, s.jwtSecret, s.accessExp, s.refreshExp)
+}
+
+func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string) (string, string, error) {
+	userIDStr, err := jwt.ParseToken(refreshToken, s.jwtSecret, "refresh")
+	if err != nil {
+		return "", "", ErrInvalidToken
+	}
+
+	//userID, _ := strconv.Atoi(userIDStr)
+
 	return jwt.GenerateTokenPair(userIDStr, s.jwtSecret, s.accessExp, s.refreshExp)
 }

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/locde0/sportudei-ukma/backend/internal/jwt"
 )
 
 type contextKey string
@@ -28,27 +28,9 @@ func Auth(jwtSecret string) func(next http.Handler) http.Handler {
 			}
 			tokenString := parts[1]
 
-			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, http.ErrAbortHandler
-				}
-				return []byte(jwtSecret), nil
-			})
-
-			if err != nil || !token.Valid {
+			userID, err := jwt.ParseToken(tokenString, jwtSecret, "access")
+			if err != nil {
 				http.Error(w, "invalid or expired token", http.StatusUnauthorized)
-				return
-			}
-
-			claims, ok := token.Claims.(jwt.MapClaims)
-			if !ok {
-				http.Error(w, "invalid token claims", http.StatusUnauthorized)
-				return
-			}
-
-			userID, ok := claims["user_id"].(string)
-			if !ok {
-				http.Error(w, "user id not found in token", http.StatusUnauthorized)
 				return
 			}
 
