@@ -5,38 +5,41 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/locde0/sportudei-ukma/backend/internal/jwt"
+	"github.com/locde0/sportudei-ukma/backend/internal/auth"
+	"github.com/locde0/sportudei-ukma/backend/internal/pkg/httputil"
 )
 
 type contextKey string
 
-const UserIDKey contextKey = "userID"
+const EmailKey contextKey = "email"
 
-func Auth(jwtSecret string) func(next http.Handler) http.Handler {
+func Auth(tokenProvider auth.TokenProvider) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			authHeader := r.Header.Get("Authorization")
-			if authHeader == "" {
-				http.Error(w, "missing authorization header", http.StatusUnauthorized)
+			header := r.Header.Get("Authorization")
+			if header == "" {
+				httputil.Error(w, http.StatusUnauthorized, "MISSING_AUTH", "missing authorization header")
 				return
 			}
 
-			parts := strings.Split(authHeader, " ")
-			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
-				http.Error(w, "invalid authorization header format", http.StatusUnauthorized)
-				return
+			parts := strings.SplitN(header, " ", 2)
+			if len(parts) != 2 || strings.EqualFold(parts[0], "bearer") {
+				httputil.Error(w, http.StatusUnauthorized, "INVALID_AUTH", "invalid authorization header")
 			}
-			tokenString := parts[1]
 
-			userID, err := jwt.ParseToken(tokenString, jwtSecret, "access")
+			email, err := tokenProvider.ParseToken(parts[1], "access")
 			if err != nil {
-				http.Error(w, "invalid or expired token", http.StatusUnauthorized)
+				httputil.Error(w, http.StatusUnauthorized, "INVALID_TOKEN", "invalid or expired token")
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), UserIDKey, userID)
-
+			ctx := context.WithValue(r.Context(), EmailKey, email)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
+}
+
+func GetEmail(ctx context.Context) (string, bool) {
+	email, ok := ctx.Value(EmailKey).(string)
+	return email, ok
 }

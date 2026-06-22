@@ -6,17 +6,19 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	rootdb "github.com/locde0/sportudei-ukma/backend/db"
+	rdb "github.com/locde0/sportudei-ukma/backend/db"
+	"github.com/locde0/sportudei-ukma/backend/db/gen"
+	"github.com/locde0/sportudei-ukma/backend/internal/auth"
 	"github.com/locde0/sportudei-ukma/backend/internal/config"
-	internaldb "github.com/locde0/sportudei-ukma/backend/internal/db"
+	idb "github.com/locde0/sportudei-ukma/backend/internal/db"
 	"github.com/locde0/sportudei-ukma/backend/internal/email"
 	"github.com/locde0/sportudei-ukma/backend/internal/handler"
 	"github.com/locde0/sportudei-ukma/backend/internal/middleware"
+	"github.com/locde0/sportudei-ukma/backend/internal/repository/postgres"
+	"github.com/locde0/sportudei-ukma/backend/internal/router"
 	"github.com/locde0/sportudei-ukma/backend/internal/service"
 )
 
@@ -24,137 +26,98 @@ type App struct {
 	server *http.Server
 	pool   *pgxpool.Pool
 	log    *slog.Logger
-	store  *internaldb.Store
 }
 
-func New(cfg *config.Config) (*App, error) {
+func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
-	pool, err := internaldb.NewPool(context.Background(), cfg.DbURL)
+	pool, err := idb.NewPool(ctx, cfg.DbURL)
 	if err != nil {
-		return nil, fmt.Errorf("db initialization failed: %w", err)
+		return nil, fmt.Errorf("database: %w", err)
 	}
 
 	if cfg.RunMigrations {
-		err := internaldb.RunMigrations(cfg.DbURL, logger, rootdb.MigrationsFS)
-		if err != nil {
-			return nil, fmt.Errorf("migration failed: %w", err)
+		if err := idb.RunMigrations(cfg.DbURL, logger, rdb.MigrationsFS); err != nil {
+			pool.Close()
+			return nil, fmt.Errorf("migrations: %w", err)
 		}
 	}
 
-	if err := os.MkdirAll("uploads", 0755); err != nil {
-		return nil, fmt.Errorf("failed to create uploads directory: %w", err)
+	if err := os.MkdirAll(cfg.UploadDir, 0755); err != nil {
+		pool.Close()
+		return nil, fmt.Errorf("create upload dir: %w", err)
 	}
 
-	store := internaldb.NewStore(pool)
-	router := handler.NewRouter(cfg.JWTSecret)
+	queries := gen.New(pool)
 
-	mailer, err := email.NewSMTPMailer(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUsername, cfg.SMTPPassword)
+	tokenProvider := auth.NewJWTProvider(cfg.JWTSecret, cfg.JWTAccessExpDays, cfg.JWTRefreshExpDays)
+	passwordHasher := auth.NewBcryptHasher()
+
+	mailer, err := email.NewSMTPSender(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPass, cfg.SMTPFrom)
 	if err != nil {
-		return nil, fmt.Errorf("failed to initialize mailer: %w", err)
+		pool.Close()
+		return nil, fmt.Errorf("mailer: %w", err)
 	}
 
-	authMiddleware := middleware.Auth(cfg.JWTSecret)
+	userRepo := postgres.NewUserRepo(queries)
 
-	authService := service.NewAuthService(store, mailer, cfg.JWTSecret, cfg.JWTAccessExpDays, cfg.JWTRefreshExpDays)
-	eventService := service.NewEventService(store)
-	settingsService := service.NewSettingsService(store)
-	contactService := service.NewContactService(store)
-	partnerService := service.NewPartnerService(store)
-	galleryService := service.NewGalleryService(store)
-	gameService := service.NewGameService(store)
+	authService := service.NewAuthService(userRepo, tokenProvider, passwordHasher, mailer)
 
-	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays)
-	eventHandler := handler.NewEventHandler(eventService)
-	settingsHandler := handler.NewSettingsHandler(settingsService)
-	contactHandler := handler.NewContactHandler(contactService)
-	partnerHandler := handler.NewPartnerHandler(partnerService)
-	galleryHandler := handler.NewGalleryHandler(galleryService)
-	gameHandler := handler.NewGameHandler(gameService)
+	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays, cfg.IsProd())
 
-	authHandler.RegisterRoutes(router)
-	eventHandler.RegisterRoutes(router, authMiddleware)
-	settingsHandler.RegisterRoutes(router, authMiddleware)
-	contactHandler.RegisterRoutes(router, authMiddleware)
-	partnerHandler.RegisterRoutes(router, authMiddleware)
-	galleryHandler.RegisterRoutes(router, authMiddleware)
-	gameHandler.RegisterRoutes(router, authMiddleware)
+	authMw := middleware.Auth(tokenProvider)
+
+	mux := router.New(
+		cfg.CORSOrigins,
+		cfg.UploadDir,
+		authMw,
+		authHandler,
+	)
+
+	var httpHandler http.Handler = mux
+	httpHandler = middleware.Logging(logger)(httpHandler)
+	httpHandler = middleware.Recovery(logger)(httpHandler)
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,
-		Handler:      router,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		Handler:      httpHandler,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
 	}
 
 	return &App{
 		server: srv,
 		pool:   pool,
 		log:    logger,
-		store:  store,
 	}, nil
 }
 
-func (a *App) Run() error {
-	serverErrors := make(chan error, 1)
-
-	workerCtx, workerCancel := context.WithCancel(context.Background())
-	defer workerCancel()
-
-	go a.runBackgroundWorkers(workerCtx)
-
+func (a *App) Run(ctx context.Context) error {
+	serverErr := make(chan error, 1)
 	go func() {
 		a.log.Info("starting server", slog.String("addr", a.server.Addr))
-		serverErrors <- a.server.ListenAndServe()
+		serverErr <- a.server.ListenAndServe()
 	}()
 
-	shutdown := make(chan os.Signal, 1)
-	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
-
 	select {
-	case err := <-serverErrors:
+	case err := <-serverErr:
 		return fmt.Errorf("server error: %w", err)
 
-	case sig := <-shutdown:
-		a.log.Info("graceful shutdown started", slog.String("signal", sig.String()))
-
-		workerCancel()
-
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	case <-ctx.Done():
+		a.log.Info("shutting down server", slog.String("addr", a.server.Addr))
+		sdCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		err := a.server.Shutdown(ctx)
-		if err != nil {
-			a.server.Close()
-			return fmt.Errorf("could not stop server gracefully: %w", err)
+		if err := a.server.Shutdown(sdCtx); err != nil {
+			return fmt.Errorf("shutdown server: %w", err)
 		}
-
-		a.pool.Close()
-		a.log.Info("server stopped")
+		a.log.Info("server stopped gracefully")
+		return nil
 	}
-
-	return nil
 }
 
-func (a *App) runBackgroundWorkers(ctx context.Context) {
-	ticker := time.NewTicker(5 * time.Minute)
-	defer ticker.Stop()
-
-	err := a.store.AutoUpdateEventStatuses(ctx)
-	if err != nil {
-		a.log.Error("failed to initial auto-update event statuses", slog.String("error", err.Error()))
-	}
-
-	for {
-		select {
-		case <-ctx.Done():
-			a.log.Info("stopping background workers")
-			return
-		case <-ticker.C:
-			err := a.store.AutoUpdateEventStatuses(ctx)
-			if err != nil {
-				a.log.Error("failed to auto-update event statuses", slog.String("error", err.Error()))
-			}
-		}
-	}
+func (a *App) Close() {
+	a.pool.Close()
+	a.log.Info("resources released")
 }

@@ -4,41 +4,58 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type Config struct {
-	Port              string
-	DbURL             string
+	Env  string
+	Port string
+
+	DbURL         string
+	RunMigrations bool
+
 	JWTSecret         string
 	JWTAccessExpDays  int
 	JWTRefreshExpDays int
-	RunMigrations     bool
 
-	SMTPHost     string
-	SMTPPort     string
-	SMTPUsername string
-	SMTPPassword string
+	SMTPHost string
+	SMTPPort string
+	SMTPUser string
+	SMTPPass string
+	SMTPFrom string
+
+	CORSOrigins []string
+
+	UploadDir string
 }
 
-func Load() (*Config, error) {
+func Load() *Config {
 	cfg := &Config{
-		Port:              envOr("PORT", "8080"),
+		Env:               envOr("APP_ENV", "dev"),
+		Port:              envOr("PORT", "8000"),
 		DbURL:             os.Getenv("DB_URL"),
+		RunMigrations:     envBool("RUN_MIGRATIONS", false),
 		JWTSecret:         os.Getenv("JWT_SECRET"),
 		JWTAccessExpDays:  envInt("JWT_ACCESS_EXP_DAYS", 1),
 		JWTRefreshExpDays: envInt("JWT_REFRESH_EXP_DAYS", 3),
-		RunMigrations:     envBool("RUN_MIGRATIONS", false),
 		SMTPHost:          os.Getenv("SMTP_HOST"),
 		SMTPPort:          os.Getenv("SMTP_PORT"),
-		SMTPUsername:      os.Getenv("SMTP_USER"),
-		SMTPPassword:      os.Getenv("SMTP_PASS"),
+		SMTPUser:          os.Getenv("SMTP_USER"),
+		SMTPPass:          os.Getenv("SMTP_PASS"),
+		SMTPFrom:          envOr("SMTP_FROM", "noreply@sportudei.com"),
+		CORSOrigins:       strings.Split(envOr("CORS_ORIGINS", "http://localhost:*"), ","),
+		UploadDir:         envOr("UPLOAD_DIR", "uploads"),
 	}
 
 	if err := cfg.validate(); err != nil {
-		return nil, err
+		panic(fmt.Sprintf("invalid config: %v", err))
 	}
 
-	return cfg, nil
+	return cfg
+}
+
+func (c *Config) IsProd() bool {
+	return c.Env == "prod"
 }
 
 func (c *Config) validate() error {
@@ -49,19 +66,10 @@ func (c *Config) validate() error {
 		return fmt.Errorf("JWT_SECRET is required")
 	}
 	if len(c.JWTSecret) < 32 {
-		return fmt.Errorf("JWT_SECRET must be at least 32 characters for security")
+		return fmt.Errorf("JWT_SECRET must be at least 32 characters")
 	}
 	if c.SMTPHost == "" {
 		return fmt.Errorf("SMTP_HOST is required")
-	}
-	if c.SMTPPort == "" {
-		return fmt.Errorf("SMTP_PORT is required")
-	}
-	if c.SMTPUsername == "" {
-		return fmt.Errorf("SMTP_USER is required")
-	}
-	if c.SMTPPassword == "" {
-		return fmt.Errorf("SMTP_PASS is required")
 	}
 	return nil
 }
@@ -70,48 +78,32 @@ func envOr(key, def string) string {
 	if v := os.Getenv(key); v != "" {
 		return v
 	}
+
 	return def
 }
-
 func envInt(key string, def int) int {
 	v := os.Getenv(key)
 	if v == "" {
 		return def
 	}
+
 	n, err := strconv.Atoi(v)
 	if err != nil {
 		return def
 	}
+
 	return n
 }
-
 func envBool(key string, def bool) bool {
 	v := os.Getenv(key)
 	if v == "" {
 		return def
 	}
+
 	b, err := strconv.ParseBool(v)
 	if err != nil {
 		return def
 	}
+
 	return b
 }
-
-//func envDbURL() string {
-//	user := os.Getenv("DB_USER")
-//	pass := os.Getenv("DB_PASSWORD")
-//	dbName := os.Getenv("DB_NAME")
-//
-//	if user == "" || pass == "" || dbName == "" {
-//		return ""
-//	}
-//
-//	return fmt.Sprintf(
-//		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
-//		user,
-//		pass,
-//		envOr("DB_HOST", "localhost"),
-//		envOr("DB_PORT", "5432"),
-//		dbName,
-//	)
-//}

@@ -1,8 +1,6 @@
 services:
   db:
     image: postgres:18-alpine
-    env_file: 
-      - .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -10,10 +8,10 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 3s
+      interval: 5s
       timeout: 3s
       retries: 5
 
@@ -31,7 +29,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./uploads:/app/uploads
+      - uploads:/uploads
 
   # frontend:
   #   build:
@@ -47,3 +45,4 @@ services:
 
 volumes:
   pgdata:
+  uploads:
