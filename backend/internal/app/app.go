@@ -10,7 +10,6 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	rdb "github.com/locde0/sportudei-ukma/backend/db"
-	"github.com/locde0/sportudei-ukma/backend/db/gen"
 	"github.com/locde0/sportudei-ukma/backend/internal/auth"
 	"github.com/locde0/sportudei-ukma/backend/internal/config"
 	idb "github.com/locde0/sportudei-ukma/backend/internal/db"
@@ -25,6 +24,7 @@ import (
 type App struct {
 	server *http.Server
 	pool   *pgxpool.Pool
+	tx     *postgres.TxManager
 	log    *slog.Logger
 }
 
@@ -48,7 +48,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, fmt.Errorf("create upload dir: %w", err)
 	}
 
-	queries := gen.New(pool)
+	txManager := postgres.NewTxManager(pool)
 
 	tokenProvider := auth.NewJWTProvider(cfg.JWTSecret, cfg.JWTAccessExpDays, cfg.JWTRefreshExpDays)
 	passwordHasher := auth.NewBcryptHasher()
@@ -59,7 +59,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, fmt.Errorf("mailer: %w", err)
 	}
 
-	userRepo := postgres.NewUserRepo(queries)
+	userRepo := postgres.NewUserRepo(txManager)
 
 	authService := service.NewAuthService(userRepo, tokenProvider, passwordHasher, mailer)
 
@@ -89,6 +89,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	return &App{
 		server: srv,
 		pool:   pool,
+		tx:     txManager,
 		log:    logger,
 	}, nil
 }

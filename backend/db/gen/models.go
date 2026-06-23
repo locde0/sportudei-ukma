@@ -5,15 +5,82 @@
 package gen
 
 import (
-	"github.com/jackc/pgx/v5/pgtype"
+	"database/sql/driver"
+	"fmt"
+	"time"
 )
+
+type EventStatus string
+
+const (
+	EventStatusPlanned    EventStatus = "planned"
+	EventStatusInProgress EventStatus = "in_progress"
+	EventStatusCompleted  EventStatus = "completed"
+)
+
+func (e *EventStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = EventStatus(s)
+	case string:
+		*e = EventStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for EventStatus: %T", src)
+	}
+	return nil
+}
+
+type NullEventStatus struct {
+	EventStatus EventStatus
+	Valid       bool // Valid is true if EventStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullEventStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.EventStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.EventStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullEventStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.EventStatus), nil
+}
+
+type Event struct {
+	ID          int32
+	Title       string
+	Description string
+	Content     string
+	EventDate   time.Time
+	Location    string
+	Url         *string
+	Status      EventStatus
+	IsPublished bool
+	CreatedAt   *time.Time
+}
+
+type EventPhoto struct {
+	ID           int32
+	EventID      int32
+	ImagePath    string
+	IsMain       bool
+	DisplayOrder int32
+	CreatedAt    *time.Time
+}
 
 type User struct {
 	ID           int32
 	Email        string
 	PasswordHash string
-	OtpCode      pgtype.Text
-	OtpExpiresAt pgtype.Timestamptz
-	CreatedAt    pgtype.Timestamptz
-	UpdatedAt    pgtype.Timestamptz
+	OtpCode      *string
+	OtpExpiresAt *time.Time
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
 }

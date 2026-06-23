@@ -7,8 +7,7 @@ package gen
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
+	"time"
 )
 
 const clearUserOTP = `-- name: ClearUserOTP :exec
@@ -32,8 +31,8 @@ type GetUserByEmailRow struct {
 	ID           int32
 	Email        string
 	PasswordHash string
-	OtpCode      pgtype.Text
-	OtpExpiresAt pgtype.Timestamptz
+	OtpCode      *string
+	OtpExpiresAt *time.Time
 }
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
@@ -57,8 +56,8 @@ WHERE email = $1
 
 type UpdateUserOTPParams struct {
 	Email        string
-	OtpCode      pgtype.Text
-	OtpExpiresAt pgtype.Timestamptz
+	OtpCode      *string
+	OtpExpiresAt *time.Time
 }
 
 func (q *Queries) UpdateUserOTP(ctx context.Context, arg UpdateUserOTPParams) error {
