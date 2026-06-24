@@ -80,6 +80,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays, cfg.IsProd())
 	eventHandler := handler.NewEventHandler(eventService)
+	galleryHandler := handler.NewGalleryHandler(galleryService)
 
 	authMw := middleware.Auth(tokenProvider)
 
@@ -89,6 +90,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		authMw,
 		authHandler,
 		eventHandler,
+		galleryHandler,
 	)
 
 	var httpHandler http.Handler = mux

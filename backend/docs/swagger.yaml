@@ -61,6 +61,24 @@ definitions:
           $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse'
         type: array
     type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse:
+    properties:
+      cover_image_path:
+        type: string
+      id:
+        type: integer
+      is_published:
+        type: boolean
+      title:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumsListResponse:
+    properties:
+      albums:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse'
+        type: array
+    type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse:
     properties:
       display_order:
@@ -71,6 +89,22 @@ definitions:
         type: string
       is_main:
         type: boolean
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotoResponse:
+    properties:
+      display_order:
+        type: integer
+      id:
+        type: integer
+      image_path:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotosListResponse:
+    properties:
+      photos:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotoResponse'
+        type: array
     type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.LoginRequest:
     properties:
@@ -129,10 +163,38 @@ definitions:
           $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListItemResponse'
         type: array
     type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse:
+    properties:
+      cover_image_path:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumsListResponse:
+    properties:
+      albums:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse'
+        type: array
+    type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse:
     properties:
       access_token:
         type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventPhotoRequest:
+    properties:
+      display_order:
+        minimum: -1
+        type: integer
+      id:
+        type: integer
+      is_main:
+        type: boolean
+    required:
+    - id
     type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventRequest:
     properties:
@@ -153,7 +215,7 @@ definitions:
         type: string
       photos:
         items:
-          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePhotoRequest'
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventPhotoRequest'
         type: array
       status:
         allOf:
@@ -176,15 +238,30 @@ definitions:
     - status
     - title
     type: object
-  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePhotoRequest:
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryAlbumRequest:
+    properties:
+      cover_image_path:
+        type: string
+      is_published:
+        type: boolean
+      photos:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryPhotoRequest'
+        type: array
+      title:
+        maxLength: 100
+        minLength: 1
+        type: string
+    required:
+    - title
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryPhotoRequest:
     properties:
       display_order:
         minimum: -1
         type: integer
       id:
         type: integer
-      is_main:
-        type: boolean
     required:
     - id
     type: object
@@ -248,7 +325,7 @@ paths:
       - application/json
       responses:
         "201":
-          description: OK
+          description: Created
       security:
       - BearerAuth: []
       summary: Create event
@@ -345,6 +422,148 @@ paths:
       summary: Upload event photo
       tags:
       - admin-events
+  /api/admin/gallery:
+    get:
+      description: List all albums for admin view with pagination
+      parameters:
+      - default: 10
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumsListResponse'
+      security:
+      - BearerAuth: []
+      summary: List admin albums
+      tags:
+      - admin-gallery
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new gallery album with a cover photo
+      parameters:
+      - description: CreateGalleryAlbumRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Cover photo
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - BearerAuth: []
+      summary: Create album
+      tags:
+      - admin-gallery
+  /api/admin/gallery/{id}:
+    delete:
+      description: Delete an existing gallery album by ID
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Delete album
+      tags:
+      - admin-gallery
+    get:
+      description: Get full album details for admin by ID
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse'
+      security:
+      - BearerAuth: []
+      summary: Get admin album
+      tags:
+      - admin-gallery
+    put:
+      consumes:
+      - application/json
+      description: Update an existing gallery album and its photos
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryAlbumRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update album
+      tags:
+      - admin-gallery
+  /api/admin/gallery/{id}/photos:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an additional photo for an album
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Photo to upload
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Upload album photo
+      tags:
+      - admin-gallery
   /api/auth/login:
     post:
       consumes:
@@ -445,6 +664,78 @@ paths:
       summary: Get public event
       tags:
       - public-events
+  /api/gallery:
+    get:
+      description: List published albums for public view with pagination
+      parameters:
+      - default: 6
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumsListResponse'
+      summary: List public albums
+      tags:
+      - public-gallery
+  /api/gallery/{id}:
+    get:
+      description: Get album details for public view by ID
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse'
+      summary: Get public album
+      tags:
+      - public-gallery
+  /api/gallery/{id}/photos:
+    get:
+      description: Get photos of an album with pagination
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: 10
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotosListResponse'
+      summary: Get album photos
+      tags:
+      - public-gallery
   /api/health:
     get:
       description: Check if the API is running
@@ -453,10 +744,6 @@ paths:
       responses:
         "200":
           description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
       summary: Health check
       tags:
       - health

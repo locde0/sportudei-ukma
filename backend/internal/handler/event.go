@@ -26,7 +26,7 @@ func NewEventHandler(service *service.EventService) *EventHandler {
 // @Produce      json
 // @Param        payload formData string true "CreateEventRequest JSON string"
 // @Param        photos formData file false "Event photos"
-// @Success      201 "OK"
+// @Success      201 "Created"
 // @Security     BearerAuth
 // @Router       /api/admin/events [post]
 func (h *EventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {

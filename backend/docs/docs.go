@@ -89,7 +89,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "OK"
+                        "description": "Created"
                     }
                 }
             }
@@ -220,6 +220,231 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Photo to upload",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/gallery": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List all albums for admin view with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "List admin albums",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Pagination limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Pagination offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumsListResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new gallery album with a cover photo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "Create album",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CreateGalleryAlbumRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Cover photo",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/api/admin/gallery/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get full album details for admin by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "Get admin album",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing gallery album and its photos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "Update album",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryAlbumRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing gallery album by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "Delete album",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/gallery/{id}/photos": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Upload an additional photo for an album",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "Upload album photo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -392,6 +617,114 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/gallery": {
+            "get": {
+                "description": "List published albums for public view with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-gallery"
+                ],
+                "summary": "List public albums",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 6,
+                        "description": "Pagination limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Pagination offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumsListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/gallery/{id}": {
+            "get": {
+                "description": "Get album details for public view by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-gallery"
+                ],
+                "summary": "Get public album",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/gallery/{id}/photos": {
+            "get": {
+                "description": "Get photos of an album with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-gallery"
+                ],
+                "summary": "Get album photos",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Pagination limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Pagination offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotosListResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/health": {
             "get": {
                 "description": "Check if the API is running",
@@ -404,13 +737,7 @@ const docTemplate = `{
                 "summary": "Health check",
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
+                        "description": "OK"
                     }
                 }
             }
@@ -508,6 +835,34 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse": {
+            "type": "object",
+            "properties": {
+                "cover_image_path": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_published": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumsListResponse": {
+            "type": "object",
+            "properties": {
+                "albums": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse"
+                    }
+                }
+            }
+        },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse": {
             "type": "object",
             "properties": {
@@ -522,6 +877,31 @@ const docTemplate = `{
                 },
                 "is_main": {
                     "type": "boolean"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotoResponse": {
+            "type": "object",
+            "properties": {
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_path": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotosListResponse": {
+            "type": "object",
+            "properties": {
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotoResponse"
+                    }
                 }
             }
         },
@@ -612,11 +992,54 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse": {
+            "type": "object",
+            "properties": {
+                "cover_image_path": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumsListResponse": {
+            "type": "object",
+            "properties": {
+                "albums": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse"
+                    }
+                }
+            }
+        },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventPhotoRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "display_order": {
+                    "type": "integer",
+                    "minimum": -1
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_main": {
+                    "type": "boolean"
                 }
             }
         },
@@ -654,7 +1077,7 @@ const docTemplate = `{
                 "photos": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePhotoRequest"
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventPhotoRequest"
                     }
                 },
                 "status": {
@@ -679,7 +1102,32 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePhotoRequest": {
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryAlbumRequest": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "cover_image_path": {
+                    "type": "string"
+                },
+                "is_published": {
+                    "type": "boolean"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryPhotoRequest"
+                    }
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryPhotoRequest": {
             "type": "object",
             "required": [
                 "id"
@@ -691,9 +1139,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "is_main": {
-                    "type": "boolean"
                 }
             }
         },

@@ -17,6 +17,7 @@ func New(
 	authMw func(http.Handler) http.Handler,
 	authHandler *handler.AuthHandler,
 	eventHandler *handler.EventHandler,
+	galleryHandler *handler.GalleryHandler,
 ) chi.Router {
 	r := chi.NewRouter()
 
@@ -59,11 +60,32 @@ func New(
 				r.Post("/photos", eventHandler.UploadEventPhoto)
 			})
 		})
+
+		r.Route("/gallery", func(r chi.Router) {
+			r.Post("/", galleryHandler.CreateAlbum)
+			r.Get("/", galleryHandler.ListAdminAlbums)
+
+			r.Route("/{id}", func(r chi.Router) {
+				r.Get("/", galleryHandler.GetAdminAlbum)
+				r.Put("/", galleryHandler.UpdateAlbum)
+				r.Delete("/", galleryHandler.DeleteAlbum)
+				r.Post("/photos", galleryHandler.UploadAlbumPhoto)
+			})
+		})
 	})
 
 	r.Route("/api/events", func(r chi.Router) {
 		r.Get("/", eventHandler.ListPublicEvents)
 		r.Get("/{id}", eventHandler.GetPublicEvent)
+	})
+
+	r.Route("/api/gallery", func(r chi.Router) {
+		r.Get("/", galleryHandler.ListPublicAlbums)
+
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", galleryHandler.GetPublicAlbum)
+			r.Get("/photos", galleryHandler.GetAlbumPhotos)
+		})
 	})
 
 	return r
@@ -74,7 +96,7 @@ func New(
 // @Description  Check if the API is running
 // @Tags         health
 // @Produce      json
-// @Success      200 {object} map[string]string
+// @Success      200 "OK"
 // @Router       /api/health [get]
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	httputil.JSON(w, http.StatusOK, map[string]string{"status": "ok"})
