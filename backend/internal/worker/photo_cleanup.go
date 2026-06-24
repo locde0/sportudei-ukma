@@ -9,16 +9,23 @@ import (
 )
 
 type PhotoCleanupWorker struct {
-	eventService *service.EventService
-	log          *slog.Logger
-	interval     time.Duration
+	eventService   *service.EventService
+	galleryService *service.GalleryService
+	log            *slog.Logger
+	interval       time.Duration
 }
 
-func NewPhotoCleanupWorker(es *service.EventService, log *slog.Logger, interval time.Duration) *PhotoCleanupWorker {
+func NewPhotoCleanupWorker(
+	es *service.EventService,
+	gs *service.GalleryService,
+	log *slog.Logger,
+	interval time.Duration,
+) *PhotoCleanupWorker {
 	return &PhotoCleanupWorker{
-		eventService: es,
-		log:          log,
-		interval:     interval,
+		eventService:   es,
+		galleryService: gs,
+		log:            log,
+		interval:       interval,
 	}
 }
 
@@ -47,7 +54,11 @@ func (w *PhotoCleanupWorker) runJob() {
 	jobCtx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 
 	if err := w.eventService.CleanupOrphanedEventPhotos(jobCtx); err != nil {
-		w.log.Error("failed to cleanup orphaned photos", slog.String("error", err.Error()))
+		w.log.Error("failed to cleanup orphaned event photos", slog.String("error", err.Error()))
+	}
+
+	if err := w.galleryService.CleanupOrphanedGalleryPhotos(jobCtx); err != nil {
+		w.log.Error("failed to cleanup orphaned gallery photos", slog.String("error", err.Error()))
 	}
 
 	cancel()

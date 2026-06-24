@@ -31,6 +31,7 @@ type GalleryRepository interface {
 	AddGalleryPhoto(ctx context.Context, photo *GalleryPhoto) error
 	UpdateGalleryPhoto(ctx context.Context, photo *GalleryPhoto) error
 	DeleteGalleryPhoto(ctx context.Context, id int32) error
+	SoftDeleteGalleryPhotos(ctx context.Context, id int32, retainedIDs []int32) error
 
 	GetGalleryPhotosListByAlbumID(ctx context.Context, albumID int32, limit, offset int32) ([]GalleryPhoto, error)
 

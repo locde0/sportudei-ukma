@@ -142,6 +142,13 @@ func (r *EventRepo) DeleteEventPhoto(ctx context.Context, id int32) error {
 	return r.tx.Q(ctx).DeleteEventPhoto(ctx, id)
 }
 
+func (r *EventRepo) SoftDeleteEventPhotos(ctx context.Context, id int32, retainedIDs []int32) error {
+	return r.tx.Q(ctx).SoftDeleteEventPhotos(ctx, gen.SoftDeleteEventPhotosParams{
+		EventID:     id,
+		RetainedIds: retainedIDs,
+	})
+}
+
 func (r *EventRepo) GetEventPhotosListByEventID(ctx context.Context, eventID int32) ([]domain.EventPhoto, error) {
 	rows, err := r.tx.Q(ctx).GetEventPhotosListByEventID(ctx, eventID)
 	if err != nil {

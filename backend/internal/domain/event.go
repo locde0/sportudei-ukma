@@ -65,6 +65,7 @@ type EventRepository interface {
 	AddEventPhoto(ctx context.Context, photo *EventPhoto) error
 	UpdateEventPhoto(ctx context.Context, photo *EventPhoto) error
 	DeleteEventPhoto(ctx context.Context, id int32) error
+	SoftDeleteEventPhotos(ctx context.Context, id int32, retainedIDs []int32) error
 
 	GetEventPhotosListByEventID(ctx context.Context, eventID int32) ([]EventPhoto, error)
 

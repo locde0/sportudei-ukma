@@ -54,6 +54,12 @@ select * from event_photos
 where event_id = $1 and display_order != -1
 order by display_order desc, created_at desc;
 
+-- name: SoftDeleteEventPhotos :exec
+update event_photos
+set display_order = -1
+where event_id = $1
+  and id != ALL(sqlc.arg('retained_ids')::int[]);
+
 -- name: UpdateEventStatuses :exec
 update events
 set status = 'in_progress'

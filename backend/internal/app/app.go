@@ -72,9 +72,11 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	userRepo := postgres.NewUserRepo(txManager)
 	eventRepo := postgres.NewEventRepo(txManager)
+	galleryRepo := postgres.NewGalleryRepo(txManager)
 
 	authService := service.NewAuthService(userRepo, tokenProvider, passwordHasher, mailer)
 	eventService := service.NewEventService(eventRepo, txManager, storage, logger)
+	galleryService := service.NewGalleryService(galleryRepo, txManager, storage, logger)
 
 	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays, cfg.IsProd())
 	eventHandler := handler.NewEventHandler(eventService)
@@ -103,7 +105,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	var workers []Worker
 
-	photoCleanupWorker := worker.NewPhotoCleanupWorker(eventService, logger, 1*time.Hour)
+	photoCleanupWorker := worker.NewPhotoCleanupWorker(eventService, galleryService, logger, 1*time.Hour)
 	workers = append(workers, photoCleanupWorker)
 
 	eventStatusWorker := worker.NewEventStatusWorker(eventService, logger, 5*time.Minute)

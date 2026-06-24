@@ -211,6 +211,23 @@ func (q *Queries) GetGalleryPhotosByAlbumID(ctx context.Context, arg GetGalleryP
 	return items, nil
 }
 
+const softDeleteGalleryPhotos = `-- name: SoftDeleteGalleryPhotos :exec
+update gallery_photos
+set display_order = -1
+where album_id = $1
+  and id != ALL($2::int[])
+`
+
+type SoftDeleteGalleryPhotosParams struct {
+	AlbumID     int32
+	RetainedIds []int32
+}
+
+func (q *Queries) SoftDeleteGalleryPhotos(ctx context.Context, arg SoftDeleteGalleryPhotosParams) error {
+	_, err := q.db.Exec(ctx, softDeleteGalleryPhotos, arg.AlbumID, arg.RetainedIds)
+	return err
+}
+
 const updateGalleryAlbum = `-- name: UpdateGalleryAlbum :exec
 update gallery_albums
 set

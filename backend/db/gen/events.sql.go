@@ -251,6 +251,23 @@ func (q *Queries) GetEventsList(ctx context.Context, arg GetEventsListParams) ([
 	return items, nil
 }
 
+const softDeleteEventPhotos = `-- name: SoftDeleteEventPhotos :exec
+update event_photos
+set display_order = -1
+where event_id = $1
+  and id != ALL($2::int[])
+`
+
+type SoftDeleteEventPhotosParams struct {
+	EventID     int32
+	RetainedIds []int32
+}
+
+func (q *Queries) SoftDeleteEventPhotos(ctx context.Context, arg SoftDeleteEventPhotosParams) error {
+	_, err := q.db.Exec(ctx, softDeleteEventPhotos, arg.EventID, arg.RetainedIds)
+	return err
+}
+
 const updateEvent = `-- name: UpdateEvent :exec
 update events
 set

@@ -36,6 +36,12 @@ update gallery_photos
 set display_order = $3
 where id = $1 and album_id = $2;
 
+-- name: SoftDeleteGalleryPhotos :exec
+update gallery_photos
+set display_order = -1
+where album_id = $1
+  and id != ALL(sqlc.arg('retained_ids')::int[]);
+
 -- name: DeleteGalleryPhoto :exec
 delete from gallery_photos where id = $1;
 

@@ -30,31 +30,34 @@ func NewEventService(
 }
 
 func (s *EventService) CreateEvent(ctx context.Context, event *domain.Event, files []domain.File) error {
-	return s.tx.ExecTx(ctx, func(txCtx context.Context) error {
-		if err := s.events.CreateEvent(txCtx, event); err != nil {
-			return fmt.Errorf("create event: %w", err)
+	if err := s.events.CreateEvent(ctx, event); err != nil {
+		return fmt.Errorf("create event: %w", err)
+	}
+
+	folderPath := fmt.Sprintf("events/%d", event.ID)
+	for i, file := range files {
+		path, err := s.storage.Upload(ctx, file, folderPath)
+		if err != nil {
+			s.log.Error("upload photo during event creation",
+				slog.Int("event_id", int(event.ID)),
+				slog.String("error", err.Error()),
+			)
+			continue
 		}
 
-		folderPath := fmt.Sprintf("events/%d", event.ID)
-		for i, file := range files {
-			path, err := s.storage.Upload(txCtx, file, folderPath)
-			if err != nil {
-				return fmt.Errorf("upload photo: %w", err)
-			}
-
-			photo := &domain.EventPhoto{
-				EventID:      event.ID,
-				ImagePath:    path,
-				IsMain:       i == 0,
-				DisplayOrder: int32(i),
-			}
-			if err := s.events.AddEventPhoto(txCtx, photo); err != nil {
-				return fmt.Errorf("add event photo: %w", err)
-			}
+		photo := &domain.EventPhoto{
+			EventID:      event.ID,
+			ImagePath:    path,
+			IsMain:       i == 0,
+			DisplayOrder: int32(i),
 		}
 
-		return nil
-	})
+		if err := s.events.AddEventPhoto(ctx, photo); err != nil {
+			s.log.Error("save event photo to db", slog.String("error", err.Error()))
+		}
+	}
+
+	return nil
 }
 
 func (s *EventService) UpdateEvent(ctx context.Context, event *domain.Event, photos []domain.EventPhoto) error {
@@ -63,31 +66,17 @@ func (s *EventService) UpdateEvent(ctx context.Context, event *domain.Event, pho
 			return fmt.Errorf("update event: %w", err)
 		}
 
-		existingPhotos, err := s.events.GetEventPhotosListByEventID(txCtx, event.ID)
-		if err != nil {
-			return err
-		}
-
-		incomingPhotos := make(map[int32]domain.EventPhoto)
-		for _, p := range photos {
-			incomingPhotos[p.ID] = p
-		}
-
-		for _, existing := range existingPhotos {
-			if _, found := incomingPhotos[existing.ID]; !found {
-				if err := s.events.DeleteEventPhoto(txCtx, existing.ID); err != nil {
-					return fmt.Errorf("delete event photo: %w", err)
-				}
-				if err := s.storage.Delete(txCtx, existing.ImagePath); err != nil {
-					return fmt.Errorf("delete event photo: %w", err)
-				}
-			}
-		}
-
+		retainedIDs := make([]int32, 0, len(photos))
 		for _, photo := range photos {
+			retainedIDs = append(retainedIDs, photo.ID)
+
 			if err := s.events.UpdateEventPhoto(txCtx, &photo); err != nil {
-				return fmt.Errorf("update event photo: %w", err)
+				return fmt.Errorf("update event photo %d: %w", photo.ID, err)
 			}
+		}
+
+		if err := s.events.SoftDeleteEventPhotos(txCtx, event.ID, retainedIDs); err != nil {
+			return fmt.Errorf("soft delete event photos: %w", err)
 		}
 
 		return nil
@@ -96,12 +85,19 @@ func (s *EventService) UpdateEvent(ctx context.Context, event *domain.Event, pho
 
 func (s *EventService) DeleteEvent(ctx context.Context, id int32) error {
 	if err := s.events.DeleteEvent(ctx, id); err != nil {
-		return fmt.Errorf("delete event from db: %w", err)
+		return fmt.Errorf("delete event: %w", err)
 	}
 
 	folderPath := fmt.Sprintf("events/%d", id)
 
-	return s.storage.DeleteDir(ctx, folderPath)
+	if err := s.storage.DeleteDir(ctx, folderPath); err != nil {
+		s.log.Warn("delete event directory from storage",
+			slog.Int("event_id", int(id)),
+			slog.String("error", err.Error()),
+		)
+	}
+
+	return nil
 }
 
 func (s *EventService) GetAdminEvent(ctx context.Context, id int32) (*domain.Event, []domain.EventPhoto, error) {
@@ -115,7 +111,7 @@ func (s *EventService) GetAdminEvent(ctx context.Context, id int32) (*domain.Eve
 		return nil, nil, fmt.Errorf("get event photos: %w", err)
 	}
 
-	return event, filterValidPhotos(photos), nil
+	return event, photos, nil
 }
 
 func (s *EventService) GetPublicEvent(ctx context.Context, id int32) (*domain.Event, []domain.EventPhoto, error) {
@@ -129,7 +125,7 @@ func (s *EventService) GetPublicEvent(ctx context.Context, id int32) (*domain.Ev
 		return nil, nil, fmt.Errorf("get event photos: %w", err)
 	}
 
-	return event, filterValidPhotos(photos), nil
+	return event, photos, nil
 }
 
 func (s *EventService) ListAdminEvents(ctx context.Context, limit, offset int32) ([]domain.EventListItem, error) {
@@ -155,7 +151,7 @@ func (s *EventService) UploadEventPhoto(ctx context.Context, eventID int32, file
 
 	path, err := s.storage.Upload(ctx, file, folderPath)
 	if err != nil {
-		return fmt.Errorf("upload photo: %w", err)
+		return fmt.Errorf("upload event photo: %w", err)
 	}
 
 	photo := &domain.EventPhoto{
@@ -186,7 +182,7 @@ func (s *EventService) CleanupOrphanedEventPhotos(ctx context.Context) error {
 
 	for _, photo := range photos {
 		if err := s.storage.Delete(ctx, photo.ImagePath); err != nil {
-			s.log.Error("failed to delete orphaned photo from storage",
+			s.log.Error("failed to delete orphaned event photo from storage",
 				slog.String("image_path", photo.ImagePath),
 				slog.String("error", err.Error()),
 			)
@@ -194,14 +190,4 @@ func (s *EventService) CleanupOrphanedEventPhotos(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func filterValidPhotos(photos []domain.EventPhoto) []domain.EventPhoto {
-	valid := make([]domain.EventPhoto, 0, len(photos))
-	for _, p := range photos {
-		if p.DisplayOrder >= 0 {
-			valid = append(valid, p)
-		}
-	}
-	return valid
 }

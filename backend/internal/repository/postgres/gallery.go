@@ -131,6 +131,13 @@ func (r *GalleryRepo) DeleteGalleryPhoto(ctx context.Context, id int32) error {
 	return r.tx.Q(ctx).DeleteGalleryPhoto(ctx, id)
 }
 
+func (r *GalleryRepo) SoftDeleteGalleryPhotos(ctx context.Context, id int32, retainedIDs []int32) error {
+	return r.tx.Q(ctx).SoftDeleteGalleryPhotos(ctx, gen.SoftDeleteGalleryPhotosParams{
+		AlbumID:     id,
+		RetainedIds: retainedIDs,
+	})
+}
+
 func (r *GalleryRepo) GetGalleryPhotosListByAlbumID(ctx context.Context, albumID int32, limit, offset int32) ([]domain.GalleryPhoto, error) {
 	rows, err := r.tx.Q(ctx).GetGalleryPhotosByAlbumID(ctx, gen.GetGalleryPhotosByAlbumIDParams{
 		AlbumID: albumID,
