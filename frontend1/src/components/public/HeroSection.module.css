@@ -1,173 +1,404 @@
+/* =========================================================
+   HERO SECTION — Героїчна в'їзна секція
+========================================================= */
 .hero {
   position: relative;
-  background: var(--color-surface);
-  color: var(--color-text);
-  padding: 5rem 1.5rem 4.5rem;
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7rem 1.5rem 5rem;
   overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 55% 45% at 85% 15%, var(--color-accent-subtle) 0%, transparent 55%),
-    radial-gradient(ellipse 35% 35% at 5% 85%, var(--color-accent-subtle) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-[data-theme='light'] .hero {
-  background: linear-gradient(180deg, #ffffff 0%, var(--color-bg) 100%);
-}
-
-[data-theme='dark'] .hero {
   background: var(--color-bg);
 }
 
-.hero::after {
-  content: '';
+/* Фон з радіальним градієнтом */
+.heroBackground {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--color-accent);
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(
+    circle at 50% -10%,
+    rgba(138, 224, 40, 0.08) 0%,
+    transparent 70%
+  );
 }
 
+/* Перший анімований гло — ліворуч, вгорі */
+.heroGlow1 {
+  position: absolute;
+  top: -30%;
+  left: -15%;
+  width: 55vw;
+  height: 55vw;
+  background: var(--color-accent);
+  filter: blur(160px);
+  opacity: 0.16;
+  border-radius: 50%;
+  animation: float 12s cubic-bezier(0.4, 0.1, 0.2, 0.9) infinite;
+  z-index: 1;
+}
+
+/* Другий анімований гло — праворуч, внизу */
+.heroGlow2 {
+  position: absolute;
+  bottom: -25%;
+  right: -12%;
+  width: 48vw;
+  height: 48vw;
+  background: var(--color-accent);
+  filter: blur(140px);
+  opacity: 0.12;
+  border-radius: 50%;
+  animation: float 10s cubic-bezier(0.4, 0.1, 0.2, 0.9) infinite reverse;
+  z-index: 1;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-40px) scale(1.08);
+  }
+}
+
+/* =========================================================
+   INNER CONTENT — Вміст всередині
+========================================================= */
 .inner {
   position: relative;
+  z-index: 10;
   max-width: var(--max-content);
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
+  width: 100%;
 }
 
+/* =========================================================
+   EYEBROW — Мікротекст перед заголовком
+========================================================= */
 .eyebrow {
-  display: inline-block;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: 99px;
+  background: var(--color-accent-muted);
+  border: 1.5px solid var(--color-accent);
+  font-size: 0.8125rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--color-accent);
-  margin-bottom: 1rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 4px 24px rgba(138, 224, 40, 0.2);
+  font-family: var(--font-heading);
+  transition: all 0.3s ease;
 }
 
+.eyebrow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 32px rgba(138, 224, 40, 0.3);
+}
+
+/* =========================================================
+   TITLE — Основний заголовок (великий!)
+========================================================= */
 .title {
   font-family: var(--font-heading);
-  font-size: clamp(2.25rem, 5vw, 3.25rem);
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 1.25rem;
+  font-size: clamp(3.25rem, 9vw, 7rem);
+  font-weight: 900;
+  line-height: 1.05;
+  margin-bottom: 2rem;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
-  text-shadow: var(--text-shadow-brand);
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+  position: relative;
 }
 
+/* Accent у заголовку */
 .titleAccent {
   color: var(--color-accent);
+  display: block;
+  text-shadow: 0 0 32px rgba(138, 224, 40, 0.25);
 }
 
+/* =========================================================
+   SUBTITLE — Підзаголовок
+========================================================= */
 .subtitle {
-  font-size: 1rem;
-  line-height: 1.75;
+  font-size: clamp(1.0625rem, 2.5vw, 1.375rem);
+  line-height: 1.7;
   color: var(--color-text-muted);
-  margin-bottom: 2rem;
-  max-width: 32rem;
+  margin-bottom: 4rem;
+  max-width: 48rem;
+  font-weight: 500;
 }
 
+/* =========================================================
+   ACTIONS — CTA кнопки
+========================================================= */
 .actions {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 7rem;
+  position: relative;
+  z-index: 11;
 }
 
+/* Primary CTA — яскрава зелена */
 .ctaPrimary {
   display: inline-flex;
-  padding: 0.85rem 1.75rem;
-  background: var(--color-accent);
-  color: var(--color-text-inverse);
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.25rem 3rem;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #7acc22 100%);
+  color: #000000;
   text-decoration: none;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 0.8125rem;
+  border-radius: 14px;
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 0.9375rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  transition: background 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.1em;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 6px 28px rgba(138, 224, 40, 0.4);
+  position: relative;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+}
+
+.ctaPrimary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .ctaPrimary:hover {
-  background: var(--color-accent-hover);
-  box-shadow: var(--glow-green);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 10px 40px rgba(138, 224, 40, 0.5);
 }
 
+.ctaPrimary:hover::before {
+  opacity: 1;
+}
+
+.ctaPrimary:active {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 4px rgba(138, 224, 40, 0.25);
+}
+
+/* Secondary CTA — контурна */
 .ctaSecondary {
   display: inline-flex;
-  padding: 0.85rem 1.75rem;
-  border: 1px solid var(--color-border-strong);
-  color: var(--color-text);
-  text-decoration: none;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 0.8125rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  transition: border-color 0.2s, color 0.2s;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.25rem 3rem;
   background: transparent;
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  text-decoration: none;
+  border-radius: 14px;
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 0.9375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
 }
 
 .ctaSecondary:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  background: var(--color-accent-muted);
+  color: var(--color-text);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 24px rgba(138, 224, 40, 0.2);
 }
 
+.ctaSecondary:active {
+  transform: translateY(-2px);
+  background: var(--color-accent-subtle);
+}
+
+/* =========================================================
+   STATS — Статистичні картки
+========================================================= */
 .stats {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  width: 100%;
+  position: relative;
+  z-index: 11;
 }
 
 .statCard {
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--color-border);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(138, 224, 40, 0.08) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
 }
 
 [data-theme='light'] .statCard {
   background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 .statCard:hover {
-  border-color: rgba(138, 224, 40, 0.45);
+  transform: translateY(-10px);
+  border-color: var(--color-accent);
   box-shadow: var(--glow-green);
+}
+
+.statCard:hover::before {
+  opacity: 1;
 }
 
 .statValue {
   font-family: var(--font-heading);
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
   color: var(--color-accent);
   line-height: 1;
-  margin-bottom: 0.35rem;
-  text-shadow: var(--text-shadow-brand);
+  position: relative;
+  z-index: 1;
 }
 
 .statLabel {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: 900;
   color: var(--color-text-muted);
-  line-height: 1.4;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
+  font-family: var(--font-heading);
+  position: relative;
+  z-index: 1;
 }
 
-@media (max-width: 768px) {
-  .inner {
+/* =========================================================
+   RESPONSIVE — Адаптація для мобільних пристроїв
+========================================================= */
+@media (max-width: 900px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .title {
+    margin-bottom: 1.5rem;
+  }
+
+  .subtitle {
+    margin-bottom: 3.5rem;
+  }
+
+  .actions {
+    margin-bottom: 6rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 6rem 1rem 3rem;
+    min-height: 85vh;
+  }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    margin-bottom: 2rem;
+    padding: 0.5rem 1.25rem;
+  }
+
+  .title {
+    font-size: clamp(2.25rem, 7vw, 3.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+    max-width: 90%;
+  }
+
+  .actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    margin-bottom: 5rem;
+  }
+
+  .ctaPrimary,
+  .ctaSecondary {
+    width: 100%;
+    padding: 1rem 2.5rem;
+    font-size: 0.875rem;
+  }
+
+  .stats {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.25rem;
+  }
+
+  .statCard {
+    padding: 2rem;
+  }
+
+  .statValue {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+  }
+
+  .statLabel {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .hero {
+    padding: 5rem 0.75rem 3rem;
+  }
+
+  .title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .ctaPrimary,
+  .ctaSecondary {
+    padding: 0.875rem 2rem;
   }
 }

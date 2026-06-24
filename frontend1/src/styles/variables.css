@@ -1,4 +1,4 @@
-/* Sportudei Brandbook — кольори бренду (не змінювати відтінки) */
+/* Sportudei Brandbook — офіційні кольори (не змінювати відтінки) */
 :root {
   --color-brand-black: #000000;
   --color-brand-white: #ffffff;
@@ -15,89 +15,98 @@
   --header-height: 68px;
 }
 
-/* Світла тема (за замовчуванням) */
+/* ========================================================
+   Світла тема (за замовчуванням) - Спортудей стиль
+======================================================== */
 :root,
 [data-theme='light'] {
   color-scheme: light;
 
-  --color-bg: #f4f6f1;
+  /* Фони — мінімалістичні, контрастні */
+  --color-bg: #f8f8f8;
   --color-surface: #ffffff;
   --color-surface-elevated: #ffffff;
-  --color-header-bg: rgba(255, 255, 255, 0.9);
+  --color-header-bg: rgba(255, 255, 255, 0.95);
   --color-footer-bg: #000000;
 
-  --color-border: rgba(0, 0, 0, 0.09);
-  --color-border-strong: rgba(0, 0, 0, 0.16);
+  /* Межі — тонкі, чітки */
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.14);
 
-  --color-text: #0a0a0a;
-  --color-text-muted: rgba(0, 0, 0, 0.52);
-  --color-text-inverse: #000000;
+  /* Текст — максимальна читабельність */
+  --color-text: #000000;
+  --color-text-muted: rgba(0, 0, 0, 0.55);
+  --color-text-inverse: #ffffff;
   --color-text-on-dark: #ffffff;
-  --color-text-muted-on-dark: rgba(255, 255, 255, 0.58);
+  --color-text-muted-on-dark: rgba(255, 255, 255, 0.65);
 
+  /* Акцент — яскравий зелений від брендбуку */
   --color-accent: #8ae028;
   --color-accent-hover: #7acc22;
-  --color-accent-muted: rgba(138, 224, 40, 0.16);
-  --color-accent-glow: rgba(138, 224, 40, 0.28);
-  --color-accent-subtle: rgba(138, 224, 40, 0.1);
+  --color-accent-muted: rgba(138, 224, 40, 0.12);
+  --color-accent-glow: rgba(138, 224, 40, 0.32);
+  --color-accent-subtle: rgba(138, 224, 40, 0.08);
 
-  --color-navy: #0a0a0a;
-  --color-navy-light: #1a1a1a;
-  --color-gold: #8ae028;
-  --color-gold-light: #9ef030;
-
+  /* Брендові ефекти для тексту (shadow & outline) */
+  --text-effect-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --text-effect-glow-green: 0 0 16px rgba(138, 224, 40, 0.4);
+  
+  /* Статуси */
   --color-success: #6db81f;
-  --color-success-bg: rgba(138, 224, 40, 0.14);
-  --color-muted: rgba(0, 0, 0, 0.38);
-  --color-muted-bg: rgba(0, 0, 0, 0.04);
+  --color-success-bg: rgba(138, 224, 40, 0.12);
+  --color-muted: rgba(0, 0, 0, 0.36);
+  --color-muted-bg: rgba(0, 0, 0, 0.03);
   --color-danger: #d32f2f;
   --color-danger-bg: rgba(211, 47, 47, 0.1);
 
-  --text-shadow-brand: none;
-  --glow-green: 0 4px 20px rgba(138, 224, 40, 0.3);
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.08);
+  /* Тіні для динамічності */
+  --glow-green: 0 4px 24px rgba(138, 224, 40, 0.35);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.15);
 }
 
-/* Темна тема */
+/* ========================================================
+   Темна тема — Спортудей стиль
+======================================================== */
 [data-theme='dark'] {
   color-scheme: dark;
 
   --color-bg: #000000;
-  --color-surface: #0d0d0d;
-  --color-surface-elevated: #161616;
-  --color-header-bg: rgba(0, 0, 0, 0.92);
+  --color-surface: #0a0a0a;
+  --color-surface-elevated: #141414;
+  --color-header-bg: rgba(0, 0, 0, 0.95);
   --color-footer-bg: #000000;
 
-  --color-border: rgba(255, 255, 255, 0.12);
-  --color-border-strong: rgba(255, 255, 255, 0.22);
+  --color-border: rgba(138, 224, 40, 0.12);
+  --color-border-strong: rgba(138, 224, 40, 0.2);
 
   --color-text: #ffffff;
-  --color-text-muted: rgba(255, 255, 255, 0.58);
+  --color-text-muted: rgba(255, 255, 255, 0.6);
   --color-text-inverse: #000000;
   --color-text-on-dark: #ffffff;
-  --color-text-muted-on-dark: rgba(255, 255, 255, 0.58);
+  --color-text-muted-on-dark: rgba(255, 255, 255, 0.65);
 
   --color-accent: #8ae028;
   --color-accent-hover: #9ef030;
-  --color-accent-muted: rgba(138, 224, 40, 0.14);
-  --color-accent-glow: rgba(138, 224, 40, 0.35);
-  --color-accent-subtle: rgba(138, 224, 40, 0.08);
+  --color-accent-muted: rgba(138, 224, 40, 0.1);
+  --color-accent-glow: rgba(138, 224, 40, 0.4);
+  --color-accent-subtle: rgba(138, 224, 40, 0.06);
 
-  --color-navy: #000000;
-  --color-navy-light: #1a1a1a;
-  --color-gold: #8ae028;
-  --color-gold-light: #9ef030;
+  --text-effect-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  --text-effect-glow-green: 0 0 20px rgba(138, 224, 40, 0.5);
 
   --color-success: #8ae028;
-  --color-success-bg: rgba(138, 224, 40, 0.12);
-  --color-muted: rgba(255, 255, 255, 0.4);
-  --color-muted-bg: rgba(255, 255, 255, 0.06);
+  --color-success-bg: rgba(138, 224, 40, 0.1);
+  --color-muted: rgba(255, 255, 255, 0.38);
+  --color-muted-bg: rgba(255, 255, 255, 0.05);
   --color-danger: #ff5252;
-  --color-danger-bg: rgba(255, 82, 82, 0.12);
+  --color-danger-bg: rgba(255, 82, 82, 0.1);
 
-  --text-shadow-brand: 0 2px 50px rgba(0, 0, 0, 0.9);
-  --glow-green: 0 0 24px var(--color-accent-glow);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
-  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.55);
+  --glow-green: 0 0 28px rgba(138, 224, 40, 0.45);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.7);
+  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.8);
 }

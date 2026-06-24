@@ -1,22 +1,48 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  justify-content: center;
+  padding: 0.375rem 0.875rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  font-family: var(--font-heading);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
 }
 
+/* Опубліковано — зелене, яскраве */
 .published {
-  background: var(--color-success-bg);
-  color: var(--color-accent);
-  border: 1px solid rgba(138, 224, 40, 0.35);
+  background: linear-gradient(135deg, var(--color-accent) 0%, #7acc22 100%);
+  color: #000000;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 8px rgba(138, 224, 40, 0.25);
 }
 
+.published:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(138, 224, 40, 0.35);
+}
+
+/* Чернетка — мuted, неяскраве */
 .draft {
   background: var(--color-muted-bg);
   color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.draft:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] .draft {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='dark'] .draft:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
