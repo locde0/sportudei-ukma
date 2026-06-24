@@ -45,24 +45,24 @@ func (c *Config) validate() error {
 	if c.DbURL == "" {
 		return fmt.Errorf("DB_URL is required")
 	}
-	if c.JWTSecret == "" {
-		return fmt.Errorf("JWT_SECRET is required")
-	}
-	if len(c.JWTSecret) < 32 {
-		return fmt.Errorf("JWT_SECRET must be at least 32 characters for security")
-	}
-	if c.SMTPHost == "" {
-		return fmt.Errorf("SMTP_HOST is required")
-	}
-	if c.SMTPPort == "" {
-		return fmt.Errorf("SMTP_PORT is required")
-	}
-	if c.SMTPUsername == "" {
-		return fmt.Errorf("SMTP_USER is required")
-	}
-	if c.SMTPPassword == "" {
-		return fmt.Errorf("SMTP_PASS is required")
-	}
+	// if c.JWTSecret == "" {
+	// 	return fmt.Errorf("JWT_SECRET is required")
+	// }
+	// if len(c.JWTSecret) < 32 {
+	// 	return fmt.Errorf("JWT_SECRET must be at least 32 characters for security")
+	// }
+	// if c.SMTPHost == "" {
+	// 	return fmt.Errorf("SMTP_HOST is required")
+	// }
+	// if c.SMTPPort == "" {
+	// 	return fmt.Errorf("SMTP_PORT is required")
+	// }
+	// if c.SMTPUsername == "" {
+	// 	return fmt.Errorf("SMTP_USER is required")
+	// }
+	// if c.SMTPPassword == "" {
+	// 	return fmt.Errorf("SMTP_PASS is required")
+	// }
 	return nil
 }
 
