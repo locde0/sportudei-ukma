@@ -27,12 +27,7 @@ func NewAuthHandler(s *service.AuthService, refreshExp int, secureCookie bool) *
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var req dto.LoginRequest
 	if err := httputil.ParseJSON(r, &req); err != nil {
-		httputil.Error(w, http.StatusBadRequest, "INVALID_JSON", err.Error())
-		return
-	}
-
-	if errs := req.Validate(); len(errs) > 0 {
-		httputil.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "invalid request")
+		httputil.HandleError(w, err)
 		return
 	}
 
@@ -48,11 +43,8 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) VerifyOTP(w http.ResponseWriter, r *http.Request) {
 	var req dto.VerifyOTPRequest
 	if err := httputil.ParseJSON(r, &req); err != nil {
-		httputil.Error(w, http.StatusBadRequest, "INVALID_JSON", err.Error())
-	}
-
-	if errs := req.Validate(); len(errs) > 0 {
-		httputil.Error(w, http.StatusBadRequest, "VALIDATION_ERROR", "invalid request")
+		httputil.HandleError(w, err)
+		return
 	}
 
 	accessToken, refreshToken, err := h.service.VerifyOTP(r.Context(), req.Email, req.Code)

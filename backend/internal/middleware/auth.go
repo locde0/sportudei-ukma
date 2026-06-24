@@ -23,8 +23,9 @@ func Auth(tokenProvider auth.TokenProvider) func(http.Handler) http.Handler {
 			}
 
 			parts := strings.SplitN(header, " ", 2)
-			if len(parts) != 2 || strings.EqualFold(parts[0], "bearer") {
+			if len(parts) != 2 || !strings.EqualFold(parts[0], "bearer") {
 				httputil.Error(w, http.StatusUnauthorized, "INVALID_AUTH", "invalid authorization header")
+				return
 			}
 
 			email, err := tokenProvider.ParseToken(parts[1], "access")

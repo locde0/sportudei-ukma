@@ -77,6 +77,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	eventService := service.NewEventService(eventRepo, txManager, storage, logger)
 
 	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays, cfg.IsProd())
+	eventHandler := handler.NewEventHandler(eventService)
 
 	authMw := middleware.Auth(tokenProvider)
 
@@ -85,6 +86,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		cfg.UploadDir,
 		authMw,
 		authHandler,
+		eventHandler,
 	)
 
 	var httpHandler http.Handler = mux

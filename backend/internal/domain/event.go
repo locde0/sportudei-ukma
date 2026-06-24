@@ -40,6 +40,7 @@ type EventListItem struct {
 	EventDate     time.Time
 	Location      string
 	Status        EventStatus
+	IsPublished   bool
 	MainImagePath string
 }
 

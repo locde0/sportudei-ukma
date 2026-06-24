@@ -1,35 +1,13 @@
 package dto
 
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-func (r LoginRequest) Validate() map[string]string {
-	errs := make(map[string]string)
-	if r.Email == "" {
-		errs["email"] = "required"
-	}
-	if r.Password == "" {
-		errs["password"] = "required"
-	}
-	return errs
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 type VerifyOTPRequest struct {
-	Email string `json:"email"`
-	Code  string `json:"code"`
-}
-
-func (r VerifyOTPRequest) Validate() map[string]string {
-	errs := make(map[string]string)
-	if r.Email == "" {
-		errs["email"] = "required"
-	}
-	if r.Code == "" {
-		errs["code"] = "required"
-	}
-	return errs
+	Email string `json:"email" validate:"required,email"`
+	Code  string `json:"code" validate:"required,numeric,len=6"`
 }
 
 type TokenResponse struct {

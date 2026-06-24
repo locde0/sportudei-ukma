@@ -15,8 +15,9 @@ type Response struct {
 }
 
 type ErrorInfo struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
+	Code    string            `json:"code"`
+	Message string            `json:"message"`
+	Details map[string]string `json:"details,omitempty"`
 }
 
 func JSON(w http.ResponseWriter, status int, data any) {
@@ -40,7 +41,25 @@ func Error(w http.ResponseWriter, status int, code, message string) {
 	})
 }
 
+func ErrorWithDetails(w http.ResponseWriter, status int, code, message string, details map[string]string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(Response{
+		Success: false,
+		Error: &ErrorInfo{
+			Code:    code,
+			Message: message,
+			Details: details,
+		},
+	})
+}
+
 func HandleError(w http.ResponseWriter, err error) {
+	if valErr, ok := errors.AsType[ValidationError](err); ok {
+		ErrorWithDetails(w, http.StatusUnprocessableEntity, "VALIDATION_ERROR", "invalid input data", valErr.Errors)
+		return
+	}
+
 	switch {
 	case errors.Is(err, domain.ErrNotFound):
 		Error(w, http.StatusNotFound, "NOT_FOUND", err.Error())

@@ -15,6 +15,7 @@ func New(
 	uploadDir string,
 	authMw func(http.Handler) http.Handler,
 	authHandler *handler.AuthHandler,
+	eventHandler *handler.EventHandler,
 ) chi.Router {
 	r := chi.NewRouter()
 
@@ -44,6 +45,22 @@ func New(
 	r.Route("/api/admin", func(r chi.Router) {
 		r.Use(authMw)
 
+		r.Route("/events", func(r chi.Router) {
+			r.Post("/", eventHandler.CreateEvent)
+			r.Get("/", eventHandler.ListAdminEvents)
+
+			r.Route("/{id}", func(r chi.Router) {
+				r.Get("/", eventHandler.GetAdminEvent)
+				r.Put("/", eventHandler.UpdateEvent)
+				r.Delete("/", eventHandler.DeleteEvent)
+				r.Post("/photos", eventHandler.UploadEventPhoto)
+			})
+		})
+	})
+
+	r.Route("/api/events", func(r chi.Router) {
+		r.Get("/", eventHandler.ListPublicEvents)
+		r.Get("/{id}", eventHandler.GetPublicEvent)
 	})
 
 	return r
