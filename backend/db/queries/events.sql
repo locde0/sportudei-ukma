@@ -19,13 +19,10 @@ where id = $1;
 -- name: DeleteEvent :exec
 delete from events where id = $1;
 
--- name: GetAdminEventByID :one
+-- name: GetEventByID :one
 select * from events
-where id = $1 limit 1;
-
--- name: GetPublicEventByID :one
-select * from events
-where id = $1 and is_published = true limit 1;
+where id = $1 and (is_published = true or sqlc.arg('show_all')::bool = true)
+limit 1;
 
 -- name: GetEventsList :many
 select
@@ -54,15 +51,15 @@ delete from event_photos where id = $1;
 
 -- name: GetEventPhotosListByEventID :many
 select * from event_photos
-where event_id = $1
-order by display_order desc;
+where event_id = $1 and display_order != -1
+order by display_order desc, created_at desc;
 
 -- name: UpdateEventStatuses :exec
 update events
 set status = 'in_progress'
 where status = 'planned' and event_date <= current_timestamp;
 
--- name: DeleteOrphanedPhotos :many
+-- name: DeleteOrphanedEventPhotos :many
 delete from event_photos
 where display_order = -1 and created_at < now() - interval '12 hours'
 returning *;

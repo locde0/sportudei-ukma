@@ -46,7 +46,7 @@ func (w *PhotoCleanupWorker) runJob() {
 
 	jobCtx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 
-	if err := w.eventService.CleanupOrphanedPhotos(jobCtx); err != nil {
+	if err := w.eventService.CleanupOrphanedEventPhotos(jobCtx); err != nil {
 		w.log.Error("failed to cleanup orphaned photos", slog.String("error", err.Error()))
 	}
 

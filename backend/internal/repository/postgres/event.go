@@ -56,25 +56,31 @@ func (r *EventRepo) DeleteEvent(ctx context.Context, id int32) error {
 }
 
 func (r *EventRepo) GetAdminEventByID(ctx context.Context, id int32) (*domain.Event, error) {
-	row, err := r.tx.Q(ctx).GetAdminEventByID(ctx, id)
+	row, err := r.tx.Q(ctx).GetEventByID(ctx, gen.GetEventByIDParams{
+		ID:      id,
+		ShowAll: true,
+	})
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, domain.ErrNotFound
 		}
 		return nil, fmt.Errorf("get admin event by id: %w", err)
 	}
-	return r.toEventDomain(&row), nil
+	return new(r.toEventDomain(&row)), nil
 }
 
 func (r *EventRepo) GetPublicEventByID(ctx context.Context, id int32) (*domain.Event, error) {
-	row, err := r.tx.Q(ctx).GetPublicEventByID(ctx, id)
+	row, err := r.tx.Q(ctx).GetEventByID(ctx, gen.GetEventByIDParams{
+		ID:      id,
+		ShowAll: false,
+	})
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, domain.ErrNotFound
 		}
 		return nil, fmt.Errorf("get public event by id: %w", err)
 	}
-	return r.toEventDomain(&row), nil
+	return new(r.toEventDomain(&row)), nil
 }
 
 func (r *EventRepo) GetAdminEventsList(ctx context.Context, limit, offset int32) ([]domain.EventListItem, error) {
@@ -151,17 +157,17 @@ func (r *EventRepo) UpdateEventStatuses(ctx context.Context) error {
 	return r.tx.Q(ctx).UpdateEventStatuses(ctx)
 }
 
-func (r *EventRepo) DeleteOrphanedPhotos(ctx context.Context) ([]domain.EventPhoto, error) {
-	photos, err := r.DeleteOrphanedPhotos(ctx)
+func (r *EventRepo) DeleteOrphanedEventPhotos(ctx context.Context) ([]domain.EventPhoto, error) {
+	photos, err := r.tx.Q(ctx).DeleteOrphanedEventPhotos(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("delete orphaned photos: %w", err)
+		return nil, fmt.Errorf("delete orphaned event photos: %w", err)
 	}
-	
-	return photos, nil
+
+	return mapSlice(photos, r.toEventPhotoDomain), nil
 }
 
-func (r *EventRepo) toEventDomain(row *gen.Event) *domain.Event {
-	return &domain.Event{
+func (r *EventRepo) toEventDomain(row *gen.Event) domain.Event {
+	return domain.Event{
 		ID:          row.ID,
 		Title:       row.Title,
 		Description: row.Description,

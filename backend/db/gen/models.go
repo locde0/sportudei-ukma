@@ -75,6 +75,22 @@ type EventPhoto struct {
 	CreatedAt    *time.Time
 }
 
+type GalleryAlbum struct {
+	ID             int32
+	Title          string
+	CoverImagePath *string
+	IsPublished    bool
+	CreatedAt      *time.Time
+}
+
+type GalleryPhoto struct {
+	ID           int32
+	AlbumID      int32
+	ImagePath    string
+	DisplayOrder int32
+	CreatedAt    *time.Time
+}
+
 type User struct {
 	ID           int32
 	Email        string

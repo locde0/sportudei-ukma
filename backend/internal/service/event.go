@@ -35,8 +35,9 @@ func (s *EventService) CreateEvent(ctx context.Context, event *domain.Event, fil
 			return fmt.Errorf("create event: %w", err)
 		}
 
+		folderPath := fmt.Sprintf("events/%d", event.ID)
 		for i, file := range files {
-			path, err := s.storage.Upload(txCtx, file)
+			path, err := s.storage.Upload(txCtx, file, folderPath)
 			if err != nil {
 				return fmt.Errorf("upload photo: %w", err)
 			}
@@ -94,16 +95,13 @@ func (s *EventService) UpdateEvent(ctx context.Context, event *domain.Event, pho
 }
 
 func (s *EventService) DeleteEvent(ctx context.Context, id int32) error {
-	photos, err := s.events.GetEventPhotosListByEventID(ctx, id)
-	if err != nil {
-		return fmt.Errorf("get photos for deletion: %w", err)
+	if err := s.events.DeleteEvent(ctx, id); err != nil {
+		return fmt.Errorf("delete event from db: %w", err)
 	}
 
-	for _, photo := range photos {
-		_ = s.storage.Delete(ctx, photo.ImagePath)
-	}
+	folderPath := fmt.Sprintf("events/%d", id)
 
-	return s.events.DeleteEvent(ctx, id)
+	return s.storage.DeleteDir(ctx, folderPath)
 }
 
 func (s *EventService) GetAdminEvent(ctx context.Context, id int32) (*domain.Event, []domain.EventPhoto, error) {
@@ -153,7 +151,9 @@ func (s *EventService) ListPublicEvents(ctx context.Context, limit, offset int32
 }
 
 func (s *EventService) UploadEventPhoto(ctx context.Context, eventID int32, file domain.File) error {
-	path, err := s.storage.Upload(ctx, file)
+	folderPath := fmt.Sprintf("events/%d", eventID)
+
+	path, err := s.storage.Upload(ctx, file, folderPath)
 	if err != nil {
 		return fmt.Errorf("upload photo: %w", err)
 	}
@@ -178,8 +178,8 @@ func (s *EventService) UpdateEventStatuses(ctx context.Context) error {
 	return nil
 }
 
-func (s *EventService) CleanupOrphanedPhotos(ctx context.Context) error {
-	photos, err := s.events.DeleteOrphanedPhotos(ctx)
+func (s *EventService) CleanupOrphanedEventPhotos(ctx context.Context) error {
+	photos, err := s.events.DeleteOrphanedEventPhotos(ctx)
 	if err != nil {
 		return err
 	}

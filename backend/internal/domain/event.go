@@ -69,5 +69,5 @@ type EventRepository interface {
 	GetEventPhotosListByEventID(ctx context.Context, eventID int32) ([]EventPhoto, error)
 
 	UpdateEventStatuses(ctx context.Context) error
-	DeleteOrphanedPhotos(ctx context.Context) ([]EventPhoto, error)
+	DeleteOrphanedEventPhotos(ctx context.Context) ([]EventPhoto, error)
 }

@@ -102,14 +102,14 @@ func (q *Queries) DeleteEventPhoto(ctx context.Context, id int32) error {
 	return err
 }
 
-const deleteOrphanedPhotos = `-- name: DeleteOrphanedPhotos :many
+const deleteOrphanedEventPhotos = `-- name: DeleteOrphanedEventPhotos :many
 delete from event_photos
 where display_order = -1 and created_at < now() - interval '12 hours'
 returning id, event_id, image_path, is_main, display_order, created_at
 `
 
-func (q *Queries) DeleteOrphanedPhotos(ctx context.Context) ([]EventPhoto, error) {
-	rows, err := q.db.Query(ctx, deleteOrphanedPhotos)
+func (q *Queries) DeleteOrphanedEventPhotos(ctx context.Context) ([]EventPhoto, error) {
+	rows, err := q.db.Query(ctx, deleteOrphanedEventPhotos)
 	if err != nil {
 		return nil, err
 	}
@@ -135,13 +135,19 @@ func (q *Queries) DeleteOrphanedPhotos(ctx context.Context) ([]EventPhoto, error
 	return items, nil
 }
 
-const getAdminEventByID = `-- name: GetAdminEventByID :one
+const getEventByID = `-- name: GetEventByID :one
 select id, title, description, content, event_date, location, url, status, is_published, created_at from events
-where id = $1 limit 1
+where id = $1 and (is_published = true or $2::bool = true)
+limit 1
 `
 
-func (q *Queries) GetAdminEventByID(ctx context.Context, id int32) (Event, error) {
-	row := q.db.QueryRow(ctx, getAdminEventByID, id)
+type GetEventByIDParams struct {
+	ID      int32
+	ShowAll bool
+}
+
+func (q *Queries) GetEventByID(ctx context.Context, arg GetEventByIDParams) (Event, error) {
+	row := q.db.QueryRow(ctx, getEventByID, arg.ID, arg.ShowAll)
 	var i Event
 	err := row.Scan(
 		&i.ID,
@@ -160,8 +166,8 @@ func (q *Queries) GetAdminEventByID(ctx context.Context, id int32) (Event, error
 
 const getEventPhotosListByEventID = `-- name: GetEventPhotosListByEventID :many
 select id, event_id, image_path, is_main, display_order, created_at from event_photos
-where event_id = $1
-order by display_order desc
+where event_id = $1 and display_order != -1
+order by display_order desc, created_at desc
 `
 
 func (q *Queries) GetEventPhotosListByEventID(ctx context.Context, eventID int32) ([]EventPhoto, error) {
@@ -243,29 +249,6 @@ func (q *Queries) GetEventsList(ctx context.Context, arg GetEventsListParams) ([
 		return nil, err
 	}
 	return items, nil
-}
-
-const getPublicEventByID = `-- name: GetPublicEventByID :one
-select id, title, description, content, event_date, location, url, status, is_published, created_at from events
-where id = $1 and is_published = true limit 1
-`
-
-func (q *Queries) GetPublicEventByID(ctx context.Context, id int32) (Event, error) {
-	row := q.db.QueryRow(ctx, getPublicEventByID, id)
-	var i Event
-	err := row.Scan(
-		&i.ID,
-		&i.Title,
-		&i.Description,
-		&i.Content,
-		&i.EventDate,
-		&i.Location,
-		&i.Url,
-		&i.Status,
-		&i.IsPublished,
-		&i.CreatedAt,
-	)
-	return i, err
 }
 
 const updateEvent = `-- name: UpdateEvent :exec

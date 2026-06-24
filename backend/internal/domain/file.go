@@ -13,6 +13,7 @@ type File struct {
 }
 
 type FileStorage interface {
-	Upload(ctx context.Context, file File) (string, error)
+	Upload(ctx context.Context, file File, folder string) (string, error)
 	Delete(ctx context.Context, path string) error
+	DeleteDir(ctx context.Context, folder string) error
 }
