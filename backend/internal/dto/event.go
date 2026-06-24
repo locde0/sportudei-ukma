@@ -22,11 +22,11 @@ type CreateEventRequest struct {
 
 type UpdateEventRequest struct {
 	BaseEventRequest
-	Status domain.EventStatus   `json:"status" validate:"required,oneof=planned in_progress completed"`
-	Photos []UpdatePhotoRequest `json:"photos" validate:"dive"`
+	Status domain.EventStatus        `json:"status" validate:"required,oneof=planned in_progress completed"`
+	Photos []UpdateEventPhotoRequest `json:"photos" validate:"dive"`
 }
 
-type UpdatePhotoRequest struct {
+type UpdateEventPhotoRequest struct {
 	ID           int32 `json:"id" validate:"required,gt=0"`
 	IsMain       bool  `json:"is_main"`
 	DisplayOrder int32 `json:"display_order" validate:"gte=-1"`
