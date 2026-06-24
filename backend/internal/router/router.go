@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/locde0/sportudei-ukma/backend/internal/handler"
 	"github.com/locde0/sportudei-ukma/backend/internal/pkg/httputil"
+	"github.com/swaggo/http-swagger/v2"
 )
 
 func New(
@@ -32,9 +33,11 @@ func New(
 	fileServer := http.FileServer(http.Dir(uploadDir))
 	r.Handle("/uploads/*", http.StripPrefix("/uploads/", fileServer))
 
-	r.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
-		httputil.JSON(w, http.StatusOK, map[string]string{"status": "ok"})
-	})
+	r.Get("/api/health", HealthCheck)
+
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger/doc.json"),
+	))
 
 	r.Route("/api/auth", func(r chi.Router) {
 		r.Post("/login", authHandler.Login)
@@ -64,4 +67,15 @@ func New(
 	})
 
 	return r
+}
+
+// HealthCheck godoc
+// @Summary      Health check
+// @Description  Check if the API is running
+// @Tags         health
+// @Produce      json
+// @Success      200 {object} map[string]string
+// @Router       /api/health [get]
+func HealthCheck(w http.ResponseWriter, r *http.Request) {
+	httputil.JSON(w, http.StatusOK, map[string]string{"status": "ok"})
 }

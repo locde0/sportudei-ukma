@@ -7,10 +7,15 @@ import (
 	"os/signal"
 	"syscall"
 
+	_ "github.com/locde0/sportudei-ukma/backend/docs"
 	"github.com/locde0/sportudei-ukma/backend/internal/app"
 	"github.com/locde0/sportudei-ukma/backend/internal/config"
 )
 
+// @title           sportudei api
+// @version         1.0
+// @description     sportudei api server
+// @BasePath        /
 func main() {
 	cfg := config.Load()
 

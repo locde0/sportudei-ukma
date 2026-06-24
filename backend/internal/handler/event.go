@@ -18,6 +18,17 @@ func NewEventHandler(service *service.EventService) *EventHandler {
 	return &EventHandler{service: service}
 }
 
+// CreateEvent godoc
+// @Summary      Create event
+// @Description  Create a new event with photos
+// @Tags         admin-events
+// @Accept       multipart/form-data
+// @Produce      json
+// @Param        payload formData string true "CreateEventRequest JSON string"
+// @Param        photos formData file false "Event photos"
+// @Success      201 "OK"
+// @Security     BearerAuth
+// @Router       /api/admin/events [post]
 func (h *EventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	var req dto.CreateEventRequest
 	if err := httputil.ParseMultipartJSON(r, 32<<20, "payload", &req); err != nil {
@@ -62,9 +73,20 @@ func (h *EventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputil.JSON(w, http.StatusCreated, map[string]int32{"id": event.ID})
+	httputil.JSON(w, http.StatusCreated, nil)
 }
 
+// UpdateEvent godoc
+// @Summary      Update event
+// @Description  Update an existing event and its photos
+// @Tags         admin-events
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "Event ID"
+// @Param        request body dto.UpdateEventRequest true "Update data"
+// @Success      200 "OK"
+// @Security     BearerAuth
+// @Router       /api/admin/events/{id} [put]
 func (h *EventHandler) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	var req dto.UpdateEventRequest
 	if err := httputil.ParseJSON(r, &req); err != nil {
@@ -108,6 +130,15 @@ func (h *EventHandler) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	httputil.JSON(w, http.StatusOK, nil)
 }
 
+// DeleteEvent godoc
+// @Summary      Delete event
+// @Description  Delete an existing event by ID
+// @Tags         admin-events
+// @Produce      json
+// @Param        id path int true "Event ID"
+// @Success      200 "OK"
+// @Security     BearerAuth
+// @Router       /api/admin/events/{id} [delete]
 func (h *EventHandler) DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	id, err := httputil.ParseID(r, "id")
 	if err != nil {
@@ -123,6 +154,17 @@ func (h *EventHandler) DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	httputil.JSON(w, http.StatusOK, nil)
 }
 
+// UploadEventPhoto godoc
+// @Summary      Upload event photo
+// @Description  Upload an additional photo for an event
+// @Tags         admin-events
+// @Accept       multipart/form-data
+// @Produce      json
+// @Param        id path int true "Event ID"
+// @Param        photo formData file true "Photo to upload"
+// @Success      200 "OK"
+// @Security     BearerAuth
+// @Router       /api/admin/events/{id}/photos [post]
 func (h *EventHandler) UploadEventPhoto(w http.ResponseWriter, r *http.Request) {
 	id, err := httputil.ParseID(r, "id")
 	if err != nil {
@@ -152,6 +194,15 @@ func (h *EventHandler) UploadEventPhoto(w http.ResponseWriter, r *http.Request) 
 	httputil.JSON(w, http.StatusOK, nil)
 }
 
+// GetAdminEvent godoc
+// @Summary      Get admin event
+// @Description  Get full event details for admin by ID
+// @Tags         admin-events
+// @Produce      json
+// @Param        id path int true "Event ID"
+// @Success      200 {object} dto.AdminEventResponse
+// @Security     BearerAuth
+// @Router       /api/admin/events/{id} [get]
 func (h *EventHandler) GetAdminEvent(w http.ResponseWriter, r *http.Request) {
 	id, err := httputil.ParseID(r, "id")
 	if err != nil {
@@ -192,6 +243,14 @@ func (h *EventHandler) GetAdminEvent(w http.ResponseWriter, r *http.Request) {
 	httputil.JSON(w, http.StatusOK, res)
 }
 
+// GetPublicEvent godoc
+// @Summary      Get public event
+// @Description  Get event details for public view by ID
+// @Tags         public-events
+// @Produce      json
+// @Param        id path int true "Event ID"
+// @Success      200 {object} dto.PublicEventResponse
+// @Router       /api/events/{id} [get]
 func (h *EventHandler) GetPublicEvent(w http.ResponseWriter, r *http.Request) {
 	id, err := httputil.ParseID(r, "id")
 	if err != nil {
@@ -231,6 +290,16 @@ func (h *EventHandler) GetPublicEvent(w http.ResponseWriter, r *http.Request) {
 	httputil.JSON(w, http.StatusOK, res)
 }
 
+// ListAdminEvents godoc
+// @Summary      List admin events
+// @Description  List all events for admin view with pagination
+// @Tags         admin-events
+// @Produce      json
+// @Param        limit query int false "Pagination limit" default(10)
+// @Param        offset query int false "Pagination offset" default(0)
+// @Success      200 {object} dto.AdminEventsListResponse
+// @Security     BearerAuth
+// @Router       /api/admin/events [get]
 func (h *EventHandler) ListAdminEvents(w http.ResponseWriter, r *http.Request) {
 	pagination := httputil.ParsePagination(r, 10, 0)
 
@@ -260,6 +329,15 @@ func (h *EventHandler) ListAdminEvents(w http.ResponseWriter, r *http.Request) {
 	httputil.JSON(w, http.StatusOK, dto.AdminEventsListResponse{Events: list})
 }
 
+// ListPublicEvents godoc
+// @Summary      List public events
+// @Description  List published events for public view with pagination
+// @Tags         public-events
+// @Produce      json
+// @Param        limit query int false "Pagination limit" default(3)
+// @Param        offset query int false "Pagination offset" default(0)
+// @Success      200 {object} dto.PublicEventsListResponse
+// @Router       /api/events [get]
 func (h *EventHandler) ListPublicEvents(w http.ResponseWriter, r *http.Request) {
 	pagination := httputil.ParsePagination(r, 3, 0)
 

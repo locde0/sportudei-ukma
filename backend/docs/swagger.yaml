@@ -1,0 +1,463 @@
+basePath: /
+definitions:
+  github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus:
+    enum:
+    - planned
+    - in_progress
+    - completed
+    type: string
+    x-enum-varnames:
+    - EventStatusPlanned
+    - EventStatusInProgress
+    - EventStatusCompleted
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventResponse:
+    properties:
+      content:
+        type: string
+      desc:
+        type: string
+      event_date:
+        type: string
+      id:
+        type: integer
+      is_published:
+        type: boolean
+      location:
+        type: string
+      photos:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse'
+        type: array
+      status:
+        $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus'
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse:
+    properties:
+      desc:
+        type: string
+      event_date:
+        type: string
+      id:
+        type: integer
+      is_published:
+        type: boolean
+      location:
+        type: string
+      main_photo_path:
+        type: string
+      status:
+        $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus'
+      title:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListResponse:
+    properties:
+      events:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse:
+    properties:
+      display_order:
+        type: integer
+      id:
+        type: integer
+      image_path:
+        type: string
+      is_main:
+        type: boolean
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventResponse:
+    properties:
+      content:
+        type: string
+      desc:
+        type: string
+      event_date:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      photos:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse'
+        type: array
+      status:
+        $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus'
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListItemResponse:
+    properties:
+      desc:
+        type: string
+      event_date:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      main_photo_path:
+        type: string
+      status:
+        $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus'
+      title:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListResponse:
+    properties:
+      events:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListItemResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventRequest:
+    properties:
+      content:
+        minLength: 1
+        type: string
+      desc:
+        maxLength: 500
+        minLength: 1
+        type: string
+      event_date:
+        type: string
+      is_published:
+        type: boolean
+      location:
+        maxLength: 300
+        minLength: 1
+        type: string
+      photos:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePhotoRequest'
+        type: array
+      status:
+        allOf:
+        - $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus'
+        enum:
+        - planned
+        - in_progress
+        - completed
+      title:
+        maxLength: 100
+        minLength: 1
+        type: string
+      url:
+        type: string
+    required:
+    - content
+    - desc
+    - event_date
+    - location
+    - status
+    - title
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePhotoRequest:
+    properties:
+      display_order:
+        minimum: -1
+        type: integer
+      id:
+        type: integer
+      is_main:
+        type: boolean
+    required:
+    - id
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.VerifyOTPRequest:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    required:
+    - code
+    - email
+    type: object
+info:
+  contact: {}
+  description: sportudei api server
+  title: sportudei api
+  version: "1.0"
+paths:
+  /api/admin/events:
+    get:
+      description: List all events for admin view with pagination
+      parameters:
+      - default: 10
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListResponse'
+      security:
+      - BearerAuth: []
+      summary: List admin events
+      tags:
+      - admin-events
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new event with photos
+      parameters:
+      - description: CreateEventRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Event photos
+        in: formData
+        name: photos
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Create event
+      tags:
+      - admin-events
+  /api/admin/events/{id}:
+    delete:
+      description: Delete an existing event by ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Delete event
+      tags:
+      - admin-events
+    get:
+      description: Get full event details for admin by ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventResponse'
+      security:
+      - BearerAuth: []
+      summary: Get admin event
+      tags:
+      - admin-events
+    put:
+      consumes:
+      - application/json
+      description: Update an existing event and its photos
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update event
+      tags:
+      - admin-events
+  /api/admin/events/{id}/photos:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an additional photo for an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Photo to upload
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Upload event photo
+      tags:
+      - admin-events
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and sends an OTP if valid
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: User login
+      tags:
+      - auth
+  /api/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refreshes the access token using a valid refresh token cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse'
+      summary: Refresh token
+      tags:
+      - auth
+  /api/auth/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verifies the OTP and issues access and refresh tokens
+      parameters:
+      - description: OTP data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.VerifyOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse'
+      summary: Verify OTP
+      tags:
+      - auth
+  /api/events:
+    get:
+      description: List published events for public view with pagination
+      parameters:
+      - default: 3
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListResponse'
+      summary: List public events
+      tags:
+      - public-events
+  /api/events/{id}:
+    get:
+      description: Get event details for public view by ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventResponse'
+      summary: Get public event
+      tags:
+      - public-events
+  /api/health:
+    get:
+      description: Check if the API is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - health
+swagger: "2.0"

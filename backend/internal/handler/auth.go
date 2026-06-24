@@ -24,6 +24,15 @@ func NewAuthHandler(s *service.AuthService, refreshExp int, secureCookie bool) *
 	}
 }
 
+// Login godoc
+// @Summary      User login
+// @Description  Authenticates a user and sends an OTP if valid
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request body dto.LoginRequest true "Login credentials"
+// @Success      200 "OK"
+// @Router       /api/auth/login [post]
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var req dto.LoginRequest
 	if err := httputil.ParseJSON(r, &req); err != nil {
@@ -40,6 +49,15 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	httputil.JSON(w, http.StatusOK, nil)
 }
 
+// VerifyOTP godoc
+// @Summary      Verify OTP
+// @Description  Verifies the OTP and issues access and refresh tokens
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request body dto.VerifyOTPRequest true "OTP data"
+// @Success      200 {object} dto.TokenResponse
+// @Router       /api/auth/verify [post]
 func (h *AuthHandler) VerifyOTP(w http.ResponseWriter, r *http.Request) {
 	var req dto.VerifyOTPRequest
 	if err := httputil.ParseJSON(r, &req); err != nil {
@@ -59,6 +77,14 @@ func (h *AuthHandler) VerifyOTP(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Refresh godoc
+// @Summary      Refresh token
+// @Description  Refreshes the access token using a valid refresh token cookie
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} dto.TokenResponse
+// @Router       /api/auth/refresh [post]
 func (h *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("refresh_token")
 	if err != nil {
