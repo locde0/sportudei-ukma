@@ -11,14 +11,14 @@ export function HeroSection() {
   return (
     <section id="hero" className={styles.hero}>
       <div className={styles.inner}>
-        <div>
+        <div className={styles.content}>
           <span className={styles.eyebrow}>Спортудей · НаУКМА</span>
           <h1 className={styles.title}>
             <span className={styles.titleAccent}>{HERO_TITLE_LINE_1}</span>
-            <br />
-            <span>{HERO_TITLE_LINE_2}</span>
+            <span className={styles.titleMain}>{HERO_TITLE_LINE_2}</span>
           </h1>
           <p className={styles.subtitle}>{HERO_SUBTITLE}</p>
+          
           <div className={styles.actions}>
             {settings.is_schedule_enabled && (
               <a href="/#events" className={styles.ctaPrimary}>
@@ -33,6 +33,7 @@ export function HeroSection() {
           </div>
         </div>
 
+        {/* Статистика повністю збережена, але тепер красиво адаптована знизу */}
         <div className={styles.stats}>
           <div className={styles.statCard}>
             <div className={styles.statValue}>12+</div>
