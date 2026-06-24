@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -16,16 +17,24 @@ import (
 	"github.com/locde0/sportudei-ukma/backend/internal/email"
 	"github.com/locde0/sportudei-ukma/backend/internal/handler"
 	"github.com/locde0/sportudei-ukma/backend/internal/middleware"
+	"github.com/locde0/sportudei-ukma/backend/internal/pkg/fileutil"
 	"github.com/locde0/sportudei-ukma/backend/internal/repository/postgres"
 	"github.com/locde0/sportudei-ukma/backend/internal/router"
 	"github.com/locde0/sportudei-ukma/backend/internal/service"
+	"github.com/locde0/sportudei-ukma/backend/internal/worker"
 )
 
+type Worker interface {
+	Start(ctx context.Context)
+	Name() string
+}
+
 type App struct {
-	server *http.Server
-	pool   *pgxpool.Pool
-	tx     *postgres.TxManager
-	log    *slog.Logger
+	server  *http.Server
+	pool    *pgxpool.Pool
+	tx      *postgres.TxManager
+	log     *slog.Logger
+	workers []Worker
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
@@ -59,9 +68,13 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, fmt.Errorf("mailer: %w", err)
 	}
 
+	storage := fileutil.NewLocalStorage(cfg.UploadDir)
+
 	userRepo := postgres.NewUserRepo(txManager)
+	eventRepo := postgres.NewEventRepo(txManager)
 
 	authService := service.NewAuthService(userRepo, tokenProvider, passwordHasher, mailer)
+	eventService := service.NewEventService(eventRepo, txManager, storage, logger)
 
 	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays, cfg.IsProd())
 
@@ -86,15 +99,37 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		IdleTimeout:  60 * time.Second,
 	}
 
+	var workers []Worker
+
+	photoCleanupWorker := worker.NewPhotoCleanupWorker(eventService, logger, 1*time.Hour)
+	workers = append(workers, photoCleanupWorker)
+
+	eventStatusWorker := worker.NewEventStatusWorker(eventService, logger, 5*time.Minute)
+	workers = append(workers, eventStatusWorker)
+
 	return &App{
-		server: srv,
-		pool:   pool,
-		tx:     txManager,
-		log:    logger,
+		server:  srv,
+		pool:    pool,
+		tx:      txManager,
+		log:     logger,
+		workers: workers,
 	}, nil
 }
 
 func (a *App) Run(ctx context.Context) error {
+	workerCtx, cancelWorkers := context.WithCancel(context.Background())
+	var wg sync.WaitGroup
+
+	for _, w := range a.workers {
+		wg.Add(1)
+		go func(wrk Worker) {
+			defer wg.Done()
+			a.log.Info("starting background worker", slog.String("name", wrk.Name()))
+			wrk.Start(workerCtx)
+			a.log.Info("background worker stopped", slog.String("name", wrk.Name()))
+		}(w)
+	}
+
 	serverErr := make(chan error, 1)
 	go func() {
 		a.log.Info("starting server", slog.String("addr", a.server.Addr))
@@ -103,6 +138,8 @@ func (a *App) Run(ctx context.Context) error {
 
 	select {
 	case err := <-serverErr:
+		cancelWorkers()
+		wg.Wait()
 		return fmt.Errorf("server error: %w", err)
 
 	case <-ctx.Done():
@@ -111,8 +148,12 @@ func (a *App) Run(ctx context.Context) error {
 		defer cancel()
 
 		if err := a.server.Shutdown(sdCtx); err != nil {
-			return fmt.Errorf("shutdown server: %w", err)
+			a.log.Error("shutdown server", slog.String("error", err.Error()))
 		}
+
+		cancelWorkers()
+		wg.Wait()
+
 		a.log.Info("server stopped gracefully")
 		return nil
 	}

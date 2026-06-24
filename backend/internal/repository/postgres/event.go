@@ -151,6 +151,15 @@ func (r *EventRepo) UpdateEventStatuses(ctx context.Context) error {
 	return r.tx.Q(ctx).UpdateEventStatuses(ctx)
 }
 
+func (r *EventRepo) DeleteOrphanedPhotos(ctx context.Context) ([]domain.EventPhoto, error) {
+	photos, err := r.DeleteOrphanedPhotos(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("delete orphaned photos: %w", err)
+	}
+	
+	return photos, nil
+}
+
 func (r *EventRepo) toEventDomain(row *gen.Event) *domain.Event {
 	return &domain.Event{
 		ID:          row.ID,

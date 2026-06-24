@@ -61,3 +61,8 @@ order by display_order desc;
 update events
 set status = 'in_progress'
 where status = 'planned' and event_date <= current_timestamp;
+
+-- name: DeleteOrphanedPhotos :many
+delete from event_photos
+where display_order = -1 and created_at < now() - interval '12 hours'
+returning *;

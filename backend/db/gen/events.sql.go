@@ -102,6 +102,39 @@ func (q *Queries) DeleteEventPhoto(ctx context.Context, id int32) error {
 	return err
 }
 
+const deleteOrphanedPhotos = `-- name: DeleteOrphanedPhotos :many
+delete from event_photos
+where display_order = -1 and created_at < now() - interval '12 hours'
+returning id, event_id, image_path, is_main, display_order, created_at
+`
+
+func (q *Queries) DeleteOrphanedPhotos(ctx context.Context) ([]EventPhoto, error) {
+	rows, err := q.db.Query(ctx, deleteOrphanedPhotos)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []EventPhoto{}
+	for rows.Next() {
+		var i EventPhoto
+		if err := rows.Scan(
+			&i.ID,
+			&i.EventID,
+			&i.ImagePath,
+			&i.IsMain,
+			&i.DisplayOrder,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getAdminEventByID = `-- name: GetAdminEventByID :one
 select id, title, description, content, event_date, location, url, status, is_published, created_at from events
 where id = $1 limit 1
