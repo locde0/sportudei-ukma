@@ -11,9 +11,8 @@
   z-index: 100;
   height: var(--header-height);
   background: var(--color-header-bg);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
 }
 
 .headerInner {
@@ -36,39 +35,61 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0;
 }
 
 .navLink {
-  padding: 0.5rem 1rem;
+  padding: 0.45rem 0.85rem;
   text-decoration: none;
   color: var(--color-text-muted);
-  font-size: 0.8125rem;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  border-radius: var(--radius-sm);
-  transition: color 0.2s, background 0.2s;
+  letter-spacing: 0.1em;
+  transition: color 0.2s;
+  border-radius: 0;
+  position: relative;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0.85rem;
+  right: 0.85rem;
+  height: 2px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transition: transform 0.2s;
 }
 
 .navLink:hover {
   color: var(--color-text);
 }
 
+.navLink:hover::after {
+  transform: scaleX(1);
+}
+
 .navLinkActive {
-  color: var(--color-text-inverse);
-  background: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.navLinkActive::after {
+  transform: scaleX(1);
 }
 
 .main {
   flex: 1;
 }
 
+/* Footer */
 .footer {
-  background: var(--color-footer-bg);
+  background: #000000;
   border-top: 3px solid var(--color-accent);
-  color: var(--color-text-muted-on-dark);
-  padding: 2rem 1.5rem;
+  color: rgba(255, 255, 255, 0.55);
+  padding: 3rem 1.5rem 2rem;
   margin-top: auto;
 }
 
@@ -79,7 +100,7 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .footerBrandRow {
@@ -96,38 +117,42 @@
 
 .footerBrand {
   font-family: var(--font-heading);
-  color: var(--color-text-on-dark);
-  font-size: 0.9375rem;
-  font-weight: 700;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
 .footerMotto {
   color: var(--color-accent);
-  font-size: 0.75rem;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
+  font-style: italic;
 }
 
 .footerCopy {
+  font-family: var(--font-body);
   font-size: 0.75rem;
 }
 
 .footerNav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem 1rem;
+  gap: 0.25rem 1.25rem;
   justify-content: center;
 }
 
 .footerNavLink {
-  font-size: 0.6875rem;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-text-muted-on-dark);
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.45);
   text-decoration: none;
   transition: color 0.2s;
 }
@@ -137,10 +162,11 @@
 }
 
 .footerHomeLink {
-  font-size: 0.75rem;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--color-accent);
   text-decoration: none;
 }
@@ -151,7 +177,7 @@
 
 @media (max-width: 600px) {
   .navLink {
-    padding: 0.5rem 0.65rem;
-    font-size: 0.75rem;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.7rem;
   }
 }

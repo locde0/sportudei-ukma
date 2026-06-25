@@ -2,172 +2,72 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 0.875rem 2rem;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
   border: none;
-  border-radius: 12px;
+  border-radius: 0;
   font-family: var(--font-heading);
-  font-size: 0.9375rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
-  white-space: nowrap;
+  transition: background-color 0.2s, transform 0.15s;
+  text-decoration: none;
 }
 
-/* ====================================================
-   Primary — основна яскрава кнопка (зелена)
-==================================================== */
-.primary {
-  background: linear-gradient(135deg, var(--color-accent) 0%, #7acc22 100%);
-  color: #000000;
-  border: 1px solid transparent;
-}
-
-.primary:hover {
-  background: linear-gradient(135deg, var(--color-accent-hover) 0%, #6db81f 100%);
-  box-shadow: var(--glow-green);
-  transform: translateY(-3px) scaleX(1.02);
-}
-
-.primary:active {
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 4px rgba(138, 224, 40, 0.2);
-}
-
-.primary:disabled {
-  opacity: 0.55;
+.button:disabled {
+  opacity: 0.45;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: var(--shadow-sm);
 }
 
-/* ====================================================
-   Secondary — контурна кнопка (з акцентом)
-==================================================== */
-.secondary {
-  background: transparent;
-  color: var(--color-accent);
-  border: 2px solid var(--color-accent);
-  box-shadow: none;
+.primary {
+  background: var(--color-accent);
+  color: #000000;
 }
 
-.secondary:hover {
-  background: var(--color-accent-muted);
-  color: var(--color-text);
-  box-shadow: 0 0 0 3px rgba(138, 224, 40, 0.2);
+.primary:hover:not(:disabled) {
+  background: #9ef030;
   transform: translateY(-2px);
 }
 
-.secondary:active {
-  transform: translateY(0);
-  box-shadow: 0 0 0 2px rgba(138, 224, 40, 0.3);
+.secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 2px solid var(--color-border-strong);
 }
 
-.secondary:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+.secondary:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
-/* ====================================================
-   Danger — червона кнопка для деструктивних дій
-==================================================== */
 .danger {
-  background: #d32f2f;
-  color: #ffffff;
-  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-danger);
+  border: 2px solid var(--color-danger);
 }
 
-.danger:hover {
-  background: #c62828;
-  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.25);
-  transform: translateY(-3px);
+.danger:hover:not(:disabled) {
+  background: var(--color-danger-bg);
 }
 
-.danger:active {
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.3);
-}
-
-.danger:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-/* ====================================================
-   Ghost — мінімалістична кнопка
-==================================================== */
 .ghost {
   background: transparent;
+  color: var(--color-text-muted);
+  padding: 0.5rem 0.75rem;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+  font-family: var(--font-body);
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--color-muted-bg);
   color: var(--color-accent);
-  border: 1px solid rgba(138, 224, 40, 0.3);
-  box-shadow: none;
-  font-weight: 600;
 }
 
-.ghost:hover {
-  background: rgba(138, 224, 40, 0.1);
-  border-color: var(--color-accent);
-  color: var(--color-text);
-  box-shadow: 0 2px 12px rgba(138, 224, 40, 0.15);
-}
-
-.ghost:active {
-  background: rgba(138, 224, 40, 0.15);
-  box-shadow: none;
-}
-
-.ghost:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ====================================================
-   Size: Small — маленька кнопка
-==================================================== */
 .sm {
-  padding: 0.5rem 1.25rem;
-  font-size: 0.8125rem;
-  letter-spacing: 0.06em;
-  border-radius: 8px;
-}
-
-.sm.primary {
-  box-shadow: var(--shadow-sm);
-}
-
-/* ====================================================
-   Стани для всіх варіантів
-==================================================== */
-button:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-/* Анімація для наголошення */
-@keyframes pulse-green {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(138, 224, 40, 0.7);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(138, 224, 40, 0);
-  }
-}
-
-.primary:active::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  pointer-events: none;
-  animation: pulse-green 0.6s ease-out;
+  padding: 0.4rem 1rem;
+  font-size: 0.75rem;
 }

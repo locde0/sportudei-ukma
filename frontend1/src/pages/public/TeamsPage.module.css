@@ -1,55 +1,65 @@
 .page {
   max-width: var(--max-content);
   margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
+  padding: 3.5rem 1.5rem 5rem;
 }
 
 .header {
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
   padding-bottom: 1.5rem;
-  border-bottom: 2px solid var(--color-accent);
+  border-bottom: 3px solid var(--color-accent);
 }
 
 .title {
   font-family: var(--font-heading);
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 900;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  margin-bottom: 0.75rem;
 }
 
-.subtitle {
-  color: var(--color-text-muted);
-}
+.subtitle { font-family: var(--font-body); color: var(--color-text-muted); }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2px;
 }
 
 .card {
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.card:hover {
+  border-color: rgba(138, 224, 40, 0.5);
+  background: var(--color-accent-subtle);
 }
 
 .logo {
   width: 80px;
   height: 80px;
   object-fit: contain;
-  margin: 0 auto 1rem;
+  margin: 0 auto 1.25rem;
 }
 
 .cardTitle {
-  font-size: 1.0625rem;
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   margin-bottom: 0.75rem;
 }
 
 .description {
+  font-family: var(--font-body);
   font-size: 0.875rem;
   color: var(--color-text-muted);
   line-height: 1.6;
@@ -61,8 +71,8 @@
   text-align: center;
   padding: 3rem;
   color: var(--color-text-muted);
+  font-family: var(--font-heading);
+  text-transform: uppercase;
 }
 
-.error {
-  color: var(--color-danger);
-}
+.error { color: var(--color-danger); }

@@ -1,26 +1,28 @@
 .page {
   max-width: var(--max-content);
   margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
+  padding: 3.5rem 1.5rem 5rem;
 }
 
 .header {
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
   padding-bottom: 1.5rem;
-  border-bottom: 2px solid var(--color-accent);
+  border-bottom: 3px solid var(--color-accent);
 }
 
 .title {
   font-family: var(--font-heading);
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 900;
   color: var(--color-text);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  margin-bottom: 0.75rem;
 }
 
 .subtitle {
+  font-family: var(--font-body);
   color: var(--color-text-muted);
   font-size: 0.9375rem;
 }
@@ -28,7 +30,7 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  gap: 2px;
 }
 
 .loading,
@@ -37,14 +39,16 @@
   text-align: center;
   padding: 4rem 2rem;
   color: var(--color-text-muted);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-.error {
-  color: var(--color-danger);
-}
+.error { color: var(--color-danger); }
 
 .loadMore {
   display: flex;
   justify-content: center;
-  margin-top: 2.5rem;
+  margin-top: 3rem;
 }

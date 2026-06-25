@@ -1,9 +1,11 @@
 import { useSiteSettings } from '../../contexts/SiteSettingsContext';
 import styles from './HeroSection.module.css';
 
-const HERO_TITLE_LINE_1 = 'Спорт сьогодні!';
-const HERO_TITLE_LINE_2 = 'Спорт завжди!';
-const HERO_SUBTITLE = 'Платформа спортивного життя академії';
+const HERO_TITLE_LINE_1 = 'Спорт';
+const HERO_TITLE_LINE_2 = 'сьогодні,';
+const HERO_TITLE_LINE_3 = 'спорт';
+const HERO_TITLE_LINE_4 = 'завжди.';
+const HERO_SUBTITLE = 'Студентська спортивна організація НаУКМА — рухайся, змагайся, перемагай.';
 
 export function HeroSection() {
   const { settings } = useSiteSettings();
@@ -11,14 +13,15 @@ export function HeroSection() {
   return (
     <section id="hero" className={styles.hero}>
       <div className={styles.inner}>
-        <div className={styles.content}>
+        <div>
           <span className={styles.eyebrow}>Спортудей · НаУКМА</span>
           <h1 className={styles.title}>
-            <span className={styles.titleAccent}>{HERO_TITLE_LINE_1}</span>
-            <span className={styles.titleMain}>{HERO_TITLE_LINE_2}</span>
+            <span>{HERO_TITLE_LINE_1}</span>
+            <span className={styles.titleAccent}>{HERO_TITLE_LINE_2}</span>
+            <span className={styles.titleOutline}>{HERO_TITLE_LINE_3}</span>
+            <span>{HERO_TITLE_LINE_4}</span>
           </h1>
           <p className={styles.subtitle}>{HERO_SUBTITLE}</p>
-          
           <div className={styles.actions}>
             {settings.is_schedule_enabled && (
               <a href="/#events" className={styles.ctaPrimary}>
@@ -27,13 +30,12 @@ export function HeroSection() {
             )}
             {settings.is_mohyla_games_enabled && (
               <a href="/#mohyla-games" className={styles.ctaSecondary}>
-                Могилянські ігри
+                Могилянські ігри →
               </a>
             )}
           </div>
         </div>
 
-        {/* Статистика повністю збережена, але тепер красиво адаптована знизу */}
         <div className={styles.stats}>
           <div className={styles.statCard}>
             <div className={styles.statValue}>12+</div>

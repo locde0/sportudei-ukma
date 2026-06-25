@@ -1,690 +1,345 @@
-/* =========================================================
-   SECTION STYLES — Динамічні, енергійні секції
-========================================================= */
-.section {
-  padding: 6rem 1.5rem;
-  background: var(--color-bg);
-  position: relative;
-  overflow: hidden;
-}
-
-.section:nth-child(even) {
-  background: var(--color-surface);
-}
-
-.section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(
-    circle at center,
-    rgba(138, 224, 40, 0.04) 0%,
-    transparent 70%
-  );
-  pointer-events: none;
-  opacity: 0.5;
-}
-
 .anchorSection {
-  scroll-margin-top: var(--header-height);
+  scroll-margin-top: calc(var(--header-height) + 1rem);
 }
 
-/* =========================================================
-   SECTION HEADER — Яскравий, контрастний заголовок
-========================================================= */
-.sectionHeader {
+.section {
   max-width: var(--max-content);
-  margin: 0 auto 4rem;
+  margin: 0 auto;
+  padding: 5rem 1.5rem;
+}
+
+.sectionHeader {
   display: flex;
-  justify-content: space-between;
   align-items: flex-end;
-  gap: 2rem;
-  position: relative;
-  z-index: 1;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .sectionTitle {
   font-family: var(--font-heading);
-  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
   font-weight: 900;
   color: var(--color-text);
   text-transform: uppercase;
-  letter-spacing: -0.025em;
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  position: relative;
-}
-
-.sectionTitle::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  height: 3px;
-  width: 60%;
-  background: linear-gradient(90deg, var(--color-accent) 0%, transparent 100%);
-  border-radius: 2px;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
 }
 
 .sectionSubtitle {
-  font-size: 1.125rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
   color: var(--color-text-muted);
-  max-width: 35rem;
-  line-height: 1.6;
-  font-weight: 500;
-}
-
-/* =========================================================
-   MISSION BLOCK — Центральний блок з місією
-========================================================= */
-.mission {
-  padding: 8rem 1.5rem;
-  background: linear-gradient(
-    180deg,
-    var(--color-bg) 0%,
-    var(--color-surface) 50%,
-    var(--color-bg) 100%
-  );
-  position: relative;
-}
-
-.mission::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-  height: 80%;
-  background: radial-gradient(
-    circle,
-    rgba(138, 224, 40, 0.08) 0%,
-    transparent 70%
-  );
-  filter: blur(80px);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.missionInner {
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-
-.missionLabel {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 900;
-  color: var(--color-accent);
+  margin-top: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 0.25em;
-  margin-bottom: 1.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(138, 224, 40, 0.1);
-  border-radius: 8px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
 }
 
-.missionTitle {
-  font-family: var(--font-heading);
-  font-size: clamp(2.25rem, 6vw, 3.75rem);
-  font-weight: 900;
-  color: var(--color-text);
-  line-height: 1.1;
-  margin-bottom: 2rem;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-  position: relative;
-}
-
-.missionText {
-  font-size: clamp(1rem, 2vw, 1.3125rem);
-  color: var(--color-text-muted);
-  line-height: 1.8;
-  font-weight: 500;
-}
-
-/* =========================================================
-   GAME PREVIEW — Динамічна панель для Могилянських ігор
-========================================================= */
-.gamePreview {
-  max-width: var(--max-content);
-  margin: 0 auto;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.92) 0%,
-    rgba(10, 10, 10, 0.96) 100%
-  );
-  border-radius: 28px;
-  padding: 4rem;
-  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.3);
-  border: 2px solid rgba(138, 224, 40, 0.25);
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.gamePreview:hover {
-  border-color: var(--color-accent);
-  box-shadow: var(--glow-green), 0 24px 56px rgba(0, 0, 0, 0.4);
-  transform: translateY(-8px);
-}
-
-[data-theme='light'] .gamePreview {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.97) 0%,
-    rgba(248, 248, 248, 0.99) 100%
-  );
-  color: #000;
-  border-color: rgba(138, 224, 40, 0.2);
-}
-
-.gamePreview::before {
-  content: '';
-  position: absolute;
-  top: -30%;
-  right: -15%;
-  width: 60%;
-  height: 120%;
-  background: var(--color-accent);
-  filter: blur(140px);
-  opacity: 0.12;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.gamePreview::after {
-  content: '';
-  position: absolute;
-  top: -30%;
-  left: -15%;
-  width: 50%;
-  height: 100%;
-  background: rgba(138, 224, 40, 0.1);
-  filter: blur(100px);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.gameTitle {
-  font-family: var(--font-heading);
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 900;
-  margin-bottom: 1.5rem;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-  position: relative;
-  z-index: 1;
-}
-
-.gameLead {
-  font-size: 1.375rem;
-  color: var(--color-accent);
-  font-weight: 900;
-  margin-bottom: 2rem;
-  position: relative;
-  z-index: 1;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.gameExcerpt {
-  font-size: 1.0625rem;
-  line-height: 1.8;
-  opacity: 0.85;
-  max-width: 45rem;
-  position: relative;
-  z-index: 1;
-  font-weight: 500;
-}
-
-/* =========================================================
-   GRIDS & LAYOUTS
-========================================================= */
-.grid {
-  max-width: var(--max-content);
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2.5rem;
-  position: relative;
-  z-index: 1;
-}
-
-.teamsRow {
-  max-width: var(--max-content);
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem;
-  position: relative;
-  z-index: 1;
-}
-
-/* =========================================================
-   TEAM CARD — Брендова карточка команди
-========================================================= */
-.teamCard {
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: 20px;
-  padding: 3rem 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.teamCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(
-    circle at center,
-    rgba(138, 224, 40, 0.05) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-}
-
-.teamCard:hover {
-  transform: translateY(-12px);
-  border-color: var(--color-accent);
-  box-shadow: var(--glow-green);
-}
-
-.teamCard:hover::before {
-  opacity: 1;
-}
-
-.teamLogo {
-  width: 120px;
-  height: 120px;
-  object-fit: contain;
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  position: relative;
-  z-index: 1;
-}
-
-.teamCard:hover .teamLogo {
-  transform: scale(1.15) rotate(2deg);
-  filter: drop-shadow(0 0 12px rgba(138, 224, 40, 0.3));
-}
-
-.teamName {
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: var(--color-text);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  position: relative;
-  z-index: 1;
-}
-
-/* =========================================================
-   PARTNERS MARQUEE — Паркнер-карусель
-========================================================= */
-.marqueeWrap {
-  width: 100%;
-  overflow: hidden;
-  padding: 2.5rem 0;
-  background: var(--color-surface);
-  border-top: 2px solid var(--color-border);
-  border-bottom: 2px solid var(--color-border);
-  display: flex;
-  position: relative;
-  z-index: 1;
-}
-
-.marqueeWrap::before,
-.marqueeWrap::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 80px;
-  background: linear-gradient(
-    to right,
-    var(--color-surface) 0%,
-    transparent 100%
-  );
-  z-index: 2;
-}
-
-.marqueeWrap::after {
-  right: 0;
-  left: auto;
-  background: linear-gradient(to left, var(--color-surface) 0%, transparent 100%);
-}
-
-.marquee {
-  display: flex;
-  gap: 5rem;
-  align-items: center;
-  animation: scrollLeft 40s linear infinite;
-  padding-right: 5rem;
-}
-
-.partnerLogo {
-  height: 64px;
-  max-width: 200px;
-  object-fit: contain;
-  filter: grayscale(100%) opacity(0.45);
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  flex-shrink: 0;
-}
-
-.partnerLogo:hover {
-  filter: grayscale(0%) opacity(1);
-  transform: scale(1.08) translateY(-2px);
-}
-
-@keyframes scrollLeft {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-/* =========================================================
-   COMMON ELEMENTS — Спільні елементи
-========================================================= */
 .sectionFooter {
-  max-width: var(--max-content);
-  margin: 4rem auto 0;
-  text-align: center;
-  position: relative;
-  z-index: 1;
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
 }
 
 .sectionCta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 1.125rem 3rem;
-  background: var(--color-accent);
-  color: #000000;
-  border: 2px solid transparent;
-  text-decoration: none;
-  border-radius: 14px;
+  padding: 0.9rem 2.5rem;
   font-family: var(--font-heading);
+  font-size: 0.9rem;
   font-weight: 900;
-  font-size: 0.9375rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
-}
-
-.sectionCta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  color: #000000;
+  background: var(--color-accent);
+  border-radius: 0;
+  transition: background 0.2s, transform 0.15s;
 }
 
 .sectionCta:hover {
-  background: var(--color-accent-hover);
-  box-shadow: var(--glow-green);
-  transform: translateY(-3px);
+  background: #9ef030;
+  transform: translateY(-2px);
 }
 
-.sectionCta:hover::before {
-  opacity: 1;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 2px;
 }
 
-.empty,
-.loading {
+.loading,
+.error,
+.empty {
   text-align: center;
+  padding: 3rem;
   color: var(--color-text-muted);
-  font-size: 1.125rem;
-  padding: 5rem 2rem;
-  position: relative;
-  z-index: 1;
-  font-weight: 500;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-/* =========================================================
-   GALLERY ALBUMS — Галерея альбомів
-========================================================= */
-.albumCard {
-  text-decoration: none;
-  color: inherit;
-  border-radius: 24px;
+.error {
+  color: var(--color-danger);
+}
+
+/* Mission strip */
+.mission {
+  background: var(--color-accent);
+  position: relative;
   overflow: hidden;
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 1;
 }
 
-.albumCard::before {
+.mission::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(138, 224, 40, 0.1), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 2;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.18;
+  mix-blend-mode: multiply;
   pointer-events: none;
 }
 
-.albumCard:hover {
-  border-color: var(--color-accent);
-  box-shadow: var(--glow-green);
-  transform: translateY(-12px);
+.missionInner {
+  position: relative;
+  max-width: var(--max-content);
+  margin: 0 auto;
+  padding: 4.5rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 4rem;
+  align-items: center;
 }
 
-.albumCard:hover::before {
-  opacity: 1;
+.missionLabel {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.55);
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.missionTitle {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 900;
+  color: #000000;
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.missionText {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+@media (max-width: 768px) {
+  .missionInner {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 3rem 1.25rem;
+  }
+}
+
+/* Mohyla Games */
+.gamePreview {
+  padding: 2rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.gameTitle {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.gameLead {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 0.75rem;
+}
+
+.gameExcerpt {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+/* Teams */
+.teamsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 2px;
+}
+
+.teamCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.teamCard:hover {
+  border-color: rgba(138, 224, 40, 0.5);
+  background: var(--color-accent-subtle);
+}
+
+.teamLogo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.teamName {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 900;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Albums */
+.albumsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2px;
+}
+
+.albumCard {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 0;
+  transition: border-color 0.2s;
+}
+
+.albumCard:hover {
+  border-color: rgba(138, 224, 40, 0.5);
 }
 
 .albumCover {
   width: 100%;
   aspect-ratio: 16 / 10;
   object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: block;
+  filter: grayscale(20%);
+  transition: filter 0.3s;
 }
 
 .albumCard:hover .albumCover {
-  transform: scale(1.08);
+  filter: grayscale(0%);
+}
+
+.albumPlaceholder {
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-muted-bg);
+  color: var(--color-muted);
+  font-size: 1.5rem;
 }
 
 .albumTitle {
-  padding: 1.875rem;
+  display: block;
+  padding: 0.75rem 1rem;
   font-family: var(--font-heading);
-  font-size: 1.1875rem;
+  font-size: 0.9rem;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
-  background: var(--color-surface);
-  z-index: 3;
+  letter-spacing: 0.04em;
 }
 
-/* =========================================================
-   CONTACTS — Контактні блоки
-========================================================= */
-.contactsRow {
-  max-width: var(--max-content);
-  margin: 0 auto;
+/* Partners */
+.partnersRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.partnerCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 2rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  min-width: 130px;
+  min-height: 80px;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.partnerCard:hover {
+  border-color: rgba(138, 224, 40, 0.5);
+  background: var(--color-accent-subtle);
+}
+
+.partnerLogo {
+  max-width: 120px;
+  max-height: 48px;
+  object-fit: contain;
+}
+
+/* Contacts */
+.contactsList {
+  list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2rem;
-  position: relative;
-  z-index: 1;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2px;
 }
 
 .contactItem {
-  padding: 3rem 2rem;
+  padding: 1.5rem;
   background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: 20px;
-  text-align: center;
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.contactItem::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(
-    circle at center,
-    rgba(138, 224, 40, 0.08) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-}
-
-.contactItem:hover {
-  transform: translateY(-8px);
-  border-color: var(--color-accent);
-  box-shadow: var(--shadow-lg);
-}
-
-.contactItem:hover::before {
-  opacity: 1;
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  border-left: 3px solid var(--color-accent);
 }
 
 .contactPlatform {
-  font-size: 0.8125rem;
-  font-weight: 900;
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.14em;
   color: var(--color-accent);
-  position: relative;
-  z-index: 1;
+  margin-bottom: 0.35rem;
 }
 
 .contactValue {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 900;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
   color: var(--color-text);
-  letter-spacing: 0.01em;
-  position: relative;
-  z-index: 1;
-  word-break: break-word;
-}
-
-/* =========================================================
-   RESPONSIVE — Мобільні адаптації
-========================================================= */
-@media (max-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .teamsRow {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .sectionHeader {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .sectionTitle::after {
-    width: 40%;
-  }
-}
-
-@media (max-width: 768px) {
-  .section {
-    padding: 4rem 1.5rem;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .teamsRow {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .gamePreview {
-    padding: 2.5rem;
-  }
-
-  .gameTitle {
-    font-size: 2rem;
-  }
-
-  .gameLead {
-    font-size: 1.125rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .section {
-    padding: 3rem 1.25rem;
-  }
-
-  .sectionTitle {
-    font-size: 1.75rem;
-  }
-
-  .teamsRow {
-    grid-template-columns: 1fr;
-  }
-
-  .contactsRow {
-    grid-template-columns: 1fr;
-  }
-
-  .gamePreview {
-    padding: 2rem;
-    border-radius: 20px;
-  }
-
-  .gameTitle {
-    font-size: 1.5rem;
-  }
-
-  .gameLead {
-    font-size: 1rem;
-  }
-
-  .marquee {
-    gap: 3rem;
-    padding-right: 3rem;
-  }
 }
