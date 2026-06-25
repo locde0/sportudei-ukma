@@ -22,7 +22,7 @@ limit 1;
 -- name: GetAlbumsList :many
 select * from gallery_albums
 where (is_published = true or sqlc.arg('show_all')::bool = true)
-order by created_at desc
+order by created_at asc
 limit $1 offset $2;
 
 
@@ -40,7 +40,7 @@ where id = $1 and album_id = $2;
 update gallery_photos
 set display_order = -1
 where album_id = $1
-  and id != ALL(sqlc.arg('retained_ids')::int[]);
+  and id != all(sqlc.arg('retained_ids')::int[]);
 
 -- name: DeleteGalleryPhoto :exec
 delete from gallery_photos where id = $1;
@@ -48,7 +48,7 @@ delete from gallery_photos where id = $1;
 -- name: GetGalleryPhotosByAlbumID :many
 select * from gallery_photos
 where album_id = $1 and display_order != -1
-order by display_order desc, created_at desc
+order by display_order asc, created_at asc
 limit $2 offset $3;
 
 -- name: DeleteOrphanedGalleryPhotos :many

@@ -136,7 +136,7 @@ func (q *Queries) GetAlbumByID(ctx context.Context, arg GetAlbumByIDParams) (Gal
 const getAlbumsList = `-- name: GetAlbumsList :many
 select id, title, cover_image_path, is_published, created_at from gallery_albums
 where (is_published = true or $3::bool = true)
-order by created_at desc
+order by created_at asc
 limit $1 offset $2
 `
 
@@ -175,7 +175,7 @@ func (q *Queries) GetAlbumsList(ctx context.Context, arg GetAlbumsListParams) ([
 const getGalleryPhotosByAlbumID = `-- name: GetGalleryPhotosByAlbumID :many
 select id, album_id, image_path, display_order, created_at from gallery_photos
 where album_id = $1 and display_order != -1
-order by display_order desc, created_at desc
+order by display_order asc, created_at asc
 limit $2 offset $3
 `
 
@@ -215,7 +215,7 @@ const softDeleteGalleryPhotos = `-- name: SoftDeleteGalleryPhotos :exec
 update gallery_photos
 set display_order = -1
 where album_id = $1
-  and id != ALL($2::int[])
+  and id != all($2::int[])
 `
 
 type SoftDeleteGalleryPhotosParams struct {

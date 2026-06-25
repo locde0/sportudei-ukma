@@ -53,6 +53,15 @@ func (ns NullEventStatus) Value() (driver.Value, error) {
 	return string(ns.EventStatus), nil
 }
 
+type Contact struct {
+	ID           int32
+	Platform     string
+	Name         string
+	Url          string
+	DisplayOrder int32
+	CreatedAt    *time.Time
+}
+
 type Event struct {
 	ID          int32
 	Title       string

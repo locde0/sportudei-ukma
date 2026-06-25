@@ -31,7 +31,7 @@ select
 from events e
     left join event_photos p on p.event_id = e.id and p.is_main = true
 where (e.is_published = true or sqlc.arg('show_all')::bool = true)
-order by e.event_date desc
+order by e.event_date asc
     limit $1 offset $2;
 
 -- name: AddEventPhoto :one
@@ -52,13 +52,13 @@ delete from event_photos where id = $1;
 -- name: GetEventPhotosListByEventID :many
 select * from event_photos
 where event_id = $1 and display_order != -1
-order by display_order desc, created_at desc;
+order by display_order asc, created_at asc;
 
 -- name: SoftDeleteEventPhotos :exec
 update event_photos
 set display_order = -1
 where event_id = $1
-  and id != ALL(sqlc.arg('retained_ids')::int[]);
+  and id != all(sqlc.arg('retained_ids')::int[]);
 
 -- name: UpdateEventStatuses :exec
 update events

@@ -167,7 +167,7 @@ func (q *Queries) GetEventByID(ctx context.Context, arg GetEventByIDParams) (Eve
 const getEventPhotosListByEventID = `-- name: GetEventPhotosListByEventID :many
 select id, event_id, image_path, is_main, display_order, created_at from event_photos
 where event_id = $1 and display_order != -1
-order by display_order desc, created_at desc
+order by display_order asc, created_at asc
 `
 
 func (q *Queries) GetEventPhotosListByEventID(ctx context.Context, eventID int32) ([]EventPhoto, error) {
@@ -204,7 +204,7 @@ select
 from events e
     left join event_photos p on p.event_id = e.id and p.is_main = true
 where (e.is_published = true or $3::bool = true)
-order by e.event_date desc
+order by e.event_date asc
     limit $1 offset $2
 `
 
@@ -255,7 +255,7 @@ const softDeleteEventPhotos = `-- name: SoftDeleteEventPhotos :exec
 update event_photos
 set display_order = -1
 where event_id = $1
-  and id != ALL($2::int[])
+  and id != all($2::int[])
 `
 
 type SoftDeleteEventPhotosParams struct {

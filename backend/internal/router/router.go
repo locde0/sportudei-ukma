@@ -18,6 +18,7 @@ func New(
 	authHandler *handler.AuthHandler,
 	eventHandler *handler.EventHandler,
 	galleryHandler *handler.GalleryHandler,
+	contactHandler *handler.ContactHandler,
 ) chi.Router {
 	r := chi.NewRouter()
 
@@ -72,6 +73,17 @@ func New(
 				r.Post("/photos", galleryHandler.UploadAlbumPhoto)
 			})
 		})
+
+		r.Route("/contacts", func(r chi.Router) {
+			r.Post("/", contactHandler.CreateContact)
+
+			r.Route("/{id}", func(r chi.Router) {
+				r.Put("/", contactHandler.UpdateContact)
+				r.Delete("/", contactHandler.DeleteContact)
+
+				r.Put("/order", contactHandler.UpdateContactOrder)
+			})
+		})
 	})
 
 	r.Route("/api/events", func(r chi.Router) {
@@ -86,6 +98,10 @@ func New(
 			r.Get("/", galleryHandler.GetPublicAlbum)
 			r.Get("/photos", galleryHandler.GetAlbumPhotos)
 		})
+	})
+
+	r.Route("/api/contacts", func(r chi.Router) {
+		r.Get("/", contactHandler.ListContacts)
 	})
 
 	return r

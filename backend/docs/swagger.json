@@ -8,6 +8,157 @@
     },
     "basePath": "/",
     "paths": {
+        "/api/admin/contacts": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new contact link",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-contacts"
+                ],
+                "summary": "Create contact",
+                "parameters": [
+                    {
+                        "description": "Contact data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.CreateContactRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/api/admin/contacts/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing contact link",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-contacts"
+                ],
+                "summary": "Update contact",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Contact ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing contact link by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-contacts"
+                ],
+                "summary": "Delete contact",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Contact ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/contacts/{id}/order": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the display order of a contact",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-contacts"
+                ],
+                "summary": "Update contact order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Contact ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New order",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/admin/events": {
             "get": {
                 "security": [
@@ -545,6 +696,26 @@
                 }
             }
         },
+        "/api/contacts": {
+            "get": {
+                "description": "List all contact links",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-contacts"
+                ],
+                "summary": "List contacts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.ContactsListResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/events": {
             "get": {
                 "description": "List published events for public view with pagination",
@@ -856,6 +1027,67 @@
                 }
             }
         },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.ContactResponse": {
+            "type": "object",
+            "properties": {
+                "displayOrder": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.ContactsListResponse": {
+            "type": "object",
+            "properties": {
+                "contacts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.ContactResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.CreateContactRequest": {
+            "type": "object",
+            "required": [
+                "displayOrder",
+                "name",
+                "platform",
+                "url"
+            ],
+            "properties": {
+                "displayOrder": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 50
+                },
+                "platform": {
+                    "type": "string",
+                    "enum": [
+                        "telegram",
+                        "instagram",
+                        "facebook",
+                        "email"
+                    ]
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse": {
             "type": "object",
             "properties": {
@@ -1014,6 +1246,43 @@
             "type": "object",
             "properties": {
                 "access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactOrderRequest": {
+            "type": "object",
+            "required": [
+                "displayOrder"
+            ],
+            "properties": {
+                "displayOrder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "platform",
+                "url"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "maxLength": 50
+                },
+                "platform": {
+                    "type": "string",
+                    "enum": [
+                        "telegram",
+                        "instagram",
+                        "facebook",
+                        "email"
+                    ]
+                },
+                "url": {
                     "type": "string"
                 }
             }

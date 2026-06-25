@@ -79,6 +79,48 @@ definitions:
           $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse'
         type: array
     type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.ContactResponse:
+    properties:
+      displayOrder:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      platform:
+        type: string
+      url:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.ContactsListResponse:
+    properties:
+      contacts:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.ContactResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.CreateContactRequest:
+    properties:
+      displayOrder:
+        type: integer
+      name:
+        maxLength: 50
+        type: string
+      platform:
+        enum:
+        - telegram
+        - instagram
+        - facebook
+        - email
+        type: string
+      url:
+        type: string
+    required:
+    - displayOrder
+    - name
+    - platform
+    - url
+    type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse:
     properties:
       display_order:
@@ -184,6 +226,32 @@ definitions:
       access_token:
         type: string
     type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactOrderRequest:
+    properties:
+      displayOrder:
+        type: integer
+    required:
+    - displayOrder
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactRequest:
+    properties:
+      name:
+        maxLength: 50
+        type: string
+      platform:
+        enum:
+        - telegram
+        - instagram
+        - facebook
+        - email
+        type: string
+      url:
+        type: string
+    required:
+    - name
+    - platform
+    - url
+    type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventPhotoRequest:
     properties:
       display_order:
@@ -281,6 +349,100 @@ info:
   title: sportudei api
   version: "1.0"
 paths:
+  /api/admin/contacts:
+    post:
+      consumes:
+      - application/json
+      description: Create a new contact link
+      parameters:
+      - description: Contact data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.CreateContactRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - BearerAuth: []
+      summary: Create contact
+      tags:
+      - admin-contacts
+  /api/admin/contacts/{id}:
+    delete:
+      description: Delete an existing contact link by ID
+      parameters:
+      - description: Contact ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Delete contact
+      tags:
+      - admin-contacts
+    put:
+      consumes:
+      - application/json
+      description: Update an existing contact link
+      parameters:
+      - description: Contact ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update contact
+      tags:
+      - admin-contacts
+  /api/admin/contacts/{id}/order:
+    put:
+      consumes:
+      - application/json
+      description: Update the display order of a contact
+      parameters:
+      - description: Contact ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New order
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update contact order
+      tags:
+      - admin-contacts
   /api/admin/events:
     get:
       description: List all events for admin view with pagination
@@ -621,6 +783,19 @@ paths:
       summary: Verify OTP
       tags:
       - auth
+  /api/contacts:
+    get:
+      description: List all contact links
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.ContactsListResponse'
+      summary: List contacts
+      tags:
+      - public-contacts
   /api/events:
     get:
       description: List published events for public view with pagination
