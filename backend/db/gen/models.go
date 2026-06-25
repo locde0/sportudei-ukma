@@ -100,6 +100,16 @@ type GalleryPhoto struct {
 	CreatedAt    *time.Time
 }
 
+type Partner struct {
+	ID           int32
+	Name         string
+	LogoPath     string
+	Url          *string
+	IsActive     bool
+	DisplayOrder int32
+	CreatedAt    *time.Time
+}
+
 type User struct {
 	ID           int32
 	Email        string

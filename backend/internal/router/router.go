@@ -19,6 +19,7 @@ func New(
 	eventHandler *handler.EventHandler,
 	galleryHandler *handler.GalleryHandler,
 	contactHandler *handler.ContactHandler,
+	partnerHandler *handler.PartnerHandler,
 ) chi.Router {
 	r := chi.NewRouter()
 
@@ -84,6 +85,19 @@ func New(
 				r.Put("/order", contactHandler.UpdateContactOrder)
 			})
 		})
+
+		r.Route("/partners", func(r chi.Router) {
+			r.Post("/", partnerHandler.CreatePartner)
+			r.Get("/", partnerHandler.ListAdminPartners)
+
+			r.Route("/{id}", func(r chi.Router) {
+				r.Get("/", partnerHandler.GetAdminPartner)
+				r.Put("/", partnerHandler.UpdatePartner)
+				r.Delete("/", partnerHandler.DeletePartner)
+
+				r.Put("/order", partnerHandler.UpdatePartnerOrder)
+			})
+		})
 	})
 
 	r.Route("/api/events", func(r chi.Router) {
@@ -102,6 +116,10 @@ func New(
 
 	r.Route("/api/contacts", func(r chi.Router) {
 		r.Get("/", contactHandler.ListContacts)
+	})
+
+	r.Route("/api/partners", func(r chi.Router) {
+		r.Get("/", partnerHandler.ListPublicPartners)
 	})
 
 	return r

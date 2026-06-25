@@ -615,6 +615,220 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/partners": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List all partners for admin view",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "List admin partners",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnersListResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new partner with an optional photo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "Create partner",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CreatePartnerRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Partner logo photo",
+                        "name": "photo",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/api/admin/partners/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get full partner details for admin by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "Get admin partner",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Partner ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing partner and its photo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "Update partner",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Partner ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "UpdatePartnerRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Partner logo photo",
+                        "name": "photo",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing partner by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "Delete partner",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Partner ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/partners/{id}/order": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the display order of a partner",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "Update partner order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Partner ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New order",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/auth/login": {
             "post": {
                 "description": "Authenticates a user and sends an OTP if valid",
@@ -912,6 +1126,26 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/partners": {
+            "get": {
+                "description": "List active partners for public view",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-partners"
+                ],
+                "summary": "List public partners",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicPartnersListResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1031,6 +1265,60 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse"
                     }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse": {
+            "type": "object",
+            "properties": {
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "logo_path": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnersListResponse": {
+            "type": "object",
+            "properties": {
+                "partners": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse": {
+            "type": "object",
+            "properties": {
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "logo_path": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
                 }
             }
         },
@@ -1249,6 +1537,17 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicPartnersListResponse": {
+            "type": "object",
+            "properties": {
+                "partners": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse"
+                    }
+                }
+            }
+        },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse": {
             "type": "object",
             "properties": {
@@ -1407,6 +1706,17 @@ const docTemplate = `{
                     "minimum": -1
                 },
                 "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest": {
+            "type": "object",
+            "required": [
+                "display_order"
+            ],
+            "properties": {
+                "display_order": {
                     "type": "integer"
                 }
             }

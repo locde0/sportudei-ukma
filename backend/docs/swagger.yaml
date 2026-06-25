@@ -79,6 +79,41 @@ definitions:
           $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse'
         type: array
     type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse:
+    properties:
+      display_order:
+        type: integer
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      logo_path:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnersListResponse:
+    properties:
+      partners:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse:
+    properties:
+      display_order:
+        type: integer
+      id:
+        type: integer
+      logo_path:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.ContactResponse:
     properties:
       displayOrder:
@@ -221,6 +256,13 @@ definitions:
           $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse'
         type: array
     type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicPartnersListResponse:
+    properties:
+      partners:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse'
+        type: array
+    type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse:
     properties:
       access_token:
@@ -332,6 +374,13 @@ definitions:
         type: integer
     required:
     - id
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest:
+    properties:
+      display_order:
+        type: integer
+    required:
+    - display_order
     type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.VerifyOTPRequest:
     properties:
@@ -726,6 +775,140 @@ paths:
       summary: Upload album photo
       tags:
       - admin-gallery
+  /api/admin/partners:
+    get:
+      description: List all partners for admin view
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnersListResponse'
+      security:
+      - BearerAuth: []
+      summary: List admin partners
+      tags:
+      - admin-partners
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new partner with an optional photo
+      parameters:
+      - description: CreatePartnerRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Partner logo photo
+        in: formData
+        name: photo
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - BearerAuth: []
+      summary: Create partner
+      tags:
+      - admin-partners
+  /api/admin/partners/{id}:
+    delete:
+      description: Delete an existing partner by ID
+      parameters:
+      - description: Partner ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Delete partner
+      tags:
+      - admin-partners
+    get:
+      description: Get full partner details for admin by ID
+      parameters:
+      - description: Partner ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse'
+      security:
+      - BearerAuth: []
+      summary: Get admin partner
+      tags:
+      - admin-partners
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update an existing partner and its photo
+      parameters:
+      - description: Partner ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: UpdatePartnerRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Partner logo photo
+        in: formData
+        name: photo
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update partner
+      tags:
+      - admin-partners
+  /api/admin/partners/{id}/order:
+    put:
+      consumes:
+      - application/json
+      description: Update the display order of a partner
+      parameters:
+      - description: Partner ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New order
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update partner order
+      tags:
+      - admin-partners
   /api/auth/login:
     post:
       consumes:
@@ -922,4 +1105,17 @@ paths:
       summary: Health check
       tags:
       - health
+  /api/partners:
+    get:
+      description: List active partners for public view
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicPartnersListResponse'
+      summary: List public partners
+      tags:
+      - public-partners
 swagger: "2.0"
