@@ -21,6 +21,7 @@ func New(
 	contactHandler *handler.ContactHandler,
 	partnerHandler *handler.PartnerHandler,
 	teamHandler *handler.TeamHandler,
+	mohylaGameHandler *handler.MohylaGameHandler,
 ) chi.Router {
 	r := chi.NewRouter()
 
@@ -112,6 +113,10 @@ func New(
 				r.Put("/order", teamHandler.UpdateTeamOrder)
 			})
 		})
+
+		r.Route("/mohyla_game", func(r chi.Router) {
+			r.Put("/", mohylaGameHandler.UpdateMohylaGame)
+		})
 	})
 
 	r.Route("/api/events", func(r chi.Router) {
@@ -140,6 +145,8 @@ func New(
 		r.Get("/", teamHandler.ListPublicTeams)
 		r.Get("/{id}", teamHandler.GetPublicTeam)
 	})
+
+	r.Get("/api/mohyla-game", mohylaGameHandler.GetMohylaGame)
 
 	return r
 }

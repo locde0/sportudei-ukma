@@ -100,6 +100,14 @@ type GalleryPhoto struct {
 	CreatedAt    *time.Time
 }
 
+type MohylaGame struct {
+	ID          int32
+	Title       string
+	Description string
+	Content     string
+	UpdatedAt   *time.Time
+}
+
 type Partner struct {
 	ID           int32
 	Name         string

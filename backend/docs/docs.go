@@ -615,6 +615,42 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/mohyla-game": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the main tournament page content",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-mohyla-game"
+                ],
+                "summary": "Update Mohyla Games info",
+                "parameters": [
+                    {
+                        "description": "New content",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateMohylaGameRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/admin/partners": {
             "get": {
                 "security": [
@@ -1342,6 +1378,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/mohyla-game": {
+            "get": {
+                "description": "Get the main tournament page info and content",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-mohyla-game"
+                ],
+                "summary": "Get Mohyla Games info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.MohylaGameResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/partners": {
             "get": {
                 "description": "List active partners for public view",
@@ -1758,6 +1814,20 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.MohylaGameResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventResponse": {
             "type": "object",
             "properties": {
@@ -2034,6 +2104,29 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateMohylaGameRequest": {
+            "type": "object",
+            "required": [
+                "content",
+                "description",
+                "title"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "description": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 }
             }
         },

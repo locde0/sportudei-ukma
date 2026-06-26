@@ -228,6 +228,15 @@ definitions:
     - email
     - password
     type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.MohylaGameResponse:
+    properties:
+      content:
+        type: string
+      description:
+        type: string
+      title:
+        type: string
+    type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventResponse:
     properties:
       content:
@@ -415,6 +424,23 @@ definitions:
         type: integer
     required:
     - id
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateMohylaGameRequest:
+    properties:
+      content:
+        minLength: 1
+        type: string
+      description:
+        minLength: 1
+        type: string
+      title:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - content
+    - description
+    - title
     type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest:
     properties:
@@ -821,6 +847,28 @@ paths:
       summary: Upload album photo
       tags:
       - admin-gallery
+  /api/admin/mohyla-game:
+    put:
+      consumes:
+      - application/json
+      description: Update the main tournament page content
+      parameters:
+      - description: New content
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateMohylaGameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update Mohyla Games info
+      tags:
+      - admin-mohyla-game
   /api/admin/partners:
     get:
       description: List all partners for admin view
@@ -1286,6 +1334,19 @@ paths:
       summary: Health check
       tags:
       - health
+  /api/mohyla-game:
+    get:
+      description: Get the main tournament page info and content
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.MohylaGameResponse'
+      summary: Get Mohyla Games info
+      tags:
+      - public-mohyla-game
   /api/partners:
     get:
       description: List active partners for public view
