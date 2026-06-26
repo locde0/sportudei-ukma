@@ -77,6 +77,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	partnerRepo := postgres.NewPartnerRepo(txManager)
 	teamRepo := postgres.NewTeamRepo(txManager)
 	mohylaGameRepo := postgres.NewMohylaGameRepo(txManager)
+	settingsRepo := postgres.NewSettingsRepo(txManager)
 
 	authService := service.NewAuthService(userRepo, tokenProvider, passwordHasher, mailer)
 	eventService := service.NewEventService(eventRepo, txManager, storage, logger)
@@ -85,6 +86,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	partnerService := service.NewPartnerService(partnerRepo, storage, logger)
 	teamService := service.NewTeamService(teamRepo, storage, logger)
 	mohylaGameService := service.NewMohylaGameService(mohylaGameRepo)
+	settingsService := service.NewSettingsService(settingsRepo)
 
 	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays, cfg.IsProd())
 	eventHandler := handler.NewEventHandler(eventService)
@@ -93,6 +95,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	partnerHandler := handler.NewPartnerHandler(partnerService)
 	teamHandler := handler.NewTeamHandler(teamService)
 	mohylaGameHandler := handler.NewMohylaGameHandler(mohylaGameService)
+	settingsHandler := handler.NewSettingsHandler(settingsService)
 
 	authMw := middleware.Auth(tokenProvider)
 
@@ -107,6 +110,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		partnerHandler,
 		teamHandler,
 		mohylaGameHandler,
+		settingsHandler,
 	)
 
 	var httpHandler http.Handler = mux

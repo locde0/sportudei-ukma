@@ -865,6 +865,42 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/settings": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update feature toggles (enable/disable pages)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-settings"
+                ],
+                "summary": "Update global settings",
+                "parameters": [
+                    {
+                        "description": "New settings state",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateSettingsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/admin/teams": {
             "get": {
                 "security": [
@@ -1418,6 +1454,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/settings": {
+            "get": {
+                "description": "Get global settings (feature toggles) for the frontend",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-settings"
+                ],
+                "summary": "Get global settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.SettingsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/teams": {
             "get": {
                 "description": "List active teams for public view",
@@ -1947,6 +2003,29 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.SettingsResponse": {
+            "type": "object",
+            "properties": {
+                "is_contacts_enabled": {
+                    "type": "boolean"
+                },
+                "is_events_enabled": {
+                    "type": "boolean"
+                },
+                "is_gallery_enabled": {
+                    "type": "boolean"
+                },
+                "is_mohyla_game_enabled": {
+                    "type": "boolean"
+                },
+                "is_partners_enabled": {
+                    "type": "boolean"
+                },
+                "is_teams_enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse": {
             "type": "object",
             "properties": {
@@ -2136,6 +2215,29 @@ const docTemplate = `{
                 "display_order": {
                     "type": "integer",
                     "minimum": 0
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateSettingsRequest": {
+            "type": "object",
+            "properties": {
+                "is_contacts_enabled": {
+                    "type": "boolean"
+                },
+                "is_events_enabled": {
+                    "type": "boolean"
+                },
+                "is_gallery_enabled": {
+                    "type": "boolean"
+                },
+                "is_mohyla_game_enabled": {
+                    "type": "boolean"
+                },
+                "is_partners_enabled": {
+                    "type": "boolean"
+                },
+                "is_teams_enabled": {
+                    "type": "boolean"
                 }
             }
         },

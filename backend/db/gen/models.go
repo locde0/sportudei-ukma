@@ -118,6 +118,17 @@ type Partner struct {
 	CreatedAt    *time.Time
 }
 
+type Setting struct {
+	ID                  int32
+	IsEventsEnabled     bool
+	IsGalleryEnabled    bool
+	IsContactsEnabled   bool
+	IsPartnersEnabled   bool
+	IsTeamsEnabled      bool
+	IsMohylaGameEnabled bool
+	UpdatedAt           *time.Time
+}
+
 type Team struct {
 	ID           int32
 	Name         string
