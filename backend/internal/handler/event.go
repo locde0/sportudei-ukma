@@ -309,7 +309,7 @@ func (h *EventHandler) ListAdminEvents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	list := make([]dto.AdminEventsListItemResponse, len(events))
+	list := make([]dto.AdminEventsListItemResponse, 0, len(events))
 	for _, event := range events {
 		base := dto.BaseEventResponse{
 			ID:        event.ID,
@@ -347,7 +347,7 @@ func (h *EventHandler) ListPublicEvents(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	list := make([]dto.PublicEventsListItemResponse, len(events))
+	list := make([]dto.PublicEventsListItemResponse, 0, len(events))
 	for _, event := range events {
 		base := dto.BaseEventResponse{
 			ID:        event.ID,

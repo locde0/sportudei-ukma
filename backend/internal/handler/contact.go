@@ -128,7 +128,7 @@ func (h *ContactHandler) ListContacts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	list := make([]dto.ContactResponse, len(contacts))
+	list := make([]dto.ContactResponse, 0, len(contacts))
 	for _, contact := range contacts {
 		list = append(list, dto.ContactResponse{
 			ID:           contact.ID,

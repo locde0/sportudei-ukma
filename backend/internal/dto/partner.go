@@ -4,7 +4,7 @@ type BasePartnerRequest struct {
 	Name         string  `json:"name" validate:"required,min=1,max=255"`
 	URL          *string `json:"url" validate:"omitempty,url"`
 	IsActive     bool    `json:"is_active"`
-	DisplayOrder int32   `json:"display_order" validate:"required,gt=0"`
+	DisplayOrder int32   `json:"display_order" validate:"gte=0"`
 }
 
 type CreatePartnerRequest struct {
@@ -16,7 +16,7 @@ type UpdatePartnerRequest struct {
 }
 
 type UpdatePartnerOrderRequest struct {
-	DisplayOrder int32 `json:"display_order" validate:"required,gt=0"`
+	DisplayOrder int32 `json:"display_order" validate:"gte=0"`
 }
 
 type BasePartnerResponse struct {

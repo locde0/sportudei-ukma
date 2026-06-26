@@ -1,7 +1,7 @@
 package dto
 
 type UpdateContactOrderRequest struct {
-	DisplayOrder int32 `json:"displayOrder" validate:"required,gt=0"`
+	DisplayOrder int32 `json:"displayOrder" validate:"gte=0"`
 }
 
 type BaseContactRequest struct {
@@ -12,7 +12,7 @@ type BaseContactRequest struct {
 
 type CreateContactRequest struct {
 	BaseContactRequest
-	DisplayOrder int32 `json:"displayOrder" validate:"required,gt=0"`
+	DisplayOrder int32 `json:"displayOrder" validate:"gte=0"`
 }
 
 type UpdateContactRequest struct {

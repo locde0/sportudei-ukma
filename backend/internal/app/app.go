@@ -75,18 +75,21 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	galleryRepo := postgres.NewGalleryRepo(txManager)
 	contactRepo := postgres.NewContactRepo(txManager)
 	partnerRepo := postgres.NewPartnerRepo(txManager)
+	teamRepo := postgres.NewTeamRepo(txManager)
 
 	authService := service.NewAuthService(userRepo, tokenProvider, passwordHasher, mailer)
 	eventService := service.NewEventService(eventRepo, txManager, storage, logger)
 	galleryService := service.NewGalleryService(galleryRepo, txManager, storage, logger)
 	contactService := service.NewContactService(contactRepo)
 	partnerService := service.NewPartnerService(partnerRepo, storage, logger)
+	teamService := service.NewTeamService(teamRepo, storage, logger)
 
 	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays, cfg.IsProd())
 	eventHandler := handler.NewEventHandler(eventService)
 	galleryHandler := handler.NewGalleryHandler(galleryService)
 	contactHandler := handler.NewContactHandler(contactService)
 	partnerHandler := handler.NewPartnerHandler(partnerService)
+	teamHandler := handler.NewTeamHandler(teamService)
 
 	authMw := middleware.Auth(tokenProvider)
 
@@ -99,6 +102,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		galleryHandler,
 		contactHandler,
 		partnerHandler,
+		teamHandler,
 	)
 
 	var httpHandler http.Handler = mux

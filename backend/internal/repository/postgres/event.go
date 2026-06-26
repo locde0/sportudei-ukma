@@ -66,7 +66,8 @@ func (r *EventRepo) GetAdminEventByID(ctx context.Context, id int32) (*domain.Ev
 		}
 		return nil, fmt.Errorf("get admin event by id: %w", err)
 	}
-	return new(r.toEventDomain(&row)), nil
+	res := r.toEventDomain(&row)
+	return &res, nil
 }
 
 func (r *EventRepo) GetPublicEventByID(ctx context.Context, id int32) (*domain.Event, error) {
@@ -80,7 +81,8 @@ func (r *EventRepo) GetPublicEventByID(ctx context.Context, id int32) (*domain.E
 		}
 		return nil, fmt.Errorf("get public event by id: %w", err)
 	}
-	return new(r.toEventDomain(&row)), nil
+	res := r.toEventDomain(&row)
+	return &res, nil
 }
 
 func (r *EventRepo) GetAdminEventsList(ctx context.Context, limit, offset int32) ([]domain.EventListItem, error) {

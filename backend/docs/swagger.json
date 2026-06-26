@@ -822,6 +822,221 @@
                 }
             }
         },
+        "/api/admin/teams": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List all teams for admin view",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "List admin teams",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamsListResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new team with a logo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "Create team",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CreateTeamRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Team logo photo",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/api/admin/teams/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get full team details for admin by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "Get admin team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing team and its logo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "Update team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "UpdateTeamRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Team logo photo (optional)",
+                        "name": "photo",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing team by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "Delete team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/teams/{id}/order": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the display order of a team",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "Update team order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New order",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateTeamOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/auth/login": {
             "post": {
                 "description": "Authenticates a user and sends an OTP if valid",
@@ -1139,6 +1354,55 @@
                     }
                 }
             }
+        },
+        "/api/teams": {
+            "get": {
+                "description": "List active teams for public view",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-teams"
+                ],
+                "summary": "List public teams",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicTeamsListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/teams/{id}": {
+            "get": {
+                "description": "Get active team details for public by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-teams"
+                ],
+                "summary": "Get public team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1295,6 +1559,40 @@
                 }
             }
         },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "logo_path": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamsListResponse": {
+            "type": "object",
+            "properties": {
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse"
+                    }
+                }
+            }
+        },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse": {
             "type": "object",
             "properties": {
@@ -1311,6 +1609,26 @@
                     "type": "string"
                 },
                 "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "logo_path": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
@@ -1349,14 +1667,14 @@
         "github_com_locde0_sportudei-ukma_backend_internal_dto.CreateContactRequest": {
             "type": "object",
             "required": [
-                "displayOrder",
                 "name",
                 "platform",
                 "url"
             ],
             "properties": {
                 "displayOrder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "name": {
                     "type": "string",
@@ -1541,6 +1859,17 @@
                 }
             }
         },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicTeamsListResponse": {
+            "type": "object",
+            "properties": {
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse"
+                    }
+                }
+            }
+        },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse": {
             "type": "object",
             "properties": {
@@ -1551,12 +1880,10 @@
         },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactOrderRequest": {
             "type": "object",
-            "required": [
-                "displayOrder"
-            ],
             "properties": {
                 "displayOrder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 }
             }
         },
@@ -1705,12 +2032,19 @@
         },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest": {
             "type": "object",
-            "required": [
-                "display_order"
-            ],
             "properties": {
                 "display_order": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateTeamOrderRequest": {
+            "type": "object",
+            "properties": {
+                "display_order": {
+                    "type": "integer",
+                    "minimum": 0
                 }
             }
         },

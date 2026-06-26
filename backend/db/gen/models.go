@@ -110,6 +110,16 @@ type Partner struct {
 	CreatedAt    *time.Time
 }
 
+type Team struct {
+	ID           int32
+	Name         string
+	LogoPath     string
+	Description  string
+	IsActive     bool
+	DisplayOrder int32
+	CreatedAt    *time.Time
+}
+
 type User struct {
 	ID           int32
 	Email        string

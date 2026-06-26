@@ -262,7 +262,7 @@ func (h *GalleryHandler) ListAdminAlbums(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	list := make([]dto.AdminGalleryAlbumResponse, len(albums))
+	list := make([]dto.AdminGalleryAlbumResponse, 0, len(albums))
 	for _, album := range albums {
 		base := dto.BaseGalleryAlbumResponse{
 			ID:             album.ID,
@@ -296,7 +296,7 @@ func (h *GalleryHandler) ListPublicAlbums(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	list := make([]dto.PublicGalleryAlbumResponse, len(albums))
+	list := make([]dto.PublicGalleryAlbumResponse, 0, len(albums))
 	for _, album := range albums {
 		base := dto.BaseGalleryAlbumResponse{
 			ID:             album.ID,
@@ -336,7 +336,7 @@ func (h *GalleryHandler) GetAlbumPhotos(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	list := make([]dto.GalleryPhotoResponse, len(photos))
+	list := make([]dto.GalleryPhotoResponse, 0, len(photos))
 	for _, photo := range photos {
 		list = append(list, dto.GalleryPhotoResponse{
 			ID:           photo.ID,

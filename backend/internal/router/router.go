@@ -20,6 +20,7 @@ func New(
 	galleryHandler *handler.GalleryHandler,
 	contactHandler *handler.ContactHandler,
 	partnerHandler *handler.PartnerHandler,
+	teamHandler *handler.TeamHandler,
 ) chi.Router {
 	r := chi.NewRouter()
 
@@ -98,6 +99,19 @@ func New(
 				r.Put("/order", partnerHandler.UpdatePartnerOrder)
 			})
 		})
+
+		r.Route("/teams", func(r chi.Router) {
+			r.Post("/", teamHandler.CreateTeam)
+			r.Get("/", teamHandler.ListAdminTeams)
+
+			r.Route("/{id}", func(r chi.Router) {
+				r.Get("/", teamHandler.GetAdminTeam)
+				r.Put("/", teamHandler.UpdateTeam)
+				r.Delete("/", teamHandler.DeleteTeam)
+
+				r.Put("/order", teamHandler.UpdateTeamOrder)
+			})
+		})
 	})
 
 	r.Route("/api/events", func(r chi.Router) {
@@ -120,6 +134,11 @@ func New(
 
 	r.Route("/api/partners", func(r chi.Router) {
 		r.Get("/", partnerHandler.ListPublicPartners)
+	})
+
+	r.Route("/api/teams", func(r chi.Router) {
+		r.Get("/", teamHandler.ListPublicTeams)
+		r.Get("/{id}", teamHandler.GetPublicTeam)
 	})
 
 	return r

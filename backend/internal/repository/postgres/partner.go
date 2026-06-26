@@ -47,7 +47,7 @@ func (r *PartnerRepo) UpdatePartner(ctx context.Context, partner *domain.Partner
 }
 
 func (r *PartnerRepo) DeletePartner(ctx context.Context, id int32) error {
-	return r.tx.Q(ctx).DeleteContact(ctx, id)
+	return r.tx.Q(ctx).DeletePartner(ctx, id)
 }
 
 func (r *PartnerRepo) GetAdminPartnerByID(ctx context.Context, id int32) (*domain.Partner, error) {
@@ -58,7 +58,8 @@ func (r *PartnerRepo) GetAdminPartnerByID(ctx context.Context, id int32) (*domai
 		}
 		return nil, fmt.Errorf("get admin partner by id: %w", err)
 	}
-	return new(r.toPartnerDomain(&row)), nil
+	res := r.toPartnerDomain(&row)
+	return &res, nil
 }
 
 func (r *PartnerRepo) GetAdminPartnersList(ctx context.Context) ([]domain.Partner, error) {

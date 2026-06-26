@@ -101,6 +101,28 @@ definitions:
           $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse'
         type: array
     type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse:
+    properties:
+      description:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      logo_path:
+        type: string
+      name:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamsListResponse:
+    properties:
+      teams:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse'
+        type: array
+    type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse:
     properties:
       display_order:
@@ -112,6 +134,19 @@ definitions:
       name:
         type: string
       url:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse:
+    properties:
+      description:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: integer
+      logo_path:
+        type: string
+      name:
         type: string
     type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.ContactResponse:
@@ -137,6 +172,7 @@ definitions:
   github_com_locde0_sportudei-ukma_backend_internal_dto.CreateContactRequest:
     properties:
       displayOrder:
+        minimum: 0
         type: integer
       name:
         maxLength: 50
@@ -151,7 +187,6 @@ definitions:
       url:
         type: string
     required:
-    - displayOrder
     - name
     - platform
     - url
@@ -263,6 +298,13 @@ definitions:
           $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse'
         type: array
     type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicTeamsListResponse:
+    properties:
+      teams:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse'
+        type: array
+    type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse:
     properties:
       access_token:
@@ -271,9 +313,8 @@ definitions:
   github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactOrderRequest:
     properties:
       displayOrder:
+        minimum: 0
         type: integer
-    required:
-    - displayOrder
     type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactRequest:
     properties:
@@ -378,9 +419,14 @@ definitions:
   github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest:
     properties:
       display_order:
+        minimum: 0
         type: integer
-    required:
-    - display_order
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateTeamOrderRequest:
+    properties:
+      display_order:
+        minimum: 0
+        type: integer
     type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.VerifyOTPRequest:
     properties:
@@ -909,6 +955,141 @@ paths:
       summary: Update partner order
       tags:
       - admin-partners
+  /api/admin/teams:
+    get:
+      description: List all teams for admin view
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamsListResponse'
+      security:
+      - BearerAuth: []
+      summary: List admin teams
+      tags:
+      - admin-teams
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new team with a logo
+      parameters:
+      - description: CreateTeamRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Team logo photo
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - BearerAuth: []
+      summary: Create team
+      tags:
+      - admin-teams
+  /api/admin/teams/{id}:
+    delete:
+      description: Delete an existing team by ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Delete team
+      tags:
+      - admin-teams
+    get:
+      description: Get full team details for admin by ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse'
+      security:
+      - BearerAuth: []
+      summary: Get admin team
+      tags:
+      - admin-teams
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update an existing team and its logo
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: UpdateTeamRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Team logo photo (optional)
+        in: formData
+        name: photo
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update team
+      tags:
+      - admin-teams
+  /api/admin/teams/{id}/order:
+    put:
+      consumes:
+      - application/json
+      description: Update the display order of a team
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New order
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateTeamOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update team order
+      tags:
+      - admin-teams
   /api/auth/login:
     post:
       consumes:
@@ -1118,4 +1299,36 @@ paths:
       summary: List public partners
       tags:
       - public-partners
+  /api/teams:
+    get:
+      description: List active teams for public view
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicTeamsListResponse'
+      summary: List public teams
+      tags:
+      - public-teams
+  /api/teams/{id}:
+    get:
+      description: Get active team details for public by ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse'
+      summary: Get public team
+      tags:
+      - public-teams
 swagger: "2.0"

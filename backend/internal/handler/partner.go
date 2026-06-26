@@ -162,7 +162,7 @@ func (h *PartnerHandler) ListAdminPartners(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	list := make([]dto.AdminPartnerResponse, len(partners))
+	list := make([]dto.AdminPartnerResponse, 0, len(partners))
 	for _, partner := range partners {
 		list = append(list, dto.AdminPartnerResponse{
 			BasePartnerResponse: dto.BasePartnerResponse{
@@ -193,7 +193,7 @@ func (h *PartnerHandler) ListPublicPartners(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	list := make([]dto.BasePartnerResponse, len(partners))
+	list := make([]dto.BasePartnerResponse, 0, len(partners))
 	for _, partner := range partners {
 		list = append(list, dto.BasePartnerResponse{
 			ID:           partner.ID,

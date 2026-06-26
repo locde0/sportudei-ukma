@@ -57,7 +57,8 @@ func (r *GalleryRepo) GetAdminAlbumByID(ctx context.Context, id int32) (*domain.
 		}
 		return nil, fmt.Errorf("get admin album by id: %w", err)
 	}
-	return new(r.toGalleryAlbumDomain(&row)), nil
+	res := r.toGalleryAlbumDomain(&row)
+	return &res, nil
 }
 
 func (r *GalleryRepo) GetPublicAlbumByID(ctx context.Context, id int32) (*domain.GalleryAlbum, error) {
@@ -71,7 +72,8 @@ func (r *GalleryRepo) GetPublicAlbumByID(ctx context.Context, id int32) (*domain
 		}
 		return nil, fmt.Errorf("get public album by id: %w", err)
 	}
-	return new(r.toGalleryAlbumDomain(&row)), nil
+	res := r.toGalleryAlbumDomain(&row)
+	return &res, nil
 }
 
 func (r *GalleryRepo) GetAdminAlbumsList(ctx context.Context, limit, offset int32) ([]domain.GalleryAlbum, error) {
