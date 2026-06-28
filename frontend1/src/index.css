@@ -25,26 +25,6 @@ html.public-no-scrollbar::-webkit-scrollbar {
 body {
   font-family: var(--font-body);
   background-color: var(--color-bg);
-  
-  background-image: 
-    url('/res/preview.png'), 
-    url('/res/preview1.png'), 
-    url('/res/preview2.png');
-  
-  background-position: 
-    95% 5%, 
-    -5% 95%, 
-    center;
-  
-  background-size: 
-    250px,
-    400px,
-    cover;
-  
-  background-repeat: no-repeat, no-repeat, no-repeat;
-  
-  background-attachment: fixed, fixed, fixed;
-  
   color: var(--color-text);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;

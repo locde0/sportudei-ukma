@@ -12,6 +12,13 @@ export function HeroSection() {
 
   return (
     <section id="hero" className={styles.hero}>
+      <img
+        src="/res/background.jpg"
+        alt=""
+        className={styles.heroBg}
+        aria-hidden="true"
+      />
+      <div className={styles.heroGradient} aria-hidden="true" />
       <div className={styles.inner}>
         <div>
           <span className={styles.eyebrow}>Спортудей · НаУКМА</span>

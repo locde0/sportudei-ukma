@@ -43,7 +43,7 @@
   text-decoration: none;
   color: var(--color-text-muted);
   font-family: var(--font-heading);
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -118,7 +118,7 @@
 .footerBrand {
   font-family: var(--font-heading);
   color: #ffffff;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -127,7 +127,7 @@
 .footerMotto {
   color: var(--color-accent);
   font-family: var(--font-heading);
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.16em;
@@ -136,7 +136,7 @@
 
 .footerCopy {
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
 }
 
 .footerNav {
@@ -148,7 +148,7 @@
 
 .footerNavLink {
   font-family: var(--font-heading);
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -163,7 +163,7 @@
 
 .footerHomeLink {
   font-family: var(--font-heading);
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -178,6 +178,6 @@
 @media (max-width: 600px) {
   .navLink {
     padding: 0.45rem 0.6rem;
-    font-size: 0.7rem;
+    font-size: 0.85rem;
   }
 }

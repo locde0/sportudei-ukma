@@ -2,12 +2,6 @@
   scroll-margin-top: calc(var(--header-height) + 1rem);
 }
 
-.section {
-  max-width: var(--max-content);
-  margin: 0 auto;
-  padding: 5rem 1.5rem;
-}
-
 .sectionHeader {
   display: flex;
   align-items: flex-end;
@@ -17,19 +11,9 @@
   flex-wrap: wrap;
 }
 
-.sectionTitle {
-  font-family: var(--font-heading);
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
-  font-weight: 900;
-  color: var(--color-text);
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  line-height: 0.92;
-}
-
 .sectionSubtitle {
   font-family: var(--font-body);
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--color-text-muted);
   margin-top: 0.6rem;
   text-transform: uppercase;
@@ -49,7 +33,7 @@
   justify-content: center;
   padding: 0.9rem 2.5rem;
   font-family: var(--font-heading);
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -78,7 +62,7 @@
   padding: 3rem;
   color: var(--color-text-muted);
   font-family: var(--font-heading);
-  font-size: 1rem;
+  font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -86,6 +70,108 @@
 .error {
   color: var(--color-danger);
 }
+
+/* ─── Brush-stroke underline ─────────────────────────────────────
+   Usage: add class .brushUnderline to any heading element.
+   preview.png  → left-leaning brush strokes (wide)
+   preview1.png → right-leaning brush strokes (tight)
+   Alternating per element via :nth-child selectors below.
+──────────────────────────────────────────────────────────────── */
+.sectionTitle {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 900;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.18em;
+  width: 100%;
+  height: 0.38em;
+  background-image: url('/res/preview.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 0.55;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+[data-theme='dark'] .sectionTitle::after {
+  mix-blend-mode: screen;
+  opacity: 0.35;
+  filter: invert(1);
+}
+
+/* Alternate to preview1 for every other sectionTitle */
+.sectionHeader:nth-child(even) .sectionTitle::after {
+  background-image: url('/res/preview1.png');
+  opacity: 0.5;
+}
+
+/* Mission title — bigger brush, preview1 strokes */
+.missionTitle {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 900;
+  color: #000000;
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.missionTitle::after {
+  content: '';
+  position: absolute;
+  left: -0.05em;
+  bottom: -0.12em;
+  width: 108%;
+  height: 0.32em;
+  background-image: url('/res/preview1.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 0.45;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* ─── Paper texture overlays ────────────────────────────────────
+   preview2.png (paper grain) as subtle section backgrounds
+──────────────────────────────────────────────────────────────── */
+.section {
+  position: relative;
+  max-width: var(--max-content);
+  margin: 0 auto;
+  padding: 5rem 1.5rem;
+}
+
+.section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/res/preview2.png');
+  background-size: 600px 600px;
+  background-repeat: repeat;
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.section > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Halftone dot bg on hero via preview2 too — see HeroSection.module.css */
 
 /* Mission strip */
 .mission {
@@ -118,7 +204,7 @@
 
 .missionLabel {
   font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -127,21 +213,11 @@
   display: block;
 }
 
-.missionTitle {
-  font-family: var(--font-heading);
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  font-weight: 900;
-  color: #000000;
-  line-height: 0.92;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-}
-
 .missionText {
   font-family: var(--font-body);
-  font-size: 1.05rem;
-  line-height: 1.8;
-  color: rgba(0, 0, 0, 0.7);
+  font-size: 1.2rem;
+  line-height: 1.75;
+  color: rgba(0, 0, 0, 0.72);
 }
 
 @media (max-width: 768px) {
@@ -219,7 +295,7 @@
 
 .teamName {
   font-family: var(--font-heading);
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 900;
   text-align: center;
   text-transform: uppercase;
@@ -272,7 +348,7 @@
   display: block;
   padding: 0.75rem 1rem;
   font-family: var(--font-heading);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -329,7 +405,7 @@
 .contactPlatform {
   display: block;
   font-family: var(--font-body);
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -339,7 +415,7 @@
 
 .contactValue {
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-text);
 }
