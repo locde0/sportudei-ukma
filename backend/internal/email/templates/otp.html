@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Код авторизації</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5; margin: 0; padding: 40px 20px; color: #333; }
+        .container { max-width: 480px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h2 { margin: 0; color: #111; font-size: 24px; }
+        .content { font-size: 16px; line-height: 1.6; color: #444; text-align: center; }
+        .code-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin: 30px 0; text-align: center; }
+        .code { font-size: 36px; font-weight: 700; letter-spacing: 6px; color: #000; margin: 0; }
+        .footer { border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px; text-align: center; font-size: 13px; color: #999; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>Вхід в систему</h2>
+    </div>
+    <div class="content">
+        <p>Вітаємо!</p>
+        <p>Ваш одноразовий код для безпечної авторизації:</p>
+
+        <div class="code-box">
+            <div class="code">{{ .Code }}</div>
+        </div>
+
+        <p>Цей код дійсний протягом <strong>5 хвилин</strong>. Нікому його не повідомляйте.</p>
+    </div>
+    <div class="footer">
+        Якщо ви не намагалися увійти в систему, просто проігноруйте цей лист.
+    </div>
+</div>
+</body>
+</html>

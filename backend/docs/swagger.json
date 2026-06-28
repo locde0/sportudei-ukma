@@ -1,0 +1,2262 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "sportudei api server",
+        "title": "sportudei api",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/",
+    "paths": {
+        "/api/admin/contacts": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new contact link",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-contacts"
+                ],
+                "summary": "Create contact",
+                "parameters": [
+                    {
+                        "description": "Contact data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.CreateContactRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/api/admin/contacts/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing contact link",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-contacts"
+                ],
+                "summary": "Update contact",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Contact ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing contact link by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-contacts"
+                ],
+                "summary": "Delete contact",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Contact ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/contacts/{id}/order": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the display order of a contact",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-contacts"
+                ],
+                "summary": "Update contact order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Contact ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New order",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/events": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List all events for admin view with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-events"
+                ],
+                "summary": "List admin events",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Pagination limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Pagination offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new event with photos",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-events"
+                ],
+                "summary": "Create event",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CreateEventRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Event photos",
+                        "name": "photos",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/api/admin/events/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get full event details for admin by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-events"
+                ],
+                "summary": "Get admin event",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing event and its photos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-events"
+                ],
+                "summary": "Update event",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing event by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-events"
+                ],
+                "summary": "Delete event",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/events/{id}/photos": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Upload an additional photo for an event",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-events"
+                ],
+                "summary": "Upload event photo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Photo to upload",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/gallery": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List all albums for admin view with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "List admin albums",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Pagination limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Pagination offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumsListResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new gallery album with a cover photo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "Create album",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CreateGalleryAlbumRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Cover photo",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/api/admin/gallery/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get full album details for admin by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "Get admin album",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing gallery album and its photos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "Update album",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryAlbumRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing gallery album by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "Delete album",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/gallery/{id}/photos": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Upload an additional photo for an album",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-gallery"
+                ],
+                "summary": "Upload album photo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Photo to upload",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/mohyla-game": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the main tournament page content",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-mohyla-game"
+                ],
+                "summary": "Update Mohyla Games info",
+                "parameters": [
+                    {
+                        "description": "New content",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateMohylaGameRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/partners": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List all partners for admin view",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "List admin partners",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnersListResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new partner with an optional photo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "Create partner",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CreatePartnerRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Partner logo photo",
+                        "name": "photo",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/api/admin/partners/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get full partner details for admin by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "Get admin partner",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Partner ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing partner and its photo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "Update partner",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Partner ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "UpdatePartnerRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Partner logo photo",
+                        "name": "photo",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing partner by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "Delete partner",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Partner ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/partners/{id}/order": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the display order of a partner",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-partners"
+                ],
+                "summary": "Update partner order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Partner ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New order",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/settings": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update feature toggles (enable/disable pages)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-settings"
+                ],
+                "summary": "Update global settings",
+                "parameters": [
+                    {
+                        "description": "New settings state",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateSettingsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/teams": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List all teams for admin view",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "List admin teams",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamsListResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new team with a logo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "Create team",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CreateTeamRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Team logo photo",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/api/admin/teams/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get full team details for admin by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "Get admin team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing team and its logo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "Update team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "UpdateTeamRequest JSON string",
+                        "name": "payload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Team logo photo (optional)",
+                        "name": "photo",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing team by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "Delete team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/admin/teams/{id}/order": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the display order of a team",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-teams"
+                ],
+                "summary": "Update team order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New order",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateTeamOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "description": "Authenticates a user and sends an OTP if valid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/auth/refresh": {
+            "post": {
+                "description": "Refreshes the access token using a valid refresh token cookie",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/verify": {
+            "post": {
+                "description": "Verifies the OTP and issues access and refresh tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Verify OTP",
+                "parameters": [
+                    {
+                        "description": "OTP data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.VerifyOTPRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contacts": {
+            "get": {
+                "description": "List all contact links",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-contacts"
+                ],
+                "summary": "List contacts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.ContactsListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/events": {
+            "get": {
+                "description": "List published events for public view with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-events"
+                ],
+                "summary": "List public events",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 3,
+                        "description": "Pagination limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Pagination offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/events/{id}": {
+            "get": {
+                "description": "Get event details for public view by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-events"
+                ],
+                "summary": "Get public event",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/gallery": {
+            "get": {
+                "description": "List published albums for public view with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-gallery"
+                ],
+                "summary": "List public albums",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 6,
+                        "description": "Pagination limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Pagination offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumsListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/gallery/{id}": {
+            "get": {
+                "description": "Get album details for public view by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-gallery"
+                ],
+                "summary": "Get public album",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/gallery/{id}/photos": {
+            "get": {
+                "description": "Get photos of an album with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-gallery"
+                ],
+                "summary": "Get album photos",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Album ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Pagination limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Pagination offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotosListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/health": {
+            "get": {
+                "description": "Check if the API is running",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/mohyla-game": {
+            "get": {
+                "description": "Get the main tournament page info and content",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-mohyla-game"
+                ],
+                "summary": "Get Mohyla Games info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.MohylaGameResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/partners": {
+            "get": {
+                "description": "List active partners for public view",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-partners"
+                ],
+                "summary": "List public partners",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicPartnersListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/settings": {
+            "get": {
+                "description": "Get global settings (feature toggles) for the frontend",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-settings"
+                ],
+                "summary": "Get global settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.SettingsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/teams": {
+            "get": {
+                "description": "List active teams for public view",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-teams"
+                ],
+                "summary": "List public teams",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicTeamsListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/teams/{id}": {
+            "get": {
+                "description": "Get active team details for public by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "public-teams"
+                ],
+                "summary": "Get public team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus": {
+            "type": "string",
+            "enum": [
+                "planned",
+                "in_progress",
+                "completed"
+            ],
+            "x-enum-varnames": [
+                "EventStatusPlanned",
+                "EventStatusInProgress",
+                "EventStatusCompleted"
+            ]
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "event_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_published": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse": {
+            "type": "object",
+            "properties": {
+                "desc": {
+                    "type": "string"
+                },
+                "event_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_published": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "main_photo_path": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListResponse": {
+            "type": "object",
+            "properties": {
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse": {
+            "type": "object",
+            "properties": {
+                "cover_image_path": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_published": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumsListResponse": {
+            "type": "object",
+            "properties": {
+                "albums": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse": {
+            "type": "object",
+            "properties": {
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "logo_path": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnersListResponse": {
+            "type": "object",
+            "properties": {
+                "partners": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "logo_path": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamsListResponse": {
+            "type": "object",
+            "properties": {
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse": {
+            "type": "object",
+            "properties": {
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "logo_path": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "logo_path": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.ContactResponse": {
+            "type": "object",
+            "properties": {
+                "displayOrder": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.ContactsListResponse": {
+            "type": "object",
+            "properties": {
+                "contacts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.ContactResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.CreateContactRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "platform",
+                "url"
+            ],
+            "properties": {
+                "displayOrder": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 50
+                },
+                "platform": {
+                    "type": "string",
+                    "enum": [
+                        "telegram",
+                        "instagram",
+                        "facebook",
+                        "email"
+                    ]
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse": {
+            "type": "object",
+            "properties": {
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_path": {
+                    "type": "string"
+                },
+                "is_main": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotoResponse": {
+            "type": "object",
+            "properties": {
+                "display_order": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_path": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotosListResponse": {
+            "type": "object",
+            "properties": {
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotoResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.MohylaGameResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "event_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListItemResponse": {
+            "type": "object",
+            "properties": {
+                "desc": {
+                    "type": "string"
+                },
+                "event_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "main_photo_path": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListResponse": {
+            "type": "object",
+            "properties": {
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListItemResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse": {
+            "type": "object",
+            "properties": {
+                "cover_image_path": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumsListResponse": {
+            "type": "object",
+            "properties": {
+                "albums": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicPartnersListResponse": {
+            "type": "object",
+            "properties": {
+                "partners": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.PublicTeamsListResponse": {
+            "type": "object",
+            "properties": {
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse"
+                    }
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.SettingsResponse": {
+            "type": "object",
+            "properties": {
+                "is_contacts_enabled": {
+                    "type": "boolean"
+                },
+                "is_events_enabled": {
+                    "type": "boolean"
+                },
+                "is_gallery_enabled": {
+                    "type": "boolean"
+                },
+                "is_mohyla_game_enabled": {
+                    "type": "boolean"
+                },
+                "is_partners_enabled": {
+                    "type": "boolean"
+                },
+                "is_teams_enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactOrderRequest": {
+            "type": "object",
+            "properties": {
+                "displayOrder": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "platform",
+                "url"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "maxLength": 50
+                },
+                "platform": {
+                    "type": "string",
+                    "enum": [
+                        "telegram",
+                        "instagram",
+                        "facebook",
+                        "email"
+                    ]
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventPhotoRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "display_order": {
+                    "type": "integer",
+                    "minimum": -1
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_main": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventRequest": {
+            "type": "object",
+            "required": [
+                "content",
+                "desc",
+                "event_date",
+                "location",
+                "status",
+                "title"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "desc": {
+                    "type": "string",
+                    "maxLength": 500,
+                    "minLength": 1
+                },
+                "event_date": {
+                    "type": "string"
+                },
+                "is_published": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "type": "string",
+                    "maxLength": 300,
+                    "minLength": 1
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventPhotoRequest"
+                    }
+                },
+                "status": {
+                    "enum": [
+                        "planned",
+                        "in_progress",
+                        "completed"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus"
+                        }
+                    ]
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryAlbumRequest": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "cover_image_path": {
+                    "type": "string"
+                },
+                "is_published": {
+                    "type": "boolean"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryPhotoRequest"
+                    }
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryPhotoRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "display_order": {
+                    "type": "integer",
+                    "minimum": -1
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateMohylaGameRequest": {
+            "type": "object",
+            "required": [
+                "content",
+                "description",
+                "title"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "description": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest": {
+            "type": "object",
+            "properties": {
+                "display_order": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateSettingsRequest": {
+            "type": "object",
+            "properties": {
+                "is_contacts_enabled": {
+                    "type": "boolean"
+                },
+                "is_events_enabled": {
+                    "type": "boolean"
+                },
+                "is_gallery_enabled": {
+                    "type": "boolean"
+                },
+                "is_mohyla_game_enabled": {
+                    "type": "boolean"
+                },
+                "is_partners_enabled": {
+                    "type": "boolean"
+                },
+                "is_teams_enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateTeamOrderRequest": {
+            "type": "object",
+            "properties": {
+                "display_order": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.VerifyOTPRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "email"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

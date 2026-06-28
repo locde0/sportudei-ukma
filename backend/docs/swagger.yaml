@@ -1,0 +1,1460 @@
+basePath: /
+definitions:
+  github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus:
+    enum:
+    - planned
+    - in_progress
+    - completed
+    type: string
+    x-enum-varnames:
+    - EventStatusPlanned
+    - EventStatusInProgress
+    - EventStatusCompleted
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventResponse:
+    properties:
+      content:
+        type: string
+      desc:
+        type: string
+      event_date:
+        type: string
+      id:
+        type: integer
+      is_published:
+        type: boolean
+      location:
+        type: string
+      photos:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse'
+        type: array
+      status:
+        $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus'
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse:
+    properties:
+      desc:
+        type: string
+      event_date:
+        type: string
+      id:
+        type: integer
+      is_published:
+        type: boolean
+      location:
+        type: string
+      main_photo_path:
+        type: string
+      status:
+        $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus'
+      title:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListResponse:
+    properties:
+      events:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse:
+    properties:
+      cover_image_path:
+        type: string
+      id:
+        type: integer
+      is_published:
+        type: boolean
+      title:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumsListResponse:
+    properties:
+      albums:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse:
+    properties:
+      display_order:
+        type: integer
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      logo_path:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnersListResponse:
+    properties:
+      partners:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse:
+    properties:
+      description:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      logo_path:
+        type: string
+      name:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamsListResponse:
+    properties:
+      teams:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse:
+    properties:
+      display_order:
+        type: integer
+      id:
+        type: integer
+      logo_path:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse:
+    properties:
+      description:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: integer
+      logo_path:
+        type: string
+      name:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.ContactResponse:
+    properties:
+      displayOrder:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      platform:
+        type: string
+      url:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.ContactsListResponse:
+    properties:
+      contacts:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.ContactResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.CreateContactRequest:
+    properties:
+      displayOrder:
+        minimum: 0
+        type: integer
+      name:
+        maxLength: 50
+        type: string
+      platform:
+        enum:
+        - telegram
+        - instagram
+        - facebook
+        - email
+        type: string
+      url:
+        type: string
+    required:
+    - name
+    - platform
+    - url
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse:
+    properties:
+      display_order:
+        type: integer
+      id:
+        type: integer
+      image_path:
+        type: string
+      is_main:
+        type: boolean
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotoResponse:
+    properties:
+      display_order:
+        type: integer
+      id:
+        type: integer
+      image_path:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotosListResponse:
+    properties:
+      photos:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotoResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.MohylaGameResponse:
+    properties:
+      content:
+        type: string
+      description:
+        type: string
+      title:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventResponse:
+    properties:
+      content:
+        type: string
+      desc:
+        type: string
+      event_date:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      photos:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.EventPhotoResponse'
+        type: array
+      status:
+        $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus'
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListItemResponse:
+    properties:
+      desc:
+        type: string
+      event_date:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      main_photo_path:
+        type: string
+      status:
+        $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus'
+      title:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListResponse:
+    properties:
+      events:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListItemResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse:
+    properties:
+      cover_image_path:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumsListResponse:
+    properties:
+      albums:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicPartnersListResponse:
+    properties:
+      partners:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BasePartnerResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.PublicTeamsListResponse:
+    properties:
+      teams:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse'
+        type: array
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.SettingsResponse:
+    properties:
+      is_contacts_enabled:
+        type: boolean
+      is_events_enabled:
+        type: boolean
+      is_gallery_enabled:
+        type: boolean
+      is_mohyla_game_enabled:
+        type: boolean
+      is_partners_enabled:
+        type: boolean
+      is_teams_enabled:
+        type: boolean
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactOrderRequest:
+    properties:
+      displayOrder:
+        minimum: 0
+        type: integer
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactRequest:
+    properties:
+      name:
+        maxLength: 50
+        type: string
+      platform:
+        enum:
+        - telegram
+        - instagram
+        - facebook
+        - email
+        type: string
+      url:
+        type: string
+    required:
+    - name
+    - platform
+    - url
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventPhotoRequest:
+    properties:
+      display_order:
+        minimum: -1
+        type: integer
+      id:
+        type: integer
+      is_main:
+        type: boolean
+    required:
+    - id
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventRequest:
+    properties:
+      content:
+        minLength: 1
+        type: string
+      desc:
+        maxLength: 500
+        minLength: 1
+        type: string
+      event_date:
+        type: string
+      is_published:
+        type: boolean
+      location:
+        maxLength: 300
+        minLength: 1
+        type: string
+      photos:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventPhotoRequest'
+        type: array
+      status:
+        allOf:
+        - $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_domain.EventStatus'
+        enum:
+        - planned
+        - in_progress
+        - completed
+      title:
+        maxLength: 100
+        minLength: 1
+        type: string
+      url:
+        type: string
+    required:
+    - content
+    - desc
+    - event_date
+    - location
+    - status
+    - title
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryAlbumRequest:
+    properties:
+      cover_image_path:
+        type: string
+      is_published:
+        type: boolean
+      photos:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryPhotoRequest'
+        type: array
+      title:
+        maxLength: 100
+        minLength: 1
+        type: string
+    required:
+    - title
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryPhotoRequest:
+    properties:
+      display_order:
+        minimum: -1
+        type: integer
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateMohylaGameRequest:
+    properties:
+      content:
+        minLength: 1
+        type: string
+      description:
+        minLength: 1
+        type: string
+      title:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - content
+    - description
+    - title
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest:
+    properties:
+      display_order:
+        minimum: 0
+        type: integer
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateSettingsRequest:
+    properties:
+      is_contacts_enabled:
+        type: boolean
+      is_events_enabled:
+        type: boolean
+      is_gallery_enabled:
+        type: boolean
+      is_mohyla_game_enabled:
+        type: boolean
+      is_partners_enabled:
+        type: boolean
+      is_teams_enabled:
+        type: boolean
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateTeamOrderRequest:
+    properties:
+      display_order:
+        minimum: 0
+        type: integer
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.VerifyOTPRequest:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    required:
+    - code
+    - email
+    type: object
+info:
+  contact: {}
+  description: sportudei api server
+  title: sportudei api
+  version: "1.0"
+paths:
+  /api/admin/contacts:
+    post:
+      consumes:
+      - application/json
+      description: Create a new contact link
+      parameters:
+      - description: Contact data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.CreateContactRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - BearerAuth: []
+      summary: Create contact
+      tags:
+      - admin-contacts
+  /api/admin/contacts/{id}:
+    delete:
+      description: Delete an existing contact link by ID
+      parameters:
+      - description: Contact ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Delete contact
+      tags:
+      - admin-contacts
+    put:
+      consumes:
+      - application/json
+      description: Update an existing contact link
+      parameters:
+      - description: Contact ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update contact
+      tags:
+      - admin-contacts
+  /api/admin/contacts/{id}/order:
+    put:
+      consumes:
+      - application/json
+      description: Update the display order of a contact
+      parameters:
+      - description: Contact ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New order
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateContactOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update contact order
+      tags:
+      - admin-contacts
+  /api/admin/events:
+    get:
+      description: List all events for admin view with pagination
+      parameters:
+      - default: 10
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListResponse'
+      security:
+      - BearerAuth: []
+      summary: List admin events
+      tags:
+      - admin-events
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new event with photos
+      parameters:
+      - description: CreateEventRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Event photos
+        in: formData
+        name: photos
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - BearerAuth: []
+      summary: Create event
+      tags:
+      - admin-events
+  /api/admin/events/{id}:
+    delete:
+      description: Delete an existing event by ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Delete event
+      tags:
+      - admin-events
+    get:
+      description: Get full event details for admin by ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventResponse'
+      security:
+      - BearerAuth: []
+      summary: Get admin event
+      tags:
+      - admin-events
+    put:
+      consumes:
+      - application/json
+      description: Update an existing event and its photos
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update event
+      tags:
+      - admin-events
+  /api/admin/events/{id}/photos:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an additional photo for an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Photo to upload
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Upload event photo
+      tags:
+      - admin-events
+  /api/admin/gallery:
+    get:
+      description: List all albums for admin view with pagination
+      parameters:
+      - default: 10
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumsListResponse'
+      security:
+      - BearerAuth: []
+      summary: List admin albums
+      tags:
+      - admin-gallery
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new gallery album with a cover photo
+      parameters:
+      - description: CreateGalleryAlbumRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Cover photo
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - BearerAuth: []
+      summary: Create album
+      tags:
+      - admin-gallery
+  /api/admin/gallery/{id}:
+    delete:
+      description: Delete an existing gallery album by ID
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Delete album
+      tags:
+      - admin-gallery
+    get:
+      description: Get full album details for admin by ID
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminGalleryAlbumResponse'
+      security:
+      - BearerAuth: []
+      summary: Get admin album
+      tags:
+      - admin-gallery
+    put:
+      consumes:
+      - application/json
+      description: Update an existing gallery album and its photos
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateGalleryAlbumRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update album
+      tags:
+      - admin-gallery
+  /api/admin/gallery/{id}/photos:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an additional photo for an album
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Photo to upload
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Upload album photo
+      tags:
+      - admin-gallery
+  /api/admin/mohyla-game:
+    put:
+      consumes:
+      - application/json
+      description: Update the main tournament page content
+      parameters:
+      - description: New content
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateMohylaGameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update Mohyla Games info
+      tags:
+      - admin-mohyla-game
+  /api/admin/partners:
+    get:
+      description: List all partners for admin view
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnersListResponse'
+      security:
+      - BearerAuth: []
+      summary: List admin partners
+      tags:
+      - admin-partners
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new partner with an optional photo
+      parameters:
+      - description: CreatePartnerRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Partner logo photo
+        in: formData
+        name: photo
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - BearerAuth: []
+      summary: Create partner
+      tags:
+      - admin-partners
+  /api/admin/partners/{id}:
+    delete:
+      description: Delete an existing partner by ID
+      parameters:
+      - description: Partner ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Delete partner
+      tags:
+      - admin-partners
+    get:
+      description: Get full partner details for admin by ID
+      parameters:
+      - description: Partner ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminPartnerResponse'
+      security:
+      - BearerAuth: []
+      summary: Get admin partner
+      tags:
+      - admin-partners
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update an existing partner and its photo
+      parameters:
+      - description: Partner ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: UpdatePartnerRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Partner logo photo
+        in: formData
+        name: photo
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update partner
+      tags:
+      - admin-partners
+  /api/admin/partners/{id}/order:
+    put:
+      consumes:
+      - application/json
+      description: Update the display order of a partner
+      parameters:
+      - description: Partner ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New order
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdatePartnerOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update partner order
+      tags:
+      - admin-partners
+  /api/admin/settings:
+    put:
+      consumes:
+      - application/json
+      description: Update feature toggles (enable/disable pages)
+      parameters:
+      - description: New settings state
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateSettingsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update global settings
+      tags:
+      - admin-settings
+  /api/admin/teams:
+    get:
+      description: List all teams for admin view
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamsListResponse'
+      security:
+      - BearerAuth: []
+      summary: List admin teams
+      tags:
+      - admin-teams
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new team with a logo
+      parameters:
+      - description: CreateTeamRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Team logo photo
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - BearerAuth: []
+      summary: Create team
+      tags:
+      - admin-teams
+  /api/admin/teams/{id}:
+    delete:
+      description: Delete an existing team by ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Delete team
+      tags:
+      - admin-teams
+    get:
+      description: Get full team details for admin by ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminTeamResponse'
+      security:
+      - BearerAuth: []
+      summary: Get admin team
+      tags:
+      - admin-teams
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update an existing team and its logo
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: UpdateTeamRequest JSON string
+        in: formData
+        name: payload
+        required: true
+        type: string
+      - description: Team logo photo (optional)
+        in: formData
+        name: photo
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update team
+      tags:
+      - admin-teams
+  /api/admin/teams/{id}/order:
+    put:
+      consumes:
+      - application/json
+      description: Update the display order of a team
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New order
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.UpdateTeamOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: Update team order
+      tags:
+      - admin-teams
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and sends an OTP if valid
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: User login
+      tags:
+      - auth
+  /api/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refreshes the access token using a valid refresh token cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse'
+      summary: Refresh token
+      tags:
+      - auth
+  /api/auth/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verifies the OTP and issues access and refresh tokens
+      parameters:
+      - description: OTP data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.VerifyOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.TokenResponse'
+      summary: Verify OTP
+      tags:
+      - auth
+  /api/contacts:
+    get:
+      description: List all contact links
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.ContactsListResponse'
+      summary: List contacts
+      tags:
+      - public-contacts
+  /api/events:
+    get:
+      description: List published events for public view with pagination
+      parameters:
+      - default: 3
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventsListResponse'
+      summary: List public events
+      tags:
+      - public-events
+  /api/events/{id}:
+    get:
+      description: Get event details for public view by ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicEventResponse'
+      summary: Get public event
+      tags:
+      - public-events
+  /api/gallery:
+    get:
+      description: List published albums for public view with pagination
+      parameters:
+      - default: 6
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumsListResponse'
+      summary: List public albums
+      tags:
+      - public-gallery
+  /api/gallery/{id}:
+    get:
+      description: Get album details for public view by ID
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicGalleryAlbumResponse'
+      summary: Get public album
+      tags:
+      - public-gallery
+  /api/gallery/{id}/photos:
+    get:
+      description: Get photos of an album with pagination
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: 10
+        description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.GalleryPhotosListResponse'
+      summary: Get album photos
+      tags:
+      - public-gallery
+  /api/health:
+    get:
+      description: Check if the API is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Health check
+      tags:
+      - health
+  /api/mohyla-game:
+    get:
+      description: Get the main tournament page info and content
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.MohylaGameResponse'
+      summary: Get Mohyla Games info
+      tags:
+      - public-mohyla-game
+  /api/partners:
+    get:
+      description: List active partners for public view
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicPartnersListResponse'
+      summary: List public partners
+      tags:
+      - public-partners
+  /api/settings:
+    get:
+      description: Get global settings (feature toggles) for the frontend
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.SettingsResponse'
+      summary: Get global settings
+      tags:
+      - public-settings
+  /api/teams:
+    get:
+      description: List active teams for public view
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.PublicTeamsListResponse'
+      summary: List public teams
+      tags:
+      - public-teams
+  /api/teams/{id}:
+    get:
+      description: Get active team details for public by ID
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.BaseTeamResponse'
+      summary: Get public team
+      tags:
+      - public-teams
+swagger: "2.0"
