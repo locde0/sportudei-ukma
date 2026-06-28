@@ -13,15 +13,6 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  font-family: var(--font-body);
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  transition: background-color 0.25s ease, color 0.25s ease;
-}
-
 html.public-no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -29,6 +20,35 @@ html.public-no-scrollbar {
 
 html.public-no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  
+  background-image: 
+    url('/res/preview.png'), 
+    url('/res/preview1.png'), 
+    url('/res/preview2.png');
+  
+  background-position: 
+    95% 5%, 
+    -5% 95%, 
+    center;
+  
+  background-size: 
+    250px,
+    400px,
+    cover;
+  
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  
+  background-attachment: fixed, fixed, fixed;
+  
+  color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 img {
