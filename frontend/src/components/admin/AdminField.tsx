@@ -1,11 +1,11 @@
 import {
-  InputHTMLAttributes,
-  SelectHTMLAttributes,
-  TextareaHTMLAttributes,
-  ReactNode,
   useState,
   useRef,
   useEffect,
+  type InputHTMLAttributes,
+  type SelectHTMLAttributes,
+  type TextareaHTMLAttributes,
+  type ReactNode,
 } from 'react';
 import styles from './AdminField.module.css';
 

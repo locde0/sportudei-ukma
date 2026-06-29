@@ -45,7 +45,7 @@ func (s *AuthService) Login(ctx context.Context, email, password string) error {
 		return fmt.Errorf("get user: %w", err)
 	}
 
-	if err := s.hasher.Compare(user.PasswordHash, password); err != nil {
+	if err := s.hasher.Compare(password, user.PasswordHash); err != nil {
 		return fmt.Errorf("%w: invalid email or password", domain.ErrUnauthorized)
 	}
 

@@ -7,9 +7,9 @@ import { EventDetailPage } from './pages/public/EventDetailPage';
 import { GalleryCatalog } from './pages/public/GalleryCatalog';
 import { GalleryAlbumPage } from './pages/public/GalleryAlbumPage';
 import { TeamsPage } from './pages/public/TeamsPage';
+import { TeamDetailPage } from './pages/public/TeamDetailPage';
 import { MohylaGamesPage } from './pages/public/MohylaGamesPage';
-import { PartnersPage } from './pages/public/PartnersPage';
-import { ContactsPage } from './pages/public/ContactsPage';
+
 import { Login } from './pages/admin/Login';
 import { VerifyOTP } from './pages/admin/VerifyOTP';
 import { AdminLayout } from './pages/AdminLayout';
@@ -21,6 +21,7 @@ import { AdminContacts } from './pages/admin/AdminContacts';
 import { AdminPartners } from './pages/admin/AdminPartners';
 import { AdminGallery } from './pages/admin/AdminGallery';
 import { AlbumForm } from './pages/admin/AlbumForm';
+import { AlbumCreateForm } from './pages/admin/AlbumCreateForm';
 import { MohylaGamesForm } from './pages/admin/MohylaGamesForm';
 import { AdminTeams } from './pages/admin/AdminTeams';
 import { TeamForm } from './pages/admin/TeamForm';
@@ -36,9 +37,9 @@ function App() {
           <Route path="gallery" element={<GalleryCatalog />} />
           <Route path="gallery/:id" element={<GalleryAlbumPage />} />
           <Route path="teams" element={<TeamsPage />} />
+          <Route path="teams/:id" element={<TeamDetailPage />} />
           <Route path="mohyla-games" element={<MohylaGamesPage />} />
-          <Route path="partners" element={<PartnersPage />} />
-          <Route path="contacts" element={<ContactsPage />} />
+
         </Route>
 
         <Route path="/admin/login" element={<Login />} />
@@ -54,6 +55,7 @@ function App() {
             <Route path="contacts" element={<AdminContacts />} />
             <Route path="partners" element={<AdminPartners />} />
             <Route path="gallery" element={<AdminGallery />} />
+            <Route path="gallery/new" element={<AlbumCreateForm />} />
             <Route path="gallery/:id" element={<AlbumForm />} />
             <Route path="mohyla-games" element={<MohylaGamesForm />} />
             <Route path="teams" element={<AdminTeams />} />

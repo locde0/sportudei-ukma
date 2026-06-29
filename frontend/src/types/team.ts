@@ -4,4 +4,5 @@ export interface Team {
   logo_url: string;
   description: string;
   is_active: boolean;
+  display_order: number;
 }

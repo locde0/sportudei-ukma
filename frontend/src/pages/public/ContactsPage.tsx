@@ -1,14 +1,8 @@
 import { useEffect, useState } from 'react';
 import { fetchContacts } from '../../api/contacts';
+import { ContactCard } from '../../components/public/ContactCard';
 import type { Contact } from '../../types/contact';
-import styles from './ContactsPage.module.css';
-
-const PLATFORM_LABELS: Record<string, string> = {
-  telegram: 'Telegram',
-  instagram: 'Instagram',
-  email: 'Email',
-  phone: 'Телефон',
-};
+import page from '../../styles/publicPage.module.css';
 
 export function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -23,28 +17,23 @@ export function ContactsPage() {
   }, []);
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Контакти</h1>
-        <p className={styles.subtitle}>Звʼяжіться з командою Sportudei</p>
+    <div className={page.page}>
+      <header className={page.header}>
+        <h1 className={page.title}>Контакти</h1>
+        <p className={page.subtitle}>Звʼяжіться з командою Sportudei</p>
       </header>
 
-      {loading && <p className={styles.state}>Завантаження...</p>}
-      {error && <p className={styles.error}>{error}</p>}
+      {loading && <p className={page.state}>Завантаження...</p>}
+      {error && <p className={page.error}>{error}</p>}
       {!loading && !error && contacts.length === 0 && (
-        <p className={styles.state}>Контактів поки немає</p>
+        <p className={page.state}>Контактів поки немає</p>
       )}
       {!loading && !error && contacts.length > 0 && (
-        <ul className={styles.list}>
+        <div className={page.grid}>
           {contacts.map((contact) => (
-            <li key={contact.id} className={styles.item}>
-              <span className={styles.platform}>
-                {PLATFORM_LABELS[contact.platform_name] ?? contact.platform_name}
-              </span>
-              <span className={styles.value}>{contact.contact_value}</span>
-            </li>
+            <ContactCard key={contact.id} contact={contact} />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

@@ -149,12 +149,12 @@ func (s *GalleryService) GetAlbumPhotos(ctx context.Context, id, limit, offset i
 	return photos, nil
 }
 
-func (s *GalleryService) UploadAlbumPhoto(ctx context.Context, albumID int32, file domain.File) error {
+func (s *GalleryService) UploadAlbumPhoto(ctx context.Context, albumID int32, file domain.File) (*domain.GalleryPhoto, error) {
 	folderPath := fmt.Sprintf("albums/%d", albumID)
 
 	path, err := s.storage.Upload(ctx, file, folderPath)
 	if err != nil {
-		return fmt.Errorf("upload gallery photo: %w", err)
+		return nil, fmt.Errorf("upload gallery photo: %w", err)
 	}
 
 	photo := &domain.GalleryPhoto{
@@ -163,10 +163,10 @@ func (s *GalleryService) UploadAlbumPhoto(ctx context.Context, albumID int32, fi
 		DisplayOrder: -1,
 	}
 	if err := s.gallery.AddGalleryPhoto(ctx, photo); err != nil {
-		return fmt.Errorf("add gallery photo: %w", err)
+		return nil, fmt.Errorf("add gallery photo: %w", err)
 	}
 
-	return nil
+	return photo, nil
 }
 
 func (s *GalleryService) CleanupOrphanedGalleryPhotos(ctx context.Context) error {

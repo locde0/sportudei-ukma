@@ -3,38 +3,34 @@ import styles from './HeroSection.module.css';
 
 const HERO_TITLE_LINE_1 = 'Спорт сьогодні!';
 const HERO_TITLE_LINE_2 = 'Спорт завжди!';
-const HERO_SUBTITLE = 'Офіційна платформа спортивного життя Києво-Могилянської Академії. Будь у центрі подій, вболівай за своїх та ставай частиною спортивної історії університету.';
+const HERO_SUBTITLE = 'Платформа спортивного життя академії';
 
 export function HeroSection() {
   const { settings } = useSiteSettings();
 
   return (
     <section id="hero" className={styles.hero}>
-      <div className={styles.heroBackground} />
-      <div className={styles.heroGlow1} />
-      <div className={styles.heroGlow2} />
-      
       <div className={styles.inner}>
-        <span className={styles.eyebrow}>Спортудей · НаУКМА</span>
-        
-        <h1 className={styles.title}>
-          <span className={styles.titleAccent}>{HERO_TITLE_LINE_1}</span>
-          <span>{HERO_TITLE_LINE_2}</span>
-        </h1>
-        
-        <p className={styles.subtitle}>{HERO_SUBTITLE}</p>
-        
-        <div className={styles.actions}>
-          {settings.is_schedule_enabled && (
-            <a href="/#events" className={styles.ctaPrimary}>
-              Розклад подій
-            </a>
-          )}
-          {settings.is_mohyla_games_enabled && (
-            <a href="/#mohyla-games" className={styles.ctaSecondary}>
-              Могилянські ігри
-            </a>
-          )}
+        <div>
+          <span className={styles.eyebrow}>Спортудей · НаУКМА</span>
+          <h1 className={styles.title}>
+            <span className={styles.titleAccent}>{HERO_TITLE_LINE_1}</span>
+            <br />
+            <span>{HERO_TITLE_LINE_2}</span>
+          </h1>
+          <p className={styles.subtitle}>{HERO_SUBTITLE}</p>
+          <div className={styles.actions}>
+            {settings.is_events_enabled && (
+              <a href="/#events" className={styles.ctaPrimary}>
+                Події
+              </a>
+            )}
+            {settings.is_mohyla_game_enabled && (
+              <a href="/#mohyla-games" className={styles.ctaSecondary}>
+                Могилянські ігри
+              </a>
+            )}
+          </div>
         </div>
 
         <div className={styles.stats}>

@@ -1,54 +1,109 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchPublicAlbums } from '../../api/gallery';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { AlbumCard } from '../../components/public/AlbumCard';
+import { Button } from '../../components/ui/Button';
 import type { GalleryAlbum } from '../../types/gallery';
-import styles from './GalleryCatalog.module.css';
+import page from '../../styles/publicPage.module.css';
+
+const PAGE_SIZE = 12;
 
 export function GalleryCatalog() {
   const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState('');
+  const [hasMore, setHasMore] = useState(false);
+  const [autoLoadEnabled, setAutoLoadEnabled] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetchPublicAlbums()
-      .then(setAlbums)
-      .catch(() => setError('Не вдалося завантажити галерею'))
-      .finally(() => setLoading(false));
+  const loadPage = useCallback(async (offset: number, append: boolean) => {
+    const batch = await fetchPublicAlbums(PAGE_SIZE, offset);
+    setAlbums((prev) => (append ? [...prev, ...batch] : batch));
+    setHasMore(batch.length === PAGE_SIZE);
   }, []);
 
+  useEffect(() => {
+    let ignore = false;
+    loadPage(0, false)
+      .catch(() => {
+        if (!ignore) setError('Не вдалося завантажити галерею');
+      })
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+      
+    return () => {
+      ignore = true;
+    };
+  }, [loadPage]);
+
+  const handleLoadMore = async () => {
+    setLoadingMore(true);
+    try {
+      await loadPage(albums.length, true);
+      setAutoLoadEnabled(true);
+    } catch {
+      setError('Не вдалося завантажити ще альбоми');
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!autoLoadEnabled || !hasMore || loadingMore) return;
+
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && !loadingMore) {
+          setLoadingMore(true);
+          loadPage(albums.length, true)
+            .catch(() => setError('Не вдалося завантажити ще альбоми'))
+            .finally(() => setLoadingMore(false));
+        }
+      },
+      { rootMargin: '200px' },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [autoLoadEnabled, hasMore, loadingMore, albums.length, loadPage]);
+
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Галерея</h1>
-        <p className={styles.subtitle}>Фотоальбоми Sportudei-UKMA</p>
+    <div className={page.page}>
+      <header className={page.header}>
+        <h1 className={page.title}>Галерея</h1>
+        <p className={page.subtitle}>Фотоальбоми Sportudei-UKMA</p>
       </header>
 
-      {loading && <p className={styles.state}>Завантаження...</p>}
-      {error && <p className={styles.error}>{error}</p>}
+      {loading && <p className={page.state}>Завантаження...</p>}
+      {error && <p className={page.error}>{error}</p>}
       {!loading && !error && albums.length === 0 && (
-        <p className={styles.state}>Альбомів поки немає</p>
+        <p className={page.state}>Альбомів поки немає</p>
       )}
       {!loading && !error && albums.length > 0 && (
-        <div className={styles.grid}>
-          {albums.map((album) => (
-            <Link key={album.id} to={`/gallery/${album.id}`} className={styles.card}>
-              {album.cover_photo_url ? (
-                <img
-                  src={resolveImageUrl(album.cover_photo_url)}
-                  alt=""
-                  className={styles.cover}
-                />
-              ) : (
-                <div className={styles.placeholder}>◎</div>
-              )}
-              <div className={styles.body}>
-                <h2 className={styles.cardTitle}>{album.title}</h2>
-                <span className={styles.count}>{album.photo_count} фото</span>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <>
+          <div className={page.grid}>
+            {albums.map((album) => (
+              <AlbumCard key={album.id} album={album} />
+            ))}
+          </div>
+          {hasMore && !autoLoadEnabled && (
+            <div className={page.loadMore}>
+              <Button variant="secondary" onClick={handleLoadMore} disabled={loadingMore}>
+                {loadingMore ? 'Завантаження…' : 'Завантажити ще'}
+              </Button>
+            </div>
+          )}
+          {autoLoadEnabled && hasMore && (
+            <div ref={sentinelRef} className={page.sentinel} aria-hidden />
+          )}
+          {autoLoadEnabled && loadingMore && (
+            <p className={page.loading}>Завантаження…</p>
+          )}
+        </>
       )}
     </div>
   );

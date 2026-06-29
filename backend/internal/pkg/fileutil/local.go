@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/locde0/sportudei-ukma/backend/internal/domain"
@@ -40,11 +41,16 @@ func (s *LocalStorage) Upload(ctx context.Context, file domain.File, folder stri
 		return "", fmt.Errorf("copy file content: %w", err)
 	}
 
-	return "/" + path.Join(s.uploadDir, folder, fileName), nil
+	// Always return the URL path expected by the router
+	return path.Join("/uploads", folder, fileName), nil
 }
 
-func (s *LocalStorage) Delete(ctx context.Context, path string) error {
-	err := os.Remove(path)
+func (s *LocalStorage) Delete(ctx context.Context, urlPath string) error {
+	// urlPath is like "/uploads/folder/file.ext", strip the prefix to get the relative path
+	relPath := strings.TrimPrefix(urlPath, "/uploads/")
+	fsPath := filepath.Join(s.uploadDir, relPath)
+	
+	err := os.Remove(fsPath)
 	if err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("delete file: %w", err)
 	}

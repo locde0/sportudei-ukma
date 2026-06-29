@@ -1,6 +1,6 @@
 export interface SiteSettings {
-  is_mohyla_games_enabled: boolean;
-  is_schedule_enabled: boolean;
+  is_events_enabled: boolean;
+  is_mohyla_game_enabled: boolean;
   is_teams_enabled: boolean;
   is_partners_enabled: boolean;
   is_gallery_enabled: boolean;

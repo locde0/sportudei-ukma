@@ -1,15 +1,22 @@
-export type ContactPlatform = 'telegram' | 'instagram' | 'email' | 'phone' | 'facebook';
+export type ContactPlatform = 'telegram' | 'instagram' | 'facebook' | 'email';
 
 export interface Contact {
   id: number;
-  platform_name: ContactPlatform;
-  contact_value: string;
+  platform: ContactPlatform;
+  name: string;
+  url: string;
   display_order: number;
 }
 
 export interface CreateContactPayload {
-  platform_name: ContactPlatform;
-  contact_value: string;
+  platform: ContactPlatform;
+  name: string;
+  url: string;
+  displayOrder: number;
 }
 
-export type UpdateContactPayload = CreateContactPayload;
+export interface UpdateContactPayload {
+  platform: ContactPlatform;
+  name: string;
+  url: string;
+}

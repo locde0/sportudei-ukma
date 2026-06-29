@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -52,9 +53,18 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		}
 	}
 
-	if err := os.MkdirAll(cfg.UploadDir, 0755); err != nil {
-		pool.Close()
-		return nil, fmt.Errorf("create upload dir: %w", err)
+	uploadSubDirs := []string{
+		cfg.UploadDir,
+		filepath.Join(cfg.UploadDir, "events"),
+		filepath.Join(cfg.UploadDir, "albums"),
+		filepath.Join(cfg.UploadDir, "partners"),
+		filepath.Join(cfg.UploadDir, "teams"),
+	}
+	for _, dir := range uploadSubDirs {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			pool.Close()
+			return nil, fmt.Errorf("create upload dir %s: %w", dir, err)
+		}
 	}
 
 	txManager := postgres.NewTxManager(pool)

@@ -186,12 +186,20 @@ func (h *EventHandler) UploadEventPhoto(w http.ResponseWriter, r *http.Request) 
 		Content:     file,
 	}
 
-	if err := h.service.UploadEventPhoto(r.Context(), id, domainFile); err != nil {
+	photo, err := h.service.UploadEventPhoto(r.Context(), id, domainFile)
+	if err != nil {
 		httputil.HandleError(w, err)
 		return
 	}
 
-	httputil.JSON(w, http.StatusOK, nil)
+	res := dto.EventPhotoResponse{
+		ID:           photo.ID,
+		ImagePath:    photo.ImagePath,
+		IsMain:       photo.IsMain,
+		DisplayOrder: photo.DisplayOrder,
+	}
+
+	httputil.JSON(w, http.StatusOK, res)
 }
 
 // GetAdminEvent godoc

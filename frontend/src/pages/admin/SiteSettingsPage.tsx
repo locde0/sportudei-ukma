@@ -69,16 +69,16 @@ export function SiteSettingsPage() {
           {saved && <div className={styles.success} style={{ marginBottom: '0.25rem' }}>Налаштування успішно збережено!</div>}
           <AdminSection icon="◈" title="Розділи сайту" description="Увімкніть або вимкніть блоки">
             <AdminToggle
-              id="schedule"
-              label="Розклад подій"
-              checked={form.is_schedule_enabled}
-              onChange={(v) => patch({ is_schedule_enabled: v })}
+              id="events"
+              label="Події"
+              checked={form.is_events_enabled}
+              onChange={(v) => patch({ is_events_enabled: v })}
             />
             <AdminToggle
               id="mohyla"
               label="Могилянські ігри"
-              checked={form.is_mohyla_games_enabled}
-              onChange={(v) => patch({ is_mohyla_games_enabled: v })}
+              checked={form.is_mohyla_game_enabled}
+              onChange={(v) => patch({ is_mohyla_game_enabled: v })}
             />
             <AdminToggle
               id="teams"

@@ -5,6 +5,7 @@ import { EventStatusBadge } from '../../components/ui/EventStatusBadge';
 import { fetchPublicEvent } from '../../api/events';
 import type { PublicEventDetail } from '../../types/event';
 import { formatEventDateTime } from '../../utils/date';
+import page from '../../styles/publicPage.module.css';
 import styles from './EventDetailPage.module.css';
 
 export function EventDetailPage() {
@@ -16,23 +17,35 @@ export function EventDetailPage() {
   useEffect(() => {
     const eventId = Number(id);
     if (!eventId) {
+      // Intentionally avoiding setError inside effect if possible, but if needed, do it asynchronously or ignore
       setError('Невірний ідентифікатор події');
       setLoading(false);
       return;
     }
 
+    let ignore = false;
     fetchPublicEvent(eventId)
-      .then(setEvent)
-      .catch(() => setError('Подію не знайдено'))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (!ignore) setEvent(data);
+      })
+      .catch(() => {
+        if (!ignore) setError('Подію не знайдено');
+      })
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+      
+    return () => {
+      ignore = true;
+    };
   }, [id]);
 
-  if (loading) return <p className={styles.loading}>Завантаження...</p>;
-  if (error || !event) return <p className={styles.error}>{error || 'Подію не знайдено'}</p>;
+  if (loading) return <p className={page.state}>Завантаження...</p>;
+  if (error || !event) return <p className={page.error}>{error || 'Подію не знайдено'}</p>;
 
   return (
-    <article className={styles.page}>
-      <Link to="/events" className={styles.back}>
+    <article className={page.page}>
+      <Link to="/events" className={page.back}>
         ← Назад до каталогу
       </Link>
 
@@ -53,15 +66,15 @@ export function EventDetailPage() {
           <strong>Локація</strong>
           {event.location}
         </div>
-        {event.photos.length > 1 && (
-          <div className={styles.metaItem}>
-            <strong>Фото</strong>
-            {event.photos.length} знімків
-          </div>
-        )}
       </div>
 
-      <h1 className={styles.title}>{event.title}</h1>
+      <header className={page.header}>
+        <h1 className={page.title}>{event.title}</h1>
+        {event.short_description && (
+          <p className={page.subtitle}>{event.short_description}</p>
+        )}
+      </header>
+
       <div className={styles.content}>{event.content}</div>
 
       {event.registration_url && (

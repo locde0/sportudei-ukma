@@ -1,6 +1,16 @@
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api';
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api';
+
+export interface ApiEnvelope<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+    details?: Record<string, string>;
+  };
+}
 
 export const apiClient = axios.create({
   baseURL: API_BASE,
@@ -25,6 +35,14 @@ export function clearAccessToken(): void {
   localStorage.removeItem('access_token');
 }
 
+export function unwrapData<T>(response: AxiosResponse<ApiEnvelope<T>>): T {
+  const body = response.data;
+  if (!body.success) {
+    throw new Error(body.error?.message ?? 'Request failed');
+  }
+  return body.data as T;
+}
+
 apiClient.interceptors.request.use((config) => {
   const token = getAccessToken();
   if (token) {
@@ -34,8 +52,26 @@ apiClient.interceptors.request.use((config) => {
 });
 
 apiClient.interceptors.response.use(
-  (response) => response,
-  async (error: AxiosError) => {
+  (response) => {
+    if (
+      response.config.responseType === 'blob' ||
+      response.config.responseType === 'arraybuffer'
+    ) {
+      return response;
+    }
+
+    const body = response.data as ApiEnvelope | undefined;
+    if (body && typeof body === 'object' && 'success' in body) {
+      if (!body.success) {
+        return Promise.reject(
+          new Error(body.error?.message ?? 'Request failed'),
+        );
+      }
+      response.data = body.data;
+    }
+    return response;
+  },
+  async (error: AxiosError<ApiEnvelope>) => {
     const originalRequest = error.config as RetryableConfig | undefined;
 
     if (
@@ -43,7 +79,8 @@ apiClient.interceptors.response.use(
       !originalRequest ||
       originalRequest._isRetry
     ) {
-      return Promise.reject(error);
+      const message = error.response?.data?.error?.message ?? error.message;
+      return Promise.reject(new Error(message));
     }
 
     originalRequest._isRetry = true;
@@ -51,14 +88,17 @@ apiClient.interceptors.response.use(
     try {
       if (!refreshPromise) {
         refreshPromise = axios
-          .post<{ access_token: string }>(
+          .post<ApiEnvelope<{ access_token: string }>>(
             `${API_BASE}/auth/refresh`,
             {},
             { withCredentials: true },
           )
           .then(({ data }) => {
-            setAccessToken(data.access_token);
-            return data.access_token;
+            if (!data.success || !data.data?.access_token) {
+              throw new Error('Refresh failed');
+            }
+            setAccessToken(data.data.access_token);
+            return data.data.access_token;
           })
           .finally(() => {
             refreshPromise = null;

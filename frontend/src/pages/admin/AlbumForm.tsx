@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   eventPhotoToGalleryUpdate,
-  fetchAlbum,
+  fetchAdminAlbumDetail,
   galleryPhotoToEventPhoto,
   updateAlbum,
   uploadAlbumPhoto,
@@ -32,12 +32,12 @@ export function AlbumForm() {
 
   useEffect(() => {
     if (!id) return;
-    fetchAlbum(Number(id))
+    fetchAdminAlbumDetail(Number(id))
       .then(({ album, photos: albumPhotos }) => {
         setTitle(album.title);
         setIsPublished(album.is_published);
         const sorted = [...albumPhotos].sort((a, b) => a.display_order - b.display_order);
-        setPhotos(sorted.map((p, index) => galleryPhotoToEventPhoto(p, index === 0)));
+        setPhotos(sorted.map((p) => galleryPhotoToEventPhoto(p, p.image_url === album.cover_photo_url)));
       })
       .catch(() => setError('Не вдалося завантажити альбом'))
       .finally(() => setLoading(false));
@@ -60,9 +60,14 @@ export function AlbumForm() {
       if (normalized.length > 0 && !normalized.some((p) => p.is_main)) {
         normalized[0] = { ...normalized[0], is_main: true };
       }
+      
+      const mainPhoto = normalized.find(p => p.is_main);
+      const coverImagePath = mainPhoto ? mainPhoto.image_url : null;
+      
       await updateAlbum(Number(id), {
         title,
         is_published: isPublished,
+        cover_image_path: coverImagePath,
         photos: eventPhotoToGalleryUpdate(normalized),
       });
       navigate('/admin/gallery');
@@ -115,9 +120,10 @@ export function AlbumForm() {
                 mode="edit"
                 photos={photos}
                 onChange={setPhotos}
-                onUpload={(file) => uploadAlbumPhoto(Number(id), file).then((p) => {
+                onUpload={async (file) => {
+                  const p = await uploadAlbumPhoto(Number(id), file);
                   return galleryPhotoToEventPhoto(p, false);
-                })}
+                }}
               />
             )}
           </AdminSection>

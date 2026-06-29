@@ -10,73 +10,116 @@ import { bool, num, optionalStr, str } from '../utils/normalizeApi';
 
 function mapAlbum(raw: Record<string, unknown>): GalleryAlbum {
   return {
-    id: num(raw.id ?? raw.ID),
-    title: str(raw.title ?? raw.Title),
-    cover_photo_url: optionalStr(raw.cover_photo_url ?? raw.CoverPhotoURL),
-    is_published: bool(raw.is_published ?? raw.IsPublished, false),
-    photo_count: num(raw.photo_count ?? raw.PhotoCount),
+    id: num(raw.id),
+    title: str(raw.title),
+    cover_photo_url: optionalStr(raw.cover_image_path ?? raw.cover_photo_url),
+    is_published: bool(raw.is_published, false),
   };
 }
 
 function mapPhoto(raw: Record<string, unknown>): GalleryPhoto {
   return {
-    id: num(raw.id ?? raw.ID),
-    album_id: num(raw.album_id ?? raw.AlbumID),
-    image_url: str(raw.image_url ?? raw.ImageURL),
-    display_order: num(raw.display_order ?? raw.DisplayOrder),
+    id: num(raw.id),
+    image_url: str(raw.image_path ?? raw.image_url),
+    display_order: num(raw.display_order),
   };
 }
 
-export async function fetchPublicAlbums(): Promise<GalleryAlbum[]> {
-  const { data } = await apiClient.get<Record<string, unknown>[]>('/gallery/albums');
-  return (data ?? []).map(mapAlbum);
+export async function fetchPublicAlbums(
+  limit = 6,
+  offset = 0,
+): Promise<GalleryAlbum[]> {
+  const { data } = await apiClient.get<{ albums: Record<string, unknown>[] }>('/gallery', {
+    params: { limit, offset },
+  });
+  return (data?.albums ?? []).map(mapAlbum);
 }
 
-export async function fetchAdminAlbums(): Promise<GalleryAlbum[]> {
-  const { data } = await apiClient.get<Record<string, unknown>[]>('/admin/gallery/albums');
-  return (data ?? []).map(mapAlbum);
+export async function fetchAdminAlbums(
+  limit = 100,
+  offset = 0,
+): Promise<GalleryAlbum[]> {
+  const { data } = await apiClient.get<{ albums: Record<string, unknown>[] }>('/admin/gallery', {
+    params: { limit, offset },
+  });
+  return (data?.albums ?? []).map(mapAlbum);
 }
 
 export async function fetchAlbum(id: number): Promise<GalleryAlbumDetail> {
-  const { data } = await apiClient.get<{
-    album: Record<string, unknown>;
-    photos: Record<string, unknown>[];
-  }>(`/gallery/albums/${id}`);
+  const { data: albumData } = await apiClient.get<Record<string, unknown>>(`/gallery/${id}`);
+  const { data: photosData } = await apiClient.get<{ photos: Record<string, unknown>[] }>(
+    `/gallery/${id}/photos`,
+    { params: { limit: 100, offset: 0 } },
+  );
   return {
-    album: mapAlbum(data.album),
-    photos: (data.photos ?? []).map(mapPhoto),
+    album: mapAlbum(albumData ?? {}),
+    photos: (photosData?.photos ?? []).map(mapPhoto),
   };
 }
 
-export async function createAlbum(payload: CreateAlbumPayload): Promise<{ id: number }> {
-  const { data } = await apiClient.post<{ id: number }>('/admin/gallery/albums', payload);
-  return data;
+export async function fetchAdminAlbumDetail(id: number): Promise<GalleryAlbumDetail> {
+  const { data: albumData } = await apiClient.get<Record<string, unknown>>(`/admin/gallery/${id}`);
+  const { data: photosData } = await apiClient.get<{ photos: Record<string, unknown>[] }>(
+    `/gallery/${id}/photos`,
+    { params: { limit: 100, offset: 0 } },
+  );
+  return {
+    album: mapAlbum(albumData ?? {}),
+    photos: (photosData?.photos ?? []).map(mapPhoto),
+  };
+}
+
+export async function fetchAdminAlbum(id: number): Promise<GalleryAlbum> {
+  const { data } = await apiClient.get<Record<string, unknown>>(`/admin/gallery/${id}`);
+  return mapAlbum(data ?? {});
+}
+
+export async function fetchAlbumPhotos(
+  albumId: number,
+  limit = 100,
+  offset = 0,
+): Promise<GalleryPhoto[]> {
+  const { data } = await apiClient.get<{ photos: Record<string, unknown>[] }>(
+    `/gallery/${albumId}/photos`,
+    { params: { limit, offset } },
+  );
+  return (data?.photos ?? []).map(mapPhoto);
+}
+
+export async function createAlbum(
+  payload: CreateAlbumPayload,
+  cover: File,
+): Promise<void> {
+  const formData = new FormData();
+  formData.append('payload', JSON.stringify(payload));
+  formData.append('photo', cover);
+  await apiClient.post('/admin/gallery', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
 }
 
 export async function updateAlbum(id: number, payload: UpdateAlbumPayload): Promise<void> {
-  await apiClient.put(`/admin/gallery/albums/${id}`, {
+  await apiClient.put(`/admin/gallery/${id}`, {
     title: payload.title,
     is_published: payload.is_published,
+    cover_image_path: payload.cover_image_path ?? null,
     photos: payload.photos.map((p) => ({
-      ID: p.id,
-      IsMain: p.is_main,
-      DisplayOrder: p.display_order,
+      id: p.id,
+      display_order: p.display_order,
     })),
   });
 }
 
 export async function deleteAlbum(id: number): Promise<void> {
-  await apiClient.delete(`/admin/gallery/albums/${id}`);
+  await apiClient.delete(`/admin/gallery/${id}`);
 }
 
 export async function uploadAlbumPhoto(albumId: number, file: File): Promise<GalleryPhoto> {
   const formData = new FormData();
   formData.append('photo', file);
-  const { data } = await apiClient.post<Record<string, unknown>>(
-    `/admin/gallery/albums/${albumId}/photos`,
-    formData,
-    { headers: { 'Content-Type': 'multipart/form-data' } },
-  );
+  const { data } = await apiClient.post<Record<string, unknown>>(`/admin/gallery/${albumId}/photos`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
   return mapPhoto(data);
 }
 
@@ -97,7 +140,6 @@ export function eventPhotoToGalleryUpdate(
 ): UpdateAlbumPayload['photos'] {
   return photos.map((p, index) => ({
     id: p.id,
-    is_main: p.is_main,
     display_order: index,
   }));
 }

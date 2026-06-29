@@ -48,8 +48,8 @@ export function PartnerForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!isEdit && !logo) {
-      setError('Завантажте логотип');
+    if (!name.trim() || (!isEdit && !logo)) {
+      setError('Заповніть назву та завантажте логотип');
       return;
     }
     setSubmitting(true);

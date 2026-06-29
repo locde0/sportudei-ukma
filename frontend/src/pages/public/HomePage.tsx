@@ -1,21 +1,24 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { fetchPublicPartners } from '../../api/partners';
-import { fetchTeams } from '../../api/teams';
-import { fetchMohylaGame, MOHYLA_GAME_ID } from '../../api/games';
-import { fetchPublicEvents } from '../../api/events';
 import { fetchPublicAlbums } from '../../api/gallery';
+import { fetchTeams } from '../../api/teams';
+import { fetchMohylaGame } from '../../api/games';
 import { fetchContacts } from '../../api/contacts';
+import { fetchPublicEvents } from '../../api/events';
 import { HeroSection } from '../../components/public/HeroSection';
 import { EventCard } from '../../components/public/EventCard';
+import { TeamCard } from '../../components/public/TeamCard';
+import { AlbumCard } from '../../components/public/AlbumCard';
+import { PartnerCard } from '../../components/public/PartnerCard';
+import { ContactCard } from '../../components/public/ContactCard';
 import { useSiteSettings } from '../../contexts/SiteSettingsContext';
-import { resolveImageUrl } from '../../utils/imageUrl';
 import type { PublicEventListItem } from '../../types/event';
 import type { Partner } from '../../types/partner';
-import type { Team } from '../../types/team';
-import type { MohylaGame } from '../../types/game';
 import type { GalleryAlbum } from '../../types/gallery';
+import type { Team } from '../../types/team';
 import type { Contact } from '../../types/contact';
+import type { MohylaGame } from '../../types/game';
 import styles from './HomePage.module.css';
 
 function scrollToHash(hash: string) {
@@ -34,12 +37,12 @@ export function HomePage() {
   const { hash } = useLocation();
   const [events, setEvents] = useState<PublicEventListItem[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
   const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [game, setGame] = useState<MohylaGame | null>(null);
-  const [loadingEvents, setLoadingEvents] = useState(false);
-  const [loadingGame, setLoadingGame] = useState(false);
+  const [loadingEvents, setLoadingEvents] = useState(settings.is_events_enabled);
+  const [loadingGame, setLoadingGame] = useState(settings.is_mohyla_game_enabled);
   const [errorEvents, setErrorEvents] = useState('');
 
   useEffect(() => {
@@ -47,77 +50,59 @@ export function HomePage() {
   }, [hash]);
 
   useEffect(() => {
-    if (!settings.is_schedule_enabled) return;
-    setLoadingEvents(true);
-    fetchPublicEvents(3)
-      .then(setEvents)
-      .catch(() => setErrorEvents('Не вдалося завантажити події'))
-      .finally(() => setLoadingEvents(false));
-  }, [settings.is_schedule_enabled]);
+    if (!settings.is_events_enabled) return;
+    let ignore = false;
+    fetchPublicEvents(3, 0)
+      .then((data) => { if (!ignore) setEvents(data); })
+      .catch(() => { if (!ignore) setErrorEvents('Не вдалося завантажити події'); })
+      .finally(() => { if (!ignore) setLoadingEvents(false); });
+    return () => { ignore = true; };
+  }, [settings.is_events_enabled]);
 
   useEffect(() => {
     if (!settings.is_partners_enabled) return;
     fetchPublicPartners()
-      .then((list) => setPartners(list.filter((p) => p.is_active)))
+      .then(setPartners)
       .catch(() => setPartners([]));
   }, [settings.is_partners_enabled]);
 
   useEffect(() => {
+    if (!settings.is_gallery_enabled) return;
+    fetchPublicAlbums(3, 0).then(setAlbums).catch(() => setAlbums([]));
+  }, [settings.is_gallery_enabled]);
+
+  useEffect(() => {
     if (!settings.is_teams_enabled) return;
     fetchTeams()
-      .then((list) => setTeams(list.filter((t) => t.is_active)))
+      .then(setTeams)
       .catch(() => setTeams([]));
   }, [settings.is_teams_enabled]);
 
   useEffect(() => {
-    if (!settings.is_gallery_enabled) return;
-    fetchPublicAlbums()
-      .then((list) => setAlbums(list.slice(0, 3)))
-      .catch(() => setAlbums([]));
-  }, [settings.is_gallery_enabled]);
-
-  useEffect(() => {
     if (!settings.is_contacts_enabled) return;
-    fetchContacts()
-      .then(setContacts)
-      .catch(() => setContacts([]));
+    fetchContacts().then(setContacts).catch(() => setContacts([]));
   }, [settings.is_contacts_enabled]);
 
   useEffect(() => {
-    if (!settings.is_mohyla_games_enabled) return;
-    setLoadingGame(true);
-    fetchMohylaGame(MOHYLA_GAME_ID)
-      .then(setGame)
-      .catch(() => setGame(null))
-      .finally(() => setLoadingGame(false));
-  }, [settings.is_mohyla_games_enabled]);
+    if (!settings.is_mohyla_game_enabled) return;
+    let ignore = false;
+    fetchMohylaGame()
+      .then((data) => { if (!ignore) setGame(data); })
+      .catch(() => { if (!ignore) setGame(null); })
+      .finally(() => { if (!ignore) setLoadingGame(false); });
+    return () => { ignore = true; };
+  }, [settings.is_mohyla_game_enabled]);
 
   return (
     <>
       <HeroSection />
 
-      {settings.is_partners_enabled && partners.length > 0 && (
-        <section id="partners" className={styles.marqueeWrap} aria-label="Наші партнери">
-          {/* We duplicate the content to make the marquee infinite seamlessly */}
-          <div className={styles.marquee}>
-            {[...partners, ...partners, ...partners].map((partner, i) => (
-              partner.logo_url ? (
-                <img 
-                  key={`${partner.id}-${i}`} 
-                  src={resolveImageUrl(partner.logo_url)} 
-                  alt={partner.name} 
-                  className={styles.partnerLogo} 
-                />
-              ) : null
-            ))}
-          </div>
-        </section>
-      )}
-
       <section className={styles.mission}>
         <div className={styles.missionInner}>
-          <span className={styles.missionLabel}>Наша місія</span>
-          <h2 className={styles.missionTitle}>Рух — частина студентського життя</h2>
+          <div>
+            <span className={styles.missionLabel}>Наша місія</span>
+            <h2 className={styles.missionTitle}>Рух — частина студентського життя</h2>
+          </div>
           <p className={styles.missionText}>
             Ми створюємо простір, де кожен студент НаУКМА може знайти свою активність —
             від благодійних марафонів до міжуніверситетських турнірів. Наша мета —
@@ -126,22 +111,24 @@ export function HomePage() {
         </div>
       </section>
 
-      {settings.is_mohyla_games_enabled && (
+      {settings.is_mohyla_game_enabled && (
         <section id="mohyla-games" className={`${styles.section} ${styles.anchorSection}`}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>
-              Могилянські ігри
-            </h2>
-            <p className={styles.sectionSubtitle}>
-              Головний спортивний турнір студентської спільноти. Виклик, емоції, перемога!
-            </p>
+            <div>
+              <h2 className={styles.sectionTitle}>Могилянські ігри</h2>
+              <p className={styles.sectionSubtitle}>
+                Головний спортивний турнір студентської спільноти
+              </p>
+            </div>
           </div>
 
           {loadingGame && <p className={styles.loading}>Завантаження...</p>}
-          {!loadingGame && game?.is_published && (
+          {!loadingGame && game?.title && (
             <div className={styles.gamePreview}>
               <h3 className={styles.gameTitle}>{game.title}</h3>
-              <p className={styles.gameLead}>{game.short_description}</p>
+              {game.description && (
+                <p className={styles.gameLead}>{game.description}</p>
+              )}
               {game.content && (
                 <p className={styles.gameExcerpt}>
                   {game.content.length > 220 ? `${game.content.slice(0, 220)}…` : game.content}
@@ -149,7 +136,7 @@ export function HomePage() {
               )}
             </div>
           )}
-          {!loadingGame && (!game || !game.is_published) && (
+          {!loadingGame && !game?.title && (
             <p className={styles.empty}>Інформація про ігри зʼявиться незабаром</p>
           )}
 
@@ -161,11 +148,13 @@ export function HomePage() {
         </section>
       )}
 
-      {settings.is_schedule_enabled && (
+      {settings.is_events_enabled && (
         <section id="events" className={`${styles.section} ${styles.anchorSection}`}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Розклад подій</h2>
-            <p className={styles.sectionSubtitle}>Будь у центрі подій академії. Знаходь активності за інтересами та приєднуйся до нас!</p>
+            <div>
+              <h2 className={styles.sectionTitle}>Події</h2>
+              <p className={styles.sectionSubtitle}>Активне життя організації</p>
+            </div>
           </div>
 
           {loadingEvents && <p className={styles.loading}>Завантаження...</p>}
@@ -176,7 +165,7 @@ export function HomePage() {
           {!loadingEvents && !errorEvents && events.length > 0 && (
             <div className={styles.grid}>
               {events.map((event) => (
-                <EventCard key={event.id} event={event} asPreview />
+                <EventCard key={event.id} event={event} />
               ))}
             </div>
           )}
@@ -192,94 +181,102 @@ export function HomePage() {
       {settings.is_teams_enabled && (
         <section id="teams" className={`${styles.section} ${styles.anchorSection}`}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Команди</h2>
-            <p className={styles.sectionSubtitle}>Спортивні колективи НаУКМА, які представляють академію на міських та всеукраїнських змаганнях.</p>
+            <div>
+              <h2 className={styles.sectionTitle}>Команди</h2>
+              <p className={styles.sectionSubtitle}>Спортивні колективи НаУКМА</p>
+            </div>
           </div>
 
           {teams.length === 0 && (
             <p className={styles.empty}>Активних команд наразі немає</p>
           )}
           {teams.length > 0 && (
-            <div className={styles.teamsRow}>
+            <div className={styles.grid}>
               {teams.slice(0, 4).map((team) => (
-                <div key={team.id} className={styles.teamCard}>
-                  {team.logo_url ? (
-                    <img src={resolveImageUrl(team.logo_url)} alt="" className={styles.teamLogo} />
-                  ) : (
-                    <div className={styles.teamLogo} style={{ background: 'var(--color-border)', borderRadius: '50%' }} />
-                  )}
-                  <span className={styles.teamName}>{team.name}</span>
-                </div>
+                <TeamCard key={team.id} team={team} />
               ))}
             </div>
           )}
 
-          <div className={styles.sectionFooter}>
-            <Link to="/teams" className={styles.sectionCta}>
-              Всі команди
-            </Link>
-          </div>
+          {teams.length > 4 && (
+            <div className={styles.sectionFooter}>
+              <Link to="/teams" className={styles.sectionCta}>
+                Усі команди
+              </Link>
+            </div>
+          )}
         </section>
       )}
+
       {settings.is_gallery_enabled && (
         <section id="gallery" className={`${styles.section} ${styles.anchorSection}`}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Галерея</h2>
-            <p className={styles.sectionSubtitle}>Найяскравіші моменти наших подій.</p>
+            <div>
+              <h2 className={styles.sectionTitle}>Галерея</h2>
+              <p className={styles.sectionSubtitle}>Фото з наших заходів</p>
+            </div>
           </div>
 
           {albums.length === 0 && (
-            <p className={styles.empty}>Альбомів поки немає</p>
+            <p className={styles.empty}>Альбомів наразі немає</p>
           )}
           {albums.length > 0 && (
             <div className={styles.grid}>
               {albums.map((album) => (
-                <Link key={album.id} to={`/gallery/${album.id}`} className={styles.albumCard}>
-                  {album.cover_photo_url ? (
-                    <img src={resolveImageUrl(album.cover_photo_url)} alt="" className={styles.albumCover} />
-                  ) : (
-                    <div className={styles.albumCover} style={{ background: 'rgba(255,255,255,0.05)' }} />
-                  )}
-                  <h3 className={styles.albumTitle}>{album.title}</h3>
-                </Link>
+                <AlbumCard key={album.id} album={album} />
               ))}
             </div>
           )}
 
           <div className={styles.sectionFooter}>
             <Link to="/gallery" className={styles.sectionCta}>
-              Вся галерея
+              Уся галерея
             </Link>
           </div>
+        </section>
+      )}
+
+      {settings.is_partners_enabled && (
+        <section id="partners" className={`${styles.section} ${styles.anchorSection}`}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <h2 className={styles.sectionTitle}>Партнери</h2>
+              <p className={styles.sectionSubtitle}>Разом робимо спорт доступнішим</p>
+            </div>
+          </div>
+
+          {partners.length === 0 && (
+            <p className={styles.empty}>Партнерів наразі немає</p>
+          )}
+          {partners.length > 0 && (
+            <div className={styles.partnersRow}>
+              {partners.map((partner) => (
+                <PartnerCard key={partner.id} partner={partner} />
+              ))}
+            </div>
+          )}
         </section>
       )}
 
       {settings.is_contacts_enabled && (
         <section id="contacts" className={`${styles.section} ${styles.anchorSection}`}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Контакти</h2>
-            <p className={styles.sectionSubtitle}>Звʼяжіться з нашою командою для співпраці.</p>
+            <div>
+              <h2 className={styles.sectionTitle}>Контакти</h2>
+              <p className={styles.sectionSubtitle}>Звʼяжіться з нами</p>
+            </div>
           </div>
 
           {contacts.length === 0 && (
-            <p className={styles.empty}>Контактів поки немає</p>
+            <p className={styles.empty}>Контактів наразі немає</p>
           )}
           {contacts.length > 0 && (
-            <div className={styles.contactsRow}>
+            <div className={styles.contactsGrid}>
               {contacts.map((contact) => (
-                <div key={contact.id} className={styles.contactItem}>
-                  <span className={styles.contactPlatform}>{contact.platform_name}</span>
-                  <span className={styles.contactValue}>{contact.contact_value}</span>
-                </div>
+                <ContactCard key={contact.id} contact={contact} />
               ))}
             </div>
           )}
-          
-          <div className={styles.sectionFooter}>
-            <Link to="/contacts" className={styles.sectionCta}>
-              Всі контакти
-            </Link>
-          </div>
         </section>
       )}
     </>

@@ -168,12 +168,19 @@ func (h *GalleryHandler) UploadAlbumPhoto(w http.ResponseWriter, r *http.Request
 		Content:     file,
 	}
 
-	if err := h.service.UploadAlbumPhoto(r.Context(), id, domainFile); err != nil {
+	photo, err := h.service.UploadAlbumPhoto(r.Context(), id, domainFile)
+	if err != nil {
 		httputil.HandleError(w, err)
 		return
 	}
 
-	httputil.JSON(w, http.StatusOK, nil)
+	res := dto.GalleryPhotoResponse{
+		ID:           photo.ID,
+		ImagePath:    photo.ImagePath,
+		DisplayOrder: photo.DisplayOrder,
+	}
+
+	httputil.JSON(w, http.StatusOK, res)
 }
 
 // GetAdminAlbum godoc

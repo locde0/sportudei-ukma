@@ -9,21 +9,21 @@ import { num, str } from '../utils/normalizeApi';
 
 function mapContact(raw: Record<string, unknown>): Contact {
   return {
-    id: num(raw.id ?? raw.ID),
-    platform_name: str(raw.platform_name ?? raw.PlatformName) as ContactPlatform,
-    contact_value: str(raw.contact_value ?? raw.ContactValue),
-    display_order: num(raw.display_order ?? raw.DisplayOrder),
+    id: num(raw.id),
+    platform: str(raw.platform ?? raw.platform_name) as ContactPlatform,
+    name: str(raw.name ?? raw.contact_value),
+    url: str(raw.url ?? raw.contact_value),
+    display_order: num(raw.displayOrder ?? raw.display_order),
   };
 }
 
 export async function fetchContacts(): Promise<Contact[]> {
-  const { data } = await apiClient.get<Record<string, unknown>[]>('/contacts');
-  return (data ?? []).map(mapContact);
+  const { data } = await apiClient.get<{ contacts: Record<string, unknown>[] }>('/contacts');
+  return (data?.contacts ?? []).map(mapContact);
 }
 
-export async function createContact(payload: CreateContactPayload): Promise<{ id: number }> {
-  const { data } = await apiClient.post<{ id: number }>('/admin/contacts', payload);
-  return data;
+export async function createContact(payload: CreateContactPayload): Promise<void> {
+  await apiClient.post('/admin/contacts', payload);
 }
 
 export async function updateContact(id: number, payload: UpdateContactPayload): Promise<void> {
@@ -34,6 +34,6 @@ export async function deleteContact(id: number): Promise<void> {
   await apiClient.delete(`/admin/contacts/${id}`);
 }
 
-export async function updateContactOrder(orderedIds: number[]): Promise<void> {
-  await apiClient.put('/admin/contacts/order', { ordered_ids: orderedIds });
+export async function updateContactOrder(id: number, displayOrder: number): Promise<void> {
+  await apiClient.put(`/admin/contacts/${id}/order`, { displayOrder });
 }

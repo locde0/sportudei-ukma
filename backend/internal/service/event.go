@@ -146,12 +146,12 @@ func (s *EventService) ListPublicEvents(ctx context.Context, limit, offset int32
 	return events, nil
 }
 
-func (s *EventService) UploadEventPhoto(ctx context.Context, eventID int32, file domain.File) error {
+func (s *EventService) UploadEventPhoto(ctx context.Context, eventID int32, file domain.File) (*domain.EventPhoto, error) {
 	folderPath := fmt.Sprintf("events/%d", eventID)
 
 	path, err := s.storage.Upload(ctx, file, folderPath)
 	if err != nil {
-		return fmt.Errorf("upload event photo: %w", err)
+		return nil, fmt.Errorf("upload event photo: %w", err)
 	}
 
 	photo := &domain.EventPhoto{
@@ -161,10 +161,10 @@ func (s *EventService) UploadEventPhoto(ctx context.Context, eventID int32, file
 		DisplayOrder: -1,
 	}
 	if err := s.events.AddEventPhoto(ctx, photo); err != nil {
-		return fmt.Errorf("add event photo: %w", err)
+		return nil, fmt.Errorf("add event photo: %w", err)
 	}
 
-	return nil
+	return photo, nil
 }
 
 func (s *EventService) UpdateEventStatuses(ctx context.Context) error {
