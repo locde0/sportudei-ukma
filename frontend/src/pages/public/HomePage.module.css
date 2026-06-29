@@ -175,15 +175,25 @@
   color: var(--color-text-muted);
 }
 
-.partnersRow {
+.cloud {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem 1.5rem;
+  align-items: center;
+  justify-items: center;
+  margin-top: 1rem;
+}
+
+.chips {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
 }
 
-.contactsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 1rem;
+@media (max-width: 600px) {
+  .cloud {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.5rem 1rem;
+  }
 }

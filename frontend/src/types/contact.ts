@@ -1,4 +1,4 @@
-export type ContactPlatform = 'telegram' | 'instagram' | 'facebook' | 'email';
+export type ContactPlatform = 'telegram' | 'instagram' | 'facebook' | 'email' | 'tiktok' | 'whatsapp';
 
 export interface Contact {
   id: number;

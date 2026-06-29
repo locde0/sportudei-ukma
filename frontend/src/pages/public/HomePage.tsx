@@ -249,7 +249,7 @@ export function HomePage() {
             <p className={styles.empty}>Партнерів наразі немає</p>
           )}
           {partners.length > 0 && (
-            <div className={styles.partnersRow}>
+            <div className={styles.cloud}>
               {partners.map((partner) => (
                 <PartnerCard key={partner.id} partner={partner} />
               ))}
@@ -271,7 +271,7 @@ export function HomePage() {
             <p className={styles.empty}>Контактів наразі немає</p>
           )}
           {contacts.length > 0 && (
-            <div className={styles.contactsGrid}>
+            <div className={styles.chips}>
               {contacts.map((contact) => (
                 <ContactCard key={contact.id} contact={contact} />
               ))}

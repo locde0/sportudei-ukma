@@ -3,6 +3,7 @@ import { fetchContacts } from '../../api/contacts';
 import { ContactCard } from '../../components/public/ContactCard';
 import type { Contact } from '../../types/contact';
 import page from '../../styles/publicPage.module.css';
+import styles from './ContactsPage.module.css';
 
 export function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -29,7 +30,7 @@ export function ContactsPage() {
         <p className={page.state}>Контактів поки немає</p>
       )}
       {!loading && !error && contacts.length > 0 && (
-        <div className={page.grid}>
+        <div className={styles.chips}>
           {contacts.map((contact) => (
             <ContactCard key={contact.id} contact={contact} />
           ))}

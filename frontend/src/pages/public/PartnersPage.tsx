@@ -29,15 +29,18 @@ export function PartnersPage() {
         <p className={styles.state}>Партнерів поки немає</p>
       )}
       {!loading && !error && partners.length > 0 && (
-        <div className={styles.grid}>
+        <div className={styles.cloud}>
           {partners.map((partner) => {
-            const card = (
+            const content = (
               <>
-                <img
-                  src={resolveImageUrl(partner.logo_url)}
-                  alt={partner.name}
-                  className={styles.logo}
-                />
+                <div className={styles.logoWrapper}>
+                  <img
+                    src={resolveImageUrl(partner.logo_url)}
+                    alt={partner.name}
+                    className={styles.logo}
+                    loading="lazy"
+                  />
+                </div>
                 <span className={styles.name}>{partner.name}</span>
               </>
             );
@@ -47,13 +50,14 @@ export function PartnersPage() {
                 href={partner.link_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.card}
+                className={styles.item}
+                aria-label={`Перейти на сайт ${partner.name}`}
               >
-                {card}
+                {content}
               </a>
             ) : (
-              <div key={partner.id} className={styles.card}>
-                {card}
+              <div key={partner.id} className={styles.item}>
+                {content}
               </div>
             );
           })}
