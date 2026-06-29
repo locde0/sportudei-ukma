@@ -20,18 +20,13 @@ export function EventGallery({ photos, title }: EventGalleryProps) {
   const sorted = useMemo(() => sortPhotos(photos), [photos]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [fading, setFading] = useState(false);
 
   const goTo = useCallback(
     (index: number) => {
-      if (index < 0 || index >= sorted.length || index === activeIndex) return;
-      setFading(true);
-      window.setTimeout(() => {
-        setActiveIndex(index);
-        setFading(false);
-      }, 120);
+      if (index < 0 || index >= sorted.length) return;
+      setActiveIndex(index);
     },
-    [activeIndex, sorted.length],
+    [sorted.length],
   );
 
   const goPrev = useCallback(() => {
@@ -41,6 +36,11 @@ export function EventGallery({ photos, title }: EventGalleryProps) {
   const goNext = useCallback(() => {
     goTo(activeIndex === sorted.length - 1 ? 0 : activeIndex + 1);
   }, [activeIndex, goTo, sorted.length]);
+
+  const openLightbox = useCallback((index: number) => {
+    setActiveIndex(index);
+    setLightboxOpen(true);
+  }, []);
 
   useEffect(() => {
     if (!lightboxOpen) return;
@@ -65,76 +65,30 @@ export function EventGallery({ photos, title }: EventGalleryProps) {
   const hasMultiple = sorted.length > 1;
 
   return (
-    <section className={styles.gallery} aria-label="Галерея події">
-      <div
-        className={styles.viewer}
-        onClick={() => setLightboxOpen(true)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && setLightboxOpen(true)}
-        aria-label="Відкрити фото на весь екран"
-      >
-        <img
-          src={resolveImageUrl(active.image_url)}
-          alt={`${title} — фото ${activeIndex + 1}`}
-          className={`${styles.viewerImage} ${fading ? styles.viewerFade : ''}`}
-        />
-
-        {hasMultiple && (
-          <>
-            <button
-              type="button"
-              className={`${styles.navBtn} ${styles.navPrev}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                goPrev();
-              }}
-              aria-label="Попереднє фото"
-            >
-              ‹
-            </button>
-            <button
-              type="button"
-              className={`${styles.navBtn} ${styles.navNext}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                goNext();
-              }}
-              aria-label="Наступне фото"
-            >
-              ›
-            </button>
-          </>
-        )}
-
-        <div className={styles.viewerOverlay} />
-        <div className={styles.viewerMeta}>
-          {hasMultiple && (
-            <span className={styles.counter}>
-              {activeIndex + 1} / {sorted.length}
-            </span>
-          )}
-          <span className={styles.expandHint}>Натисніть для збільшення</span>
-        </div>
+    <section className={styles.gallery} aria-label="Галерея">
+      <div className={styles.masonry}>
+        {sorted.map((photo, idx) => (
+          <div
+            key={photo.id}
+            className={styles.masonryItem}
+            onClick={() => openLightbox(idx)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && openLightbox(idx)}
+            aria-label={`Відкрити фото ${idx + 1}`}
+          >
+            <img
+              src={resolveImageUrl(photo.image_url)}
+              alt={`${title} — фото ${idx + 1}`}
+              loading="lazy"
+              className={styles.masonryImage}
+            />
+            <div className={styles.overlay}>
+              <div className={styles.overlayIcon}>⤢</div>
+            </div>
+          </div>
+        ))}
       </div>
-
-      {hasMultiple && (
-        <div className={styles.thumbs} role="tablist" aria-label="Мініатюри">
-          {sorted.map((photo, idx) => (
-            <button
-              key={photo.id}
-              type="button"
-              role="tab"
-              aria-selected={idx === activeIndex}
-              aria-label={`Фото ${idx + 1}`}
-              className={`${styles.thumb} ${idx === activeIndex ? styles.thumbActive : ''}`}
-              onClick={() => goTo(idx)}
-            >
-              <img src={resolveImageUrl(photo.image_url)} alt="" loading="lazy" />
-            </button>
-          ))}
-        </div>
-      )}
 
       {lightboxOpen &&
         createPortal(
@@ -168,12 +122,13 @@ export function EventGallery({ photos, title }: EventGalleryProps) {
               </button>
             )}
 
-            <img
-              src={resolveImageUrl(active.image_url)}
-              alt={`${title} — фото ${activeIndex + 1}`}
-              className={styles.lightboxImage}
-              onClick={(e) => e.stopPropagation()}
-            />
+            <div className={styles.lightboxImageContainer} onClick={(e) => e.stopPropagation()}>
+              <img
+                src={resolveImageUrl(active.image_url)}
+                alt={`${title} — фото ${activeIndex + 1}`}
+                className={styles.lightboxImage}
+              />
+            </div>
 
             {hasMultiple && (
               <button
@@ -190,25 +145,9 @@ export function EventGallery({ photos, title }: EventGalleryProps) {
             )}
 
             {hasMultiple && (
-              <>
-                <span className={styles.lightboxCounter}>
-                  {activeIndex + 1} / {sorted.length}
-                </span>
-                <div className={styles.lightboxStrip} onClick={(e) => e.stopPropagation()}>
-                  {sorted.map((photo, idx) => (
-                    <button
-                      key={photo.id}
-                      type="button"
-                      className={`${styles.lightboxThumb} ${
-                        idx === activeIndex ? styles.lightboxThumbActive : ''
-                      }`}
-                      onClick={() => goTo(idx)}
-                    >
-                      <img src={resolveImageUrl(photo.image_url)} alt="" />
-                    </button>
-                  ))}
-                </div>
-              </>
+              <span className={styles.lightboxCounter}>
+                {activeIndex + 1} / {sorted.length}
+              </span>
             )}
           </div>,
           document.body,

@@ -94,7 +94,9 @@ export function AdminField(props: InputFieldProps | TextareaFieldProps | SelectF
                     opt.value === selectProps.value ? styles.selectOptionActive : ''
                   }`}
                   onClick={() => {
-                    const e = { target: { value: opt.value } } as any;
+                    const e = {
+                      target: { value: opt.value },
+                    } as unknown as React.ChangeEvent<HTMLSelectElement>;
                     selectProps.onChange?.(e);
                     setIsOpen(false);
                   }}
