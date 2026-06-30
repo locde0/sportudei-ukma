@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchPublicPartners } from '../../api/partners';
 import { resolveImageUrl } from '../../utils/imageUrl';
+import { formatExternalUrl } from '../../utils/url';
 import type { Partner } from '../../types/partner';
 import styles from './PartnersPage.module.css';
 
@@ -47,7 +48,7 @@ export function PartnersPage() {
             return partner.link_url ? (
               <a
                 key={partner.id}
-                href={partner.link_url}
+                href={formatExternalUrl(partner.link_url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.item}

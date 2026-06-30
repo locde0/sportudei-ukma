@@ -10,31 +10,40 @@ interface EventCardProps {
 }
 
 export function EventCard({ event }: EventCardProps) {
+  const content = (
+      <>
+        <div className={styles.imageWrap}>
+          {event.main_photo_url ? (
+              <img
+                  src={resolveImageUrl(event.main_photo_url)}
+                  alt={event.title}
+                  className={styles.image}
+                  loading="lazy"
+              />
+          ) : (
+              <div className={styles.placeholder}>Без фото</div>
+          )}
+          {event.status && (
+              <div className={styles.statusWrap}>
+                <EventStatusBadge status={event.status} />
+              </div>
+          )}
+        </div>
+        <div className={styles.body}>
+          <time className={styles.date} dateTime={event.event_date}>
+            {formatEventDate(event.event_date)}
+          </time>
+          <h3 className={styles.title}>{event.title}</h3>
+          <p className={styles.description}>{event.short_description}</p>
+          <span className={styles.location}>{event.location}</span>
+        </div>
+      </>
+
+  );
+
   return (
     <Link to={`/events/${event.id}`} className={styles.card}>
-      <div className={styles.imageWrap}>
-        {event.main_photo_url ? (
-          <img
-            src={resolveImageUrl(event.main_photo_url)}
-            alt={event.title}
-            className={styles.image}
-            loading="lazy"
-          />
-        ) : (
-          <div className={styles.placeholder}>Без фото</div>
-        )}
-        {event.status && (
-          <div className={styles.statusWrap}>
-            <EventStatusBadge status={event.status} />
-          </div>
-        )}
-      </div>
-      <div className={styles.body}>
-        <time className={styles.date} dateTime={event.event_date}>
-          {formatEventDate(event.event_date)}
-        </time>
-        <h3 className={styles.title}>{event.title}</h3>
-      </div>
+      {content}
     </Link>
   );
 }

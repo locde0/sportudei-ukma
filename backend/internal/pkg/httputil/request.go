@@ -109,7 +109,7 @@ func ParseFile(r *http.Request, key string) (multipart.File, *multipart.FileHead
 	file, header, err := r.FormFile(key)
 	if err != nil {
 		if errors.Is(err, http.ErrMissingFile) {
-			return nil, nil, fmt.Errorf("%w: missing file field '%s'", domain.ErrInvalidInput, key)
+			return nil, nil, http.ErrMissingFile
 		}
 		return nil, nil, fmt.Errorf("%w: parse file: %v", domain.ErrInvalidInput, err)
 	}

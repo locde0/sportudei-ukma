@@ -65,7 +65,7 @@ func HandleError(w http.ResponseWriter, err error) {
 		Error(w, http.StatusNotFound, "NOT_FOUND", err.Error())
 	case errors.Is(err, domain.ErrAlreadyExists):
 		Error(w, http.StatusConflict, "ALREADY_EXISTS", err.Error())
-	case errors.Is(err, domain.ErrInvalidInput):
+	case errors.Is(err, domain.ErrInvalidInput) || errors.Is(err, http.ErrMissingFile):
 		Error(w, http.StatusBadRequest, "BAD_REQUEST", err.Error())
 	case errors.Is(err, domain.ErrUnauthorized):
 		Error(w, http.StatusUnauthorized, "UNAUTHORIZED", err.Error())

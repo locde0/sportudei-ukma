@@ -176,11 +176,10 @@
 }
 
 .cloud {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 2rem 1.5rem;
-  align-items: center;
-  justify-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem 2rem;
   margin-top: 1rem;
 }
 
@@ -193,7 +192,14 @@
 
 @media (max-width: 600px) {
   .cloud {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1.5rem 1rem;
   }
+}
+
+.partnersSection {
+  padding-bottom: 1.5rem;
+}
+
+.contactsSection {
+  padding-top: 1.5rem;
 }

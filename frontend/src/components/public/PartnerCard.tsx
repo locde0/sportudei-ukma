@@ -1,5 +1,6 @@
 import type { Partner } from '../../types/partner';
 import { resolveImageUrl } from '../../utils/imageUrl';
+import { formatExternalUrl } from '../../utils/url';
 import styles from './PartnerCard.module.css';
 
 interface PartnerCardProps {
@@ -24,7 +25,7 @@ export function PartnerCard({ partner }: PartnerCardProps) {
   if (partner.link_url) {
     return (
       <a
-        href={partner.link_url}
+        href={formatExternalUrl(partner.link_url)}
         target="_blank"
         rel="noopener noreferrer"
         className={styles.item}

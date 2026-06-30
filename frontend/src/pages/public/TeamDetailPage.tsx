@@ -37,13 +37,17 @@ export function TeamDetailPage() {
         ← Назад до команд
       </Link>
 
-      <div className={styles.hero}>
-        <img src={resolveImageUrl(team.logo_url)} alt="" className={styles.logo} />
+      <div className={styles.header}>
+        <div className={styles.logoWrapper}>
+          <img src={resolveImageUrl(team.logo_url)} alt={team.name} className={styles.logo} />
+        </div>
         <h1 className={styles.title}>{team.name}</h1>
       </div>
 
       {team.description && (
-        <div className={styles.content}>{team.description}</div>
+        <div className={styles.contentWrapper}>
+          <div className={styles.content}>{team.description}</div>
+        </div>
       )}
     </article>
   );

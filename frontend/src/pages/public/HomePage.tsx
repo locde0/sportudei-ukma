@@ -237,7 +237,7 @@ export function HomePage() {
       )}
 
       {settings.is_partners_enabled && (
-        <section id="partners" className={`${styles.section} ${styles.anchorSection}`}>
+        <section id="partners" className={`${styles.section} ${styles.anchorSection} ${styles.partnersSection}`}>
           <div className={styles.sectionHeader}>
             <div>
               <h2 className={styles.sectionTitle}>Партнери</h2>
@@ -259,7 +259,7 @@ export function HomePage() {
       )}
 
       {settings.is_contacts_enabled && (
-        <section id="contacts" className={`${styles.section} ${styles.anchorSection}`}>
+        <section id="contacts" className={`${styles.section} ${styles.anchorSection} ${styles.contactsSection}`}>
           <div className={styles.sectionHeader}>
             <div>
               <h2 className={styles.sectionTitle}>Контакти</h2>
