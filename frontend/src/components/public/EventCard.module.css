@@ -77,11 +77,11 @@
   letter-spacing: 0.08em;
 }
 
-.statusWrap {
-  position: absolute;
-  top: 0.625rem;
-  left: 0.625rem;
-  z-index: 1;
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .body {
