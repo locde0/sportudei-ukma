@@ -17,8 +17,8 @@ export const mockEventsList: EventListItem[] = [
     event_date: '2026-04-12T09:00:00Z',
     location: 'Кампус NaUKMA, парк',
     is_published: true,
+    status: 'in_progress',
     main_photo_url: PLACEHOLDER(1),
-    created_at: '2026-01-15T10:00:00Z',
   },
   {
     id: 2,
@@ -28,8 +28,8 @@ export const mockEventsList: EventListItem[] = [
     event_date: '2026-03-28T14:00:00Z',
     location: 'Спортзал КМЦ',
     is_published: true,
+    status: 'planned',
     main_photo_url: PLACEHOLDER(2),
-    created_at: '2026-02-01T12:00:00Z',
   },
   {
     id: 3,
@@ -39,8 +39,8 @@ export const mockEventsList: EventListItem[] = [
     event_date: '2026-03-05T18:00:00Z',
     location: 'Google Meet',
     is_published: true,
+    status: 'planned',
     main_photo_url: PLACEHOLDER(3),
-    created_at: '2026-02-10T09:00:00Z',
   },
   {
     id: 4,
@@ -50,8 +50,8 @@ export const mockEventsList: EventListItem[] = [
     event_date: '2026-05-20T10:00:00Z',
     location: 'Стадіон «Динамо», м. Київ',
     is_published: true,
+    status: 'completed',
     main_photo_url: PLACEHOLDER(4),
-    created_at: '2026-02-20T14:00:00Z',
   },
 ];
 
@@ -74,6 +74,7 @@ export const mockEventsDetail: Record<number, EventDetail> = {
     location: 'Кампус NaUKMA, парк',
     registration_url: 'https://forms.gle/example-marathon',
     is_published: true,
+    status: 'in_progress',
     photos: [
       { id: 1, image_url: PLACEHOLDER(11), is_main: true, display_order: 0 },
       { id: 2, image_url: PLACEHOLDER(12), is_main: false, display_order: 1 },
@@ -81,8 +82,6 @@ export const mockEventsDetail: Record<number, EventDetail> = {
       { id: 4, image_url: PLACEHOLDER(14), is_main: false, display_order: 3 },
       { id: 5, image_url: PLACEHOLDER(15), is_main: false, display_order: 4 },
     ],
-    created_at: '2026-01-15T10:00:00Z',
-    updated_at: '2026-01-15T10:00:00Z',
   },
   2: {
     id: 2,
@@ -96,13 +95,12 @@ export const mockEventsDetail: Record<number, EventDetail> = {
     location: 'Спортзал КМЦ',
     registration_url: 'https://forms.gle/example-volleyball',
     is_published: true,
+    status: 'planned',
     photos: [
       { id: 6, image_url: PLACEHOLDER(21), is_main: true, display_order: 0 },
       { id: 7, image_url: PLACEHOLDER(22), is_main: false, display_order: 1 },
       { id: 8, image_url: PLACEHOLDER(23), is_main: false, display_order: 2 },
     ],
-    created_at: '2026-02-01T12:00:00Z',
-    updated_at: '2026-02-01T12:00:00Z',
   },
   3: {
     id: 3,
@@ -116,9 +114,8 @@ export const mockEventsDetail: Record<number, EventDetail> = {
     location: 'Google Meet',
     registration_url: 'https://meet.google.com/example',
     is_published: true,
+    status: 'planned',
     photos: [{ id: 4, image_url: PLACEHOLDER(31), is_main: true, display_order: 0 }],
-    created_at: '2026-02-10T09:00:00Z',
-    updated_at: '2026-02-10T09:00:00Z',
   },
   4: {
     id: 4,
@@ -132,26 +129,25 @@ export const mockEventsDetail: Record<number, EventDetail> = {
     location: 'Стадіон «Динамо», м. Київ',
     registration_url: null,
     is_published: true,
+    status: 'completed',
     photos: [
       { id: 9, image_url: PLACEHOLDER(41), is_main: true, display_order: 0 },
       { id: 10, image_url: PLACEHOLDER(42), is_main: false, display_order: 1 },
       { id: 11, image_url: PLACEHOLDER(43), is_main: false, display_order: 2 },
       { id: 12, image_url: PLACEHOLDER(44), is_main: false, display_order: 3 },
     ],
-    created_at: '2026-02-20T14:00:00Z',
-    updated_at: '2026-02-20T14:00:00Z',
   },
 };
 
 export const mockPublicEventsList: PublicEventListItem[] = mockEventsList.map(
-  ({ id, title, short_description, event_date, location, main_photo_url }, index) => ({
+  ({ id, title, short_description, event_date, location, main_photo_url, status }) => ({
     id,
     title,
     short_description: short_description ?? '',
     event_date,
     location,
     main_photo_url,
-    status: (index === 0 ? 'in_progress' : index === 1 ? 'planned' : 'completed') as const,
+    status,
   }),
 );
 
@@ -167,7 +163,7 @@ export const mockPublicEventsDetail: Record<number, PublicEventDetail> =
         event_date: event.event_date,
         location: event.location,
         registration_url: event.registration_url ?? '',
-        status: 'planned' as const,
+        status: event.status,
         photos: event.photos,
       },
     ]),

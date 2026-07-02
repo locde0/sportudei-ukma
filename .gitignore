@@ -26,9 +26,16 @@ go.work.sum
 
 # env file
 .env
+.env.production
 
 # Editor/IDE
 .idea/
 # .vscode/
 
 tmp
+
+# Frontend build output
+frontend/dist/
+
+# Nginx logs
+nginx/logs/

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { createAlbum, deleteAlbum, fetchAdminAlbums } from '../../api/gallery';
+import { deleteAlbum, fetchAdminAlbums } from '../../api/gallery';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { Badge } from '../../components/ui/Badge';
 import { LinkButton, Button } from '../../components/ui/Button';
@@ -9,11 +8,9 @@ import type { GalleryAlbum } from '../../types/gallery';
 import styles from './AdminListLayout.module.css';
 
 export function AdminGallery() {
-  const navigate = useNavigate();
   const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [creating, setCreating] = useState(false);
   const [confirmId, setConfirmId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deleteErrorId, setDeleteErrorId] = useState<number | null>(null);
@@ -39,17 +36,6 @@ export function AdminGallery() {
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, [confirmId]);
-
-  const handleCreate = async () => {
-    setCreating(true);
-    try {
-      const { id } = await createAlbum({ title: 'Новий альбом', is_published: false });
-      navigate(`/admin/gallery/${id}`);
-    } catch {
-      setError('Не вдалося створити альбом');
-      setCreating(false);
-    }
-  };
 
   const handleDeleteClick = (id: number) => {
     setConfirmId(id);
@@ -83,9 +69,9 @@ export function AdminGallery() {
         title="Галерея"
         description="Керуйте фотоальбомами."
         actions={
-          <Button onClick={handleCreate} disabled={creating}>
-            {creating ? 'Створюємо…' : '+ Новий альбом'}
-          </Button>
+          <LinkButton to="/admin/gallery/new">
+            + Новий альбом
+          </LinkButton>
         }
       />
 
@@ -100,11 +86,11 @@ export function AdminGallery() {
         <div className={styles.stateBox}>
           <div className={styles.emptyIcon}>▣</div>
           <p className={styles.emptyTitle}>Альбомів ще немає</p>
-          <p>Створіть перший альбом — він зʼявиться тут і на головній сторінці.</p>
+          <p>Створіть перший альбом — введіть назву та оберіть обкладинку.</p>
           <div style={{ marginTop: '1.25rem' }}>
-            <Button onClick={handleCreate} disabled={creating}>
-              {creating ? 'Створюємо…' : 'Створити альбом'}
-            </Button>
+            <LinkButton to="/admin/gallery/new">
+              Створити альбом
+            </LinkButton>
           </div>
         </div>
       )}
@@ -132,7 +118,6 @@ export function AdminGallery() {
                 <div className={styles.meta}>
                   <span className={styles.id}>#{album.id}</span>
                   <Badge published={album.is_published} />
-                  <span className={styles.count}>{album.photo_count} фото</span>
                 </div>
                 <h2 className={styles.title}>{album.title}</h2>
               </div>

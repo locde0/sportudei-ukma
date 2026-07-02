@@ -1,10 +1,11 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/locde0/sportudei-ukma/backend/internal/domain"
+	"github.com/locde0/sportudei-ukma/backend/internal/dto"
+	"github.com/locde0/sportudei-ukma/backend/internal/pkg/httputil"
 	"github.com/locde0/sportudei-ukma/backend/internal/service"
 )
 
@@ -12,50 +13,68 @@ type SettingsHandler struct {
 	service *service.SettingsService
 }
 
-func NewSettingsHandler(s *service.SettingsService) *SettingsHandler {
-	return &SettingsHandler{service: s}
+func NewSettingsHandler(service *service.SettingsService) *SettingsHandler {
+	return &SettingsHandler{
+		service: service,
+	}
 }
 
-func (h *SettingsHandler) RegisterRoutes(r chi.Router, authMw func(http.Handler) http.Handler) {
-	r.Get("/api/settings", h.GetSettings)
-
-	r.Route("/api/admin/settings", func(r chi.Router) {
-		r.Use(authMw)
-		r.Put("/", h.UpdateSettings)
-	})
-}
-
+// GetSettings godoc
+// @Summary      Get global settings
+// @Description  Get global settings (feature toggles) for the frontend
+// @Tags         public-settings
+// @Produce      json
+// @Success      200 {object} dto.SettingsResponse
+// @Router       /api/settings [get]
 func (h *SettingsHandler) GetSettings(w http.ResponseWriter, r *http.Request) {
 	settings, err := h.service.GetSettings(r.Context())
 	if err != nil {
-		http.Error(w, "failed to get settings", http.StatusInternalServerError)
+		httputil.HandleError(w, err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(settings)
+	res := &dto.SettingsResponse{
+		IsEventsEnabled:     settings.IsEventsEnabled,
+		IsGalleryEnabled:    settings.IsGalleryEnabled,
+		IsContactsEnabled:   settings.IsContactsEnabled,
+		IsPartnersEnabled:   settings.IsPartnersEnabled,
+		IsTeamsEnabled:      settings.IsTeamsEnabled,
+		IsMohylaGameEnabled: settings.IsMohylaGameEnabled,
+	}
+
+	httputil.JSON(w, http.StatusOK, res)
 }
 
+// UpdateSettings godoc
+// @Summary      Update global settings
+// @Description  Update feature toggles (enable/disable pages)
+// @Tags         admin-settings
+// @Accept       json
+// @Produce      json
+// @Param        request body dto.UpdateSettingsRequest true "New settings state"
+// @Success      200 "OK"
+// @Security     BearerAuth
+// @Router       /api/admin/settings [put]
 func (h *SettingsHandler) UpdateSettings(w http.ResponseWriter, r *http.Request) {
-	var req UpdateSiteSettingsRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid request", http.StatusBadRequest)
+	var req dto.UpdateSettingsRequest
+	if err := httputil.ParseJSON(r, &req); err != nil {
+		httputil.HandleError(w, err)
 		return
 	}
 
-	dto := service.SiteSettingsDto{
-		IsMohylaGamesEnabled: req.IsMohylaGamesEnabled,
-		IsScheduleEnabled:    req.IsScheduleEnabled,
-		IsTeamsEnabled:       req.IsTeamsEnabled,
-		IsPartnersEnabled:    req.IsPartnersEnabled,
-		IsGalleryEnabled:     req.IsGalleryEnabled,
-		IsContactsEnabled:    req.IsContactsEnabled,
+	settings := &domain.Settings{
+		IsEventsEnabled:     req.IsEventsEnabled,
+		IsGalleryEnabled:    req.IsGalleryEnabled,
+		IsContactsEnabled:   req.IsContactsEnabled,
+		IsPartnersEnabled:   req.IsPartnersEnabled,
+		IsTeamsEnabled:      req.IsTeamsEnabled,
+		IsMohylaGameEnabled: req.IsMohylaGameEnabled,
 	}
 
-	if err := h.service.UpdateSettings(r.Context(), dto); err != nil {
-		http.Error(w, "failed to update settings", http.StatusInternalServerError)
+	if err := h.service.UpdateSettings(r.Context(), settings); err != nil {
+		httputil.HandleError(w, err)
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	httputil.JSON(w, http.StatusOK, nil)
 }

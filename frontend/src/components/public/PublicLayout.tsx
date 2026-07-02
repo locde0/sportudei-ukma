@@ -9,9 +9,9 @@ const NAV_ITEMS = [
   {
     hash: 'mohyla-games',
     label: 'Могилянські ігри',
-    flag: 'is_mohyla_games_enabled' as const,
+    flag: 'is_mohyla_game_enabled' as const,
   },
-  { hash: 'events', label: 'Розклад подій', flag: 'is_schedule_enabled' as const },
+  { hash: 'events', label: 'Події', flag: 'is_events_enabled' as const },
   { hash: 'teams', label: 'Команди', flag: 'is_teams_enabled' as const },
   { hash: 'gallery', label: 'Галерея', flag: 'is_gallery_enabled' as const },
   { hash: 'partners', label: 'Партнери', flag: 'is_partners_enabled' as const },

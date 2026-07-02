@@ -1,29 +1,62 @@
 import { useEffect, useState } from 'react';
-import { fetchMohylaGame, MOHYLA_GAME_ID } from '../../api/games';
+import { Link } from 'react-router-dom';
+import { fetchMohylaGame } from '../../api/games';
+import { fetchTeams } from '../../api/teams';
+import { TeamCard } from '../../components/public/TeamCard';
 import type { MohylaGame } from '../../types/game';
+import type { Team } from '../../types/team';
+import page from '../../styles/publicPage.module.css';
 import styles from './MohylaGamesPage.module.css';
 
 export function MohylaGamesPage() {
   const [game, setGame] = useState<MohylaGame | null>(null);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchMohylaGame(MOHYLA_GAME_ID)
-      .then(setGame)
-      .catch(() => setError('Сторінку не знайдено'))
+    Promise.all([fetchMohylaGame(), fetchTeams()])
+      .then(([gameData, teamsData]) => {
+        setGame(gameData);
+        setTeams(teamsData);
+      })
+      .catch(() => setError('Не вдалося завантажити сторінку'))
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p className={styles.state}>Завантаження...</p>;
-  if (error || !game) return <p className={styles.error}>{error || 'Сторінку не знайдено'}</p>;
-  if (!game.is_published) return <p className={styles.state}>Сторінка тимчасово недоступна</p>;
+  if (loading) return <p className={page.state}>Завантаження...</p>;
+  if (error || !game) return <p className={page.error}>{error || 'Сторінку не знайдено'}</p>;
 
   return (
-    <article className={styles.page}>
-      <h1 className={styles.title}>{game.title}</h1>
-      <p className={styles.lead}>{game.short_description}</p>
-      <div className={styles.content}>{game.content}</div>
+    <article className={page.page}>
+      <Link to="/#mohyla-games" className={page.back}>
+        ← На головну
+      </Link>
+
+      <header className={page.header}>
+        <h1 className={page.title}>{game.title}</h1>
+        {game.description && (
+          <p className={page.subtitle}>{game.description}</p>
+        )}
+      </header>
+
+      {game.content && (
+        <div className={styles.content}>{game.content}</div>
+      )}
+
+      {teams.length > 0 && (
+        <section className={styles.teamsSection}>
+          <h2 className={styles.teamsTitle}>Команди-учасниці</h2>
+          <p className={styles.teamsSubtitle}>
+            Спортивні колективи, що беруть участь у Могилянських іграх
+          </p>
+          <div className={page.grid}>
+            {teams.map((team) => (
+              <TeamCard key={team.id} team={team} />
+            ))}
+          </div>
+        </section>
+      )}
     </article>
   );
 }

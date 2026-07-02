@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { fetchTeams } from '../../api/teams';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { TeamCard } from '../../components/public/TeamCard';
 import type { Team } from '../../types/team';
-import styles from './TeamsPage.module.css';
+import page from '../../styles/publicPage.module.css';
 
 export function TeamsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -11,31 +11,27 @@ export function TeamsPage() {
 
   useEffect(() => {
     fetchTeams()
-      .then((list) => setTeams(list.filter((t) => t.is_active)))
+      .then(setTeams)
       .catch(() => setError('Не вдалося завантажити команди'))
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Команди</h1>
-        <p className={styles.subtitle}>Спортивні колективи студентської організації</p>
+    <div className={page.page}>
+      <header className={page.header}>
+        <h1 className={page.title}>Команди</h1>
+        <p className={page.subtitle}>Спортивні колективи студентської організації</p>
       </header>
 
-      {loading && <p className={styles.state}>Завантаження...</p>}
-      {error && <p className={styles.error}>{error}</p>}
+      {loading && <p className={page.state}>Завантаження...</p>}
+      {error && <p className={page.error}>{error}</p>}
       {!loading && !error && teams.length === 0 && (
-        <p className={styles.state}>Команд поки немає</p>
+        <p className={page.state}>Команд поки немає</p>
       )}
       {!loading && !error && teams.length > 0 && (
-        <div className={styles.grid}>
+        <div className={page.grid}>
           {teams.map((team) => (
-            <article key={team.id} className={styles.card}>
-              <img src={resolveImageUrl(team.logo_url)} alt="" className={styles.logo} />
-              <h2 className={styles.cardTitle}>{team.name}</h2>
-              <p className={styles.description}>{team.description}</p>
-            </article>
+            <TeamCard key={team.id} team={team} />
           ))}
         </div>
       )}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchMohylaGame, MOHYLA_GAME_ID, updateMohylaGame } from '../../api/games';
+import { fetchMohylaGame, updateMohylaGame } from '../../api/games';
 import { AdminField } from '../../components/admin/AdminField';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { AdminSection } from '../../components/admin/AdminSection';
@@ -16,10 +16,10 @@ export function MohylaGamesForm() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    fetchMohylaGame(MOHYLA_GAME_ID)
+    fetchMohylaGame()
       .then((game) => {
         setTitle(game.title);
-        setShortDesc(game.short_description);
+        setShortDesc(game.description);
         setContent(game.content);
       })
       .catch(() => setError('Не вдалося завантажити сторінку'))
@@ -30,11 +30,18 @@ export function MohylaGamesForm() {
     e.preventDefault();
     setError('');
     setSaved(false);
+
+    if (!title.trim() || !shortDesc.trim() || !content.trim()) {
+      setError('Заповніть усі поля');
+      setTimeout(() => setError(''), 3000);
+      return;
+    }
+
     setSubmitting(true);
     try {
-      await updateMohylaGame(MOHYLA_GAME_ID, {
+      await updateMohylaGame({
         title,
-        short_description: shortDesc,
+        description: shortDesc,
         content,
       });
       setSaved(true);

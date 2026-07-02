@@ -1,141 +1,135 @@
 .page {
-  padding: 8rem 1.5rem 4rem;
   max-width: var(--max-content);
   margin: 0 auto;
-  position: relative;
-}
-
-.page::before {
-  content: '';
-  position: absolute;
-  top: -10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60vw;
-  height: 40vw;
-  background: var(--color-accent);
-  filter: blur(150px);
-  opacity: 0.1;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: -1;
+  padding: 3rem 1.5rem 4rem;
 }
 
 .header {
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-border);
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .title {
   font-family: var(--font-heading);
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 900;
-  color: var(--color-text);
+  font-size: 2.5rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
-  margin-bottom: 1rem;
-  line-height: 1;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--color-text), var(--color-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
   color: var(--color-text-muted);
   font-size: 1.125rem;
-  max-width: 35rem;
-  line-height: 1.6;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.5rem;
+.cloud {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem 2rem;
+  margin-top: 1rem;
 }
 
-.card {
+.item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1.25rem;
-  padding: 2.5rem 1.5rem;
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
   text-decoration: none;
   color: inherit;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  padding: 1rem;
+  width: 100%;
+  border-radius: var(--radius-lg);
 }
 
-[data-theme='light'] .card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: var(--shadow-sm);
-}
-
-.card:hover {
-  transform: translateY(-8px);
-  border-color: rgba(138, 224, 40, 0.4);
-  box-shadow: 0 12px 40px rgba(138, 224, 40, 0.15);
-}
-
-a.card {
+a.item {
   cursor: pointer;
 }
 
-.logo {
-  max-width: 140px;
-  max-height: 64px;
-  object-fit: contain;
-  filter: grayscale(100%) opacity(0.7);
-  transition: all 0.3s;
+a.item:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.02);
 }
 
-.card:hover .logo {
+.logoWrapper {
+  height: 80px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  max-width: 160px;
+  max-height: 100%;
+  object-fit: contain;
+  filter: grayscale(100%) opacity(0.65);
+  transition: filter 0.4s ease, transform 0.4s ease;
+}
+
+/* Grayscale turns to full color on hover */
+.item:hover .logo {
   filter: grayscale(0%) opacity(1);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .name {
   font-size: 0.875rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--color-text-muted);
   text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.card:hover .name {
-  color: var(--color-text);
+/* Name appears smoothly on hover */
+.item:hover .name {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .state,
 .error {
   text-align: center;
-  padding: 6rem 2rem;
+  padding: 4rem 1rem;
   color: var(--color-text-muted);
   font-size: 1.125rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--color-border);
-  border-radius: 24px;
-  backdrop-filter: blur(10px);
-}
-
-[data-theme='light'] .state,
-[data-theme='light'] .error {
-  background: rgba(0, 0, 0, 0.02);
 }
 
 .error {
   color: var(--color-danger);
-  border-color: var(--color-danger-bg);
 }
 
 @media (max-width: 600px) {
-  .page {
-    padding: 6rem 1.5rem 3rem;
+  .cloud {
+    gap: 2rem 1rem;
+  }
+  
+  .logoWrapper {
+    height: 60px;
+  }
+  
+  .logo {
+    max-width: 120px;
+  }
+  
+  .name {
+    opacity: 1; /* Always show name on mobile since hover isn't reliable */
+    transform: translateY(0);
+    font-size: 0.75rem;
+  }
+
+  .logo {
+    filter: grayscale(0%) opacity(0.9); /* More color on mobile */
   }
 }

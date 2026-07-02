@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchAlbum } from '../../api/gallery';
 import { EventGallery } from '../../components/public/EventGallery';
 import type { EventPhoto } from '../../types/event';
-import styles from './GalleryAlbumPage.module.css';
+import page from '../../styles/publicPage.module.css';
 
 export function GalleryAlbumPage() {
   const { id } = useParams<{ id: string }>();
@@ -20,32 +20,49 @@ export function GalleryAlbumPage() {
       return;
     }
 
+    let ignore = false;
     fetchAlbum(albumId)
       .then(({ album, photos: albumPhotos }) => {
-        setTitle(album.title);
-        setPhotos(
-          albumPhotos.map((p, index) => ({
-            id: p.id,
-            image_url: p.image_url,
-            is_main: index === 0,
-            display_order: p.display_order,
-          })),
-        );
+        if (!ignore) {
+          setTitle(album.title);
+          setPhotos(
+            albumPhotos.map((p, index) => ({
+              id: p.id,
+              image_url: p.image_url,
+              is_main: index === 0,
+              display_order: p.display_order,
+            })),
+          );
+        }
       })
-      .catch(() => setError('Альбом не знайдено'))
-      .finally(() => setLoading(false));
+      .catch(() => {
+        if (!ignore) setError('Альбом не знайдено');
+      })
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+      
+    return () => {
+      ignore = true;
+    };
   }, [id]);
 
-  if (loading) return <p className={styles.state}>Завантаження...</p>;
-  if (error) return <p className={styles.error}>{error}</p>;
+  if (loading) return <p className={page.state}>Завантаження...</p>;
+  if (error) return <p className={page.error}>{error}</p>;
 
   return (
-    <article className={styles.page}>
-      <Link to="/gallery" className={styles.back}>
+    <article className={page.page}>
+      <Link to="/gallery" className={page.back}>
         ← Назад до галереї
       </Link>
-      <h1 className={styles.title}>{title}</h1>
-      {photos.length > 0 && <EventGallery photos={photos} title={title} />}
+      <header className={page.header}>
+        <h1 className={page.title}>{title}</h1>
+      </header>
+      {photos.length > 0 ? (
+        <EventGallery photos={photos} title={title} />
+      ) : (
+        <p className={page.state}>У цьому альбомі ще немає фото</p>
+      )}
     </article>
   );
 }

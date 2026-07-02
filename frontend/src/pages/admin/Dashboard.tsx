@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { Badge } from '../../components/ui/Badge';
 import { fetchAdminEvents } from '../../api/events';
-import { fetchTeams } from '../../api/teams';
+import { fetchAdminTeams } from '../../api/teams';
 import { fetchAdminPartners } from '../../api/partners';
 import { fetchAdminAlbums } from '../../api/gallery';
 import type { EventListItem } from '../../types/event';
@@ -40,7 +40,7 @@ export function Dashboard() {
   useEffect(() => {
     Promise.all([
       fetchAdminEvents().catch(() => [] as EventListItem[]),
-      fetchTeams().catch(() => [] as Team[]),
+      fetchAdminTeams().catch(() => [] as Team[]),
       fetchAdminPartners().catch(() => [] as Partner[]),
       fetchAdminAlbums().catch(() => [] as GalleryAlbum[]),
     ])

@@ -64,15 +64,17 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
 
     setUploading(true);
     try {
-      let next = [...props.photos];
+      const newPhotos: EventPhoto[] = [];
       for (const file of images) {
-        const uploaded = await props.onUpload(file);
-        next = [...next, uploaded];
+        const p = await props.onUpload(file);
+        newPhotos.push(p);
       }
-      if (!next.some((p) => p.is_main) && next.length > 0) {
-        next = next.map((p, i) => ({ ...p, is_main: i === 0 }));
-      }
-      props.onChange(next);
+      const next = [...props.photos, ...newPhotos];
+      const normalized =
+        !next.some((p) => p.is_main) && next.length > 0
+          ? next.map((p, i) => ({ ...p, is_main: i === 0 }))
+          : next;
+      props.onChange(normalized);
     } catch {
       setError('Не вдалося завантажити фото');
     } finally {

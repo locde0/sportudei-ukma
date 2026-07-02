@@ -4,55 +4,31 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/locde0/sportudei-ukma/backend/db/generated"
-	"github.com/locde0/sportudei-ukma/backend/internal/db"
+	"github.com/locde0/sportudei-ukma/backend/internal/domain"
 )
 
 type SettingsService struct {
-	store *db.Store
+	settings domain.SettingsRepository
 }
 
-func NewSettingsService(store *db.Store) *SettingsService {
-	return &SettingsService{store: store}
+func NewSettingsService(settings domain.SettingsRepository) *SettingsService {
+	return &SettingsService{
+		settings: settings,
+	}
 }
 
-type SiteSettingsDto struct {
-	IsMohylaGamesEnabled bool
-	IsScheduleEnabled    bool
-	IsTeamsEnabled       bool
-	IsPartnersEnabled    bool
-	IsGalleryEnabled     bool
-	IsContactsEnabled    bool
-}
-
-func (s *SettingsService) GetSettings(ctx context.Context) (SiteSettingsDto, error) {
-	settings, err := s.store.GetSettings(ctx)
+func (s *SettingsService) GetSettings(ctx context.Context) (*domain.Settings, error) {
+	settings, err := s.settings.GetSettings(ctx)
 	if err != nil {
-		return SiteSettingsDto{}, fmt.Errorf("failed to fetch site settings from db: %w", err)
+		return nil, fmt.Errorf("get settings: %w", err)
 	}
 
-	return SiteSettingsDto{
-		IsMohylaGamesEnabled: settings.IsMohylaGamesEnabled,
-		IsScheduleEnabled:    settings.IsScheduleEnabled,
-		IsTeamsEnabled:       settings.IsTeamsEnabled,
-		IsPartnersEnabled:    settings.IsPartnersEnabled,
-		IsGalleryEnabled:     settings.IsGalleryEnabled,
-		IsContactsEnabled:    settings.IsContactsEnabled,
-	}, nil
+	return settings, nil
 }
 
-func (s *SettingsService) UpdateSettings(ctx context.Context, dto SiteSettingsDto) error {
-	err := s.store.UpdateSettings(ctx, gen.UpdateSettingsParams{
-		IsMohylaGamesEnabled: dto.IsMohylaGamesEnabled,
-		IsScheduleEnabled:    dto.IsScheduleEnabled,
-		IsTeamsEnabled:       dto.IsTeamsEnabled,
-		IsPartnersEnabled:    dto.IsPartnersEnabled,
-		IsGalleryEnabled:     dto.IsGalleryEnabled,
-		IsContactsEnabled:    dto.IsContactsEnabled,
-	})
-
-	if err != nil {
-		return fmt.Errorf("failed to update site settings in db: %w", err)
+func (s *SettingsService) UpdateSettings(ctx context.Context, settings *domain.Settings) error {
+	if err := s.settings.UpdateSettings(ctx, settings); err != nil {
+		return fmt.Errorf("update settings: %w", err)
 	}
 
 	return nil

@@ -1,8 +1,6 @@
 services:
   db:
     image: postgres:18-alpine
-    env_file: 
-      - .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -13,7 +11,7 @@ services:
       - pgdata:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 3s
+      interval: 5s
       timeout: 3s
       retries: 5
 
@@ -31,7 +29,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./uploads:/app/uploads
+      - ./backend/uploads:/app/uploads
 
   # frontend:
   #   build:

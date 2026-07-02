@@ -1,91 +1,71 @@
 -- name: CreateEvent :one
-INSERT INTO events (
-    title, short_description, content, event_date, location, registration_url, is_published
-) VALUES (
-    $1, $2, $3, $4, $5, $6, $7
-) RETURNING id;
-
--- name: GetAdminEvent :one
-SELECT id, title, short_description, content, event_date, location, registration_url, is_published, status, created_at, updated_at
-FROM events
-WHERE id = $1 LIMIT 1;
-
--- name: GetAdminEvents :many
-SELECT
-    e.id,
-    e.title,
-    e.event_date,
-    e.location,
-    e.is_published,
-    e.status,
-    e.created_at,
-    p.image_url AS main_photo_url
-FROM events e
-    LEFT JOIN event_photos p ON e.id = p.event_id AND p.is_main = true
-ORDER BY e.created_at DESC
-    LIMIT $1 OFFSET $2;
+insert into events (title, description, content, event_date, location, url, is_published)
+values ($1, $2, $3, $4, $5, $6, $7)
+returning *;
 
 -- name: UpdateEvent :exec
-UPDATE events
-SET
+update events
+set
     title = $2,
-    short_description = $3,
+    description = $3,
     content = $4,
     event_date = $5,
     location = $6,
-    registration_url = $7,
-    is_published = $8,
-    status = $9,
-    updated_at = CURRENT_TIMESTAMP
-WHERE id = $1;
+    url = $7,
+    status = $8,
+    is_published = $9
+where id = $1;
 
 -- name: DeleteEvent :exec
-DELETE FROM events
-WHERE id = $1;
+delete from events where id = $1;
 
--- name: GetPublicEventsList :many
-SELECT
-    e.id,
-    e.title,
-    e.short_description,
-    e.event_date,
-    e.location,
-    e.status,
-    p.image_url AS main_photo_url
-FROM events e
-    LEFT JOIN event_photos p ON e.id = p.event_id AND p.is_main = true
-WHERE e.is_published = true
-ORDER BY e.event_date DESC
-    LIMIT $1 OFFSET $2;
+-- name: GetEventByID :one
+select * from events
+where id = $1 and (is_published = true or sqlc.arg('show_all')::bool = true)
+limit 1;
 
--- name: GetPublicEvent :one
-SELECT id, title, short_description, content, event_date, location, registration_url, status
-FROM events
-WHERE id = $1 AND is_published = true LIMIT 1;
+-- name: GetEventsList :many
+select
+    sqlc.embed(e),
+    p.image_path as main_image_path
+from events e
+    left join event_photos p on p.event_id = e.id and p.is_main = true
+where (e.is_published = true or sqlc.arg('show_all')::bool = true)
+order by e.event_date asc
+    limit $1 offset $2;
 
 -- name: AddEventPhoto :one
-INSERT INTO event_photos (
-    event_id, image_url, is_main, display_order
-) VALUES (
-    $1, $2, $3, $4
-) RETURNING id, image_url, is_main, display_order;
-
--- name: GetEventPhotos :many
-SELECT id, event_id, image_url, is_main, display_order, created_at
-FROM event_photos
-WHERE event_id = $1
-ORDER BY display_order ASC;
+insert into event_photos (event_id, image_path, is_main, display_order)
+values ($1, $2, $3, $4)
+returning *;
 
 -- name: UpdateEventPhoto :exec
-UPDATE event_photos
-SET is_main = $1, display_order = $2
-WHERE id = $3 AND event_id = $4;
+update event_photos
+set
+    is_main = $3,
+    display_order = $4
+where id = $1 and event_id = $2;
 
 -- name: DeleteEventPhoto :exec
-DELETE FROM event_photos
-WHERE id = $1;
+delete from event_photos where id = $1;
 
--- name: AutoUpdateEventStatuses :exec
-UPDATE events
-SET status = 'in_progress'
-WHERE status = 'planned' AND event_date <= CURRENT_TIMESTAMP;
+-- name: GetEventPhotosListByEventID :many
+select * from event_photos
+where event_id = $1 and display_order != -1
+order by display_order asc, created_at asc;
+
+-- name: SoftDeleteEventPhotos :exec
+update event_photos
+set display_order = -1
+where event_id = $1
+  and id != all(sqlc.arg('retained_ids')::int[]);
+
+-- name: UpdateEventStatuses :exec
+update events
+set status = 'in_progress'
+where status = 'planned' and event_date <= current_timestamp;
+
+-- name: DeleteOrphanedEventPhotos :many
+delete from event_photos
+where display_order = -1 and created_at < now() - interval '12 hours'
+returning *;

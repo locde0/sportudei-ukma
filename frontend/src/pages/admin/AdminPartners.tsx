@@ -160,7 +160,9 @@ export function AdminPartners() {
     setPartners(next);
     setSavingOrder(true);
     try {
-      await updatePartnerOrder(next.map((p) => p.id));
+      await Promise.all(
+        next.map((partner, index) => updatePartnerOrder(partner.id, index)),
+      );
     } catch {
       setError('Не вдалося зберегти порядок');
       load();

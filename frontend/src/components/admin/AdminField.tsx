@@ -1,11 +1,11 @@
 import {
-  InputHTMLAttributes,
-  SelectHTMLAttributes,
-  TextareaHTMLAttributes,
-  ReactNode,
   useState,
   useRef,
   useEffect,
+  type InputHTMLAttributes,
+  type SelectHTMLAttributes,
+  type TextareaHTMLAttributes,
+  type ReactNode,
 } from 'react';
 import styles from './AdminField.module.css';
 
@@ -94,7 +94,9 @@ export function AdminField(props: InputFieldProps | TextareaFieldProps | SelectF
                     opt.value === selectProps.value ? styles.selectOptionActive : ''
                   }`}
                   onClick={() => {
-                    const e = { target: { value: opt.value } } as any;
+                    const e = {
+                      target: { value: opt.value },
+                    } as unknown as React.ChangeEvent<HTMLSelectElement>;
                     selectProps.onChange?.(e);
                     setIsOpen(false);
                   }}

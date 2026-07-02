@@ -1,0 +1,24 @@
+.logoWrapper {
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+[data-theme='light'] .logoWrapper {
+  background: #f8f9fa;
+}
+
+.logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+:global(.card):hover .logo {
+  transform: scale(1.05);
+}

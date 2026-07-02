@@ -1,25 +1,32 @@
--- name: GetPublicPartners :many
-SELECT id, name, logo_url, link_url, is_active, display_order
-FROM partners
-WHERE is_active = true
-ORDER BY display_order ASC;
-
--- name: GetAdminPartners :many
-SELECT id, name, logo_url, link_url, is_active, display_order
-FROM partners
-ORDER BY display_order ASC;
-
 -- name: CreatePartner :one
-INSERT INTO partners (name, logo_url, link_url, is_active, display_order)
-VALUES ($1, $2, $3, $4, $5) RETURNING id;
+insert into partners (name, logo_path, url, is_active, display_order)
+values ($1, $2, $3, $4, $5)
+returning *;
 
 -- name: UpdatePartner :exec
-UPDATE partners
-SET name = $2, logo_url = $3, link_url = $4, is_active = $5
-WHERE id = $1;
+update partners
+set
+    name = $2,
+    logo_path = $3,
+    url = $4,
+    is_active = $5,
+    display_order = $6
+where id = $1;
 
 -- name: DeletePartner :exec
-DELETE FROM partners WHERE id = $1;
+delete from partners
+where id = $1;
+
+-- name: GetPartnersList :many
+select * from partners
+where (is_active = true or sqlc.arg('show_all')::bool = true)
+order by display_order asc, created_at asc;
+
+-- name: GetPartnerByID :one
+select * from partners
+where id = $1 limit 1;
 
 -- name: UpdatePartnerOrder :exec
-UPDATE partners SET display_order = $2 WHERE id = $1;
+update partners
+set display_order = $2
+where id = $1;

@@ -1,24 +1,36 @@
 package main
 
 import (
-	"log"
+	"context"
+	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
 
+	_ "github.com/locde0/sportudei-ukma/backend/docs"
 	"github.com/locde0/sportudei-ukma/backend/internal/app"
 	"github.com/locde0/sportudei-ukma/backend/internal/config"
 )
 
+// @title           sportudei api
+// @version         1.0
+// @description     sportudei api server
+// @BasePath        /
 func main() {
-	cfg, err := config.Load()
-	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
-	}
+	cfg := config.Load()
 
-	application, err := app.New(cfg)
-	if err != nil {
-		log.Fatalf("failed to initialize app: %v", err)
-	}
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
 
-	if err := application.Run(); err != nil {
-		log.Fatalf("application stopped with error: %v", err)
+	application, err := app.New(ctx, cfg)
+	if err != nil {
+		slog.Error("failed to initialize app", "error", err)
+		os.Exit(1)
+	}
+	defer application.Close()
+
+	if err := application.Run(ctx); err != nil {
+		slog.Error("app stopped with error", "error", err)
+		os.Exit(1)
 	}
 }

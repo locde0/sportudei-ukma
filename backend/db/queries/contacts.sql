@@ -1,21 +1,21 @@
--- name: GetContacts :many
-SELECT id, platform_name, contact_value, display_order
-FROM contacts
-ORDER BY display_order ASC;
-
 -- name: CreateContact :one
-INSERT INTO contacts (platform_name, contact_value, display_order)
-VALUES ($1, $2, $3) RETURNING id;
+insert into contacts (platform, name, url, display_order)
+values ($1, $2, $3, $4)
+returning *;
 
 -- name: UpdateContact :exec
-UPDATE contacts
-SET platform_name = $2, contact_value = $3
-WHERE id = $1;
+update contacts
+set platform = $2, name = $3, url = $4
+where id = $1;
 
 -- name: DeleteContact :exec
-DELETE FROM contacts WHERE id = $1;
+delete from contacts where id = $1;
+
+-- name: GetContactsList :many
+select * from contacts
+order by display_order asc, created_at asc;
 
 -- name: UpdateContactOrder :exec
-UPDATE contacts
-SET display_order = $2
-WHERE id = $1;
+update contacts
+set display_order = $2
+where id = $1;

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { buildTeamFormData, createTeam, fetchTeams, updateTeam } from '../../api/teams';
+import { buildTeamFormData, createTeam, fetchAdminTeam, updateTeam } from '../../api/teams';
 import { AdminField } from '../../components/admin/AdminField';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { AdminSection } from '../../components/admin/AdminSection';
@@ -27,10 +27,8 @@ export function TeamForm() {
 
   useEffect(() => {
     if (!isEdit || !id) return;
-    fetchTeams()
-      .then((list) => {
-        const team = list.find((t) => t.id === Number(id));
-        if (!team) throw new Error('not found');
+    fetchAdminTeam(Number(id))
+      .then((team) => {
         setName(team.name);
         setDescription(team.description);
         setIsActive(team.is_active);
@@ -42,7 +40,7 @@ export function TeamForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || (!isEdit && !logo)) {
+    if (!name.trim() || !description.trim() || (!isEdit && !logo)) {
       setError('Не вдалося зберегти. Перевірте поля та спробуйте ще раз.');
       setTimeout(() => setError(''), 3000);
       return;

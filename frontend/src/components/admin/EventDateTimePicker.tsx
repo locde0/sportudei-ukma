@@ -77,6 +77,7 @@ export function EventDateTimePicker({
     if (!parts) return;
     setViewYear(parts.year);
     setViewMonth(parts.month);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parts?.year, parts?.month]);
 
   useEffect(() => {

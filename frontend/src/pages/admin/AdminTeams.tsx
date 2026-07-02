@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { deleteTeam, fetchTeams } from '../../api/teams';
+import { deleteTeam, fetchAdminTeams } from '../../api/teams';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { Badge } from '../../components/ui/Badge';
 import { Button, LinkButton } from '../../components/ui/Button';
@@ -17,7 +17,7 @@ export function AdminTeams() {
 
   const load = useCallback(() => {
     setLoading(true);
-    fetchTeams()
+    fetchAdminTeams()
       .then(setTeams)
       .catch(() => setError('Не вдалося завантажити команди'))
       .finally(() => setLoading(false));

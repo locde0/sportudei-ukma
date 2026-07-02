@@ -3,228 +3,186 @@ package service
 import (
 	"context"
 	"fmt"
-	"io"
-	"mime/multipart"
-	"os"
-	"path/filepath"
-	"time"
+	"log/slog"
 
-	gen "github.com/locde0/sportudei-ukma/backend/db/generated"
-	"github.com/locde0/sportudei-ukma/backend/internal/db"
+	"github.com/locde0/sportudei-ukma/backend/internal/domain"
 )
 
 type GalleryService struct {
-	store *db.Store
+	gallery domain.GalleryRepository
+	tx      domain.TxManager
+	storage domain.FileStorage
+	log     *slog.Logger
 }
 
-func NewGalleryService(store *db.Store) *GalleryService {
-	return &GalleryService{store: store}
+func NewGalleryService(
+	gallery domain.GalleryRepository,
+	tx domain.TxManager,
+	storage domain.FileStorage,
+	log *slog.Logger,
+) *GalleryService {
+	return &GalleryService{
+		gallery: gallery,
+		tx:      tx,
+		storage: storage,
+		log:     log,
+	}
 }
 
-type GalleryAlbumDto struct {
-	ID            int32
-	Title         string
-	CoverPhotoURL *string
-	IsPublished   bool
-	PhotoCount    int32
-}
+func (s *GalleryService) CreateAlbum(ctx context.Context, album *domain.GalleryAlbum, file *domain.File) error {
+	if err := s.gallery.CreateAlbum(ctx, album); err != nil {
+		return fmt.Errorf("create gallery album: %w", err)
+	}
 
-type GalleryPhotoDto struct {
-	ID           int32
-	AlbumID      int32
-	ImageURL     string
-	DisplayOrder int32
-}
+	if file == nil {
+		return nil
+	}
 
-func (s *GalleryService) savePhoto(fileHeader *multipart.FileHeader) (string, error) {
-	file, err := fileHeader.Open()
+	folderPath := fmt.Sprintf("albums/%d", album.ID)
+	path, err := s.storage.Upload(ctx, *file, folderPath)
 	if err != nil {
-		return "", fmt.Errorf("failed to open uploaded file: %w", err)
-	}
-	defer file.Close()
-
-	ext := filepath.Ext(fileHeader.Filename)
-	newFilename := fmt.Sprintf("gallery_%d%s", time.Now().UnixNano(), ext)
-	savePath := filepath.Join("uploads", newFilename)
-
-	dst, err := os.Create(savePath)
-	if err != nil {
-		return "", fmt.Errorf("failed to create destination file: %w", err)
-	}
-	defer dst.Close()
-
-	if _, err := io.Copy(dst, file); err != nil {
-		return "", fmt.Errorf("failed to save file content: %w", err)
+		s.log.Error("upload initial album photo", slog.String("error", err.Error()))
+		return nil
 	}
 
-	return "/" + filepath.ToSlash(savePath), nil
-}
-
-func (s *GalleryService) ListPublicAlbums(ctx context.Context, limit, offset int32) ([]GalleryAlbumDto, error) {
-	albums, err := s.store.GetPublicAlbums(ctx, gen.GetPublicAlbumsParams{
-		Limit:  limit,
-		Offset: offset,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to get public albums: %w", err)
+	photo := &domain.GalleryPhoto{
+		AlbumID:      album.ID,
+		ImagePath:    path,
+		DisplayOrder: 0,
+	}
+	if err := s.gallery.AddGalleryPhoto(ctx, photo); err != nil {
+		s.log.Error("save initial photo to db", slog.String("error", err.Error()))
+		return nil
 	}
 
-	var dtos []GalleryAlbumDto
-	for _, a := range albums {
-		dtos = append(dtos, GalleryAlbumDto{
-			ID:            a.ID,
-			Title:         a.Title,
-			CoverPhotoURL: fromPgText(a.CoverPhotoUrl),
-			IsPublished:   a.IsPublished,
-			PhotoCount:    a.PhotoCount,
-		})
-	}
-	return dtos, nil
-}
+	album.CoverImagePath = &path
 
-func (s *GalleryService) ListAdminAlbums(ctx context.Context, limit, offset int32) ([]GalleryAlbumDto, error) {
-	albums, err := s.store.GetAdminAlbums(ctx, gen.GetAdminAlbumsParams{
-		Limit:  limit,
-		Offset: offset,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to get admin albums: %w", err)
-	}
-
-	var dtos []GalleryAlbumDto
-	for _, a := range albums {
-		dtos = append(dtos, GalleryAlbumDto{
-			ID:            a.ID,
-			Title:         a.Title,
-			CoverPhotoURL: fromPgText(a.CoverPhotoUrl),
-			IsPublished:   a.IsPublished,
-			PhotoCount:    a.PhotoCount,
-		})
-	}
-	return dtos, nil
-}
-
-func (s *GalleryService) GetAlbum(ctx context.Context, id int32) (GalleryAlbumDto, []GalleryPhotoDto, error) {
-	album, err := s.store.GetAlbum(ctx, id)
-	if err != nil {
-		return GalleryAlbumDto{}, nil, fmt.Errorf("failed to get album: %w", err)
-	}
-
-	photos, err := s.store.GetAlbumPhotos(ctx, id)
-	if err != nil {
-		return GalleryAlbumDto{}, nil, fmt.Errorf("failed to get album photos: %w", err)
-	}
-
-	albumDto := GalleryAlbumDto{
-		ID:            album.ID,
-		Title:         album.Title,
-		CoverPhotoURL: fromPgText(album.CoverPhotoUrl),
-		IsPublished:   album.IsPublished,
-		PhotoCount:    int32(len(photos)),
-	}
-
-	var photoDtos []GalleryPhotoDto
-	for _, p := range photos {
-		photoDtos = append(photoDtos, GalleryPhotoDto{
-			ID:           p.ID,
-			AlbumID:      p.AlbumID,
-			ImageURL:     p.ImageUrl,
-			DisplayOrder: p.DisplayOrder,
-		})
-	}
-
-	return albumDto, photoDtos, nil
-}
-
-func (s *GalleryService) CreateAlbum(ctx context.Context, title string, isPublished bool) (int32, error) {
-	id, err := s.store.CreateAlbum(ctx, gen.CreateAlbumParams{
-		Title:       title,
-		IsPublished: isPublished,
-	})
-	if err != nil {
-		return 0, fmt.Errorf("failed to create album: %w", err)
-	}
-	return id, nil
-}
-
-func (s *GalleryService) UpdateAlbum(ctx context.Context, id int32, title string, isPublished bool, photos []UpdatePhotoDto) error {
-	existingPhotos, err := s.store.GetAlbumPhotos(ctx, id)
-	if err != nil {
-		return fmt.Errorf("failed to get existing photos: %w", err)
-	}
-
-	reqPhotosMap := make(map[int32]UpdatePhotoDto)
-	var coverPhotoURL *string
-
-	for _, p := range photos {
-		reqPhotosMap[p.ID] = p
-	}
-
-	for _, ep := range existingPhotos {
-		if reqPhoto, exists := reqPhotosMap[ep.ID]; exists {
-			err := s.store.UpdateAlbumPhoto(ctx, gen.UpdateAlbumPhotoParams{
-				DisplayOrder: reqPhoto.DisplayOrder,
-				ID:           ep.ID,
-				AlbumID:      id,
-			})
-			if err != nil {
-				return fmt.Errorf("failed to update photo order: %w", err)
-			}
-			if reqPhoto.IsMain {
-				url := ep.ImageUrl
-				coverPhotoURL = &url
-			}
-		} else {
-			err := s.store.DeleteAlbumPhoto(ctx, ep.ID)
-			if err != nil {
-				return fmt.Errorf("failed to delete removed photo: %w", err)
-			}
-		}
-	}
-
-	err = s.store.UpdateAlbum(ctx, gen.UpdateAlbumParams{
-		ID:            id,
-		Title:         title,
-		IsPublished:   isPublished,
-		CoverPhotoUrl: toPgText(coverPhotoURL),
-	})
-	if err != nil {
-		return fmt.Errorf("failed to update album details: %w", err)
+	if err := s.gallery.UpdateAlbum(ctx, album); err != nil {
+		s.log.Error("update album cover", slog.String("error", err.Error()))
 	}
 
 	return nil
+}
+
+func (s *GalleryService) UpdateAlbum(ctx context.Context, album *domain.GalleryAlbum, photos []domain.GalleryPhoto) error {
+	return s.tx.ExecTx(ctx, func(txCtx context.Context) error {
+		if err := s.gallery.UpdateAlbum(txCtx, album); err != nil {
+			return fmt.Errorf("update gallery album: %w", err)
+		}
+
+		retainedIDs := make([]int32, 0, len(photos))
+		for _, photo := range photos {
+			retainedIDs = append(retainedIDs, photo.ID)
+
+			if err := s.gallery.UpdateGalleryPhoto(txCtx, &photo); err != nil {
+				return fmt.Errorf("update gallery photo %d: %w", photo.ID, err)
+			}
+		}
+
+		if err := s.gallery.SoftDeleteGalleryPhotos(txCtx, album.ID, retainedIDs); err != nil {
+			return fmt.Errorf("soft delete gallery photos: %w", err)
+		}
+
+		return nil
+	})
 }
 
 func (s *GalleryService) DeleteAlbum(ctx context.Context, id int32) error {
-	err := s.store.DeleteAlbum(ctx, id)
-	if err != nil {
-		return fmt.Errorf("failed to delete album: %w", err)
+	if err := s.gallery.DeleteAlbum(ctx, id); err != nil {
+		return fmt.Errorf("delete gallery album: %w", err)
 	}
+
+	folderPath := fmt.Sprintf("albums/%d", id)
+
+	if err := s.storage.DeleteDir(ctx, folderPath); err != nil {
+		s.log.Warn("delete event directory from storage",
+			slog.Int("album_id", int(id)),
+			slog.String("error", err.Error()),
+		)
+	}
+
 	return nil
 }
 
-func (s *GalleryService) UploadAlbumPhoto(ctx context.Context, albumID int32, photo *multipart.FileHeader) (GalleryPhotoDto, error) {
-	photoURL, err := s.savePhoto(photo)
+func (s *GalleryService) GetAdminAlbum(ctx context.Context, id int32) (*domain.GalleryAlbum, error) {
+	album, err := s.gallery.GetAdminAlbumByID(ctx, id)
 	if err != nil {
-		return GalleryPhotoDto{}, err
+		return nil, fmt.Errorf("get admin gallery album: %w", err)
 	}
 
-	existingPhotos, _ := s.store.GetAlbumPhotos(ctx, albumID)
-	nextOrder := int32(len(existingPhotos))
+	return album, nil
+}
 
-	newPhoto, err := s.store.AddAlbumPhoto(ctx, gen.AddAlbumPhotoParams{
-		AlbumID:      albumID,
-		ImageUrl:     photoURL,
-		DisplayOrder: nextOrder,
-	})
+func (s *GalleryService) GetPublicAlbum(ctx context.Context, id int32) (*domain.GalleryAlbum, error) {
+	album, err := s.gallery.GetPublicAlbumByID(ctx, id)
 	if err != nil {
-		return GalleryPhotoDto{}, fmt.Errorf("failed to add photo to db: %w", err)
+		return nil, fmt.Errorf("get public gallery album: %w", err)
 	}
 
-	return GalleryPhotoDto{
-		ID:           newPhoto.ID,
+	return album, nil
+}
+
+func (s *GalleryService) ListAdminAlbums(ctx context.Context, limit, offset int32) ([]domain.GalleryAlbum, error) {
+	albums, err := s.gallery.GetAdminAlbumsList(ctx, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("get admin albums list: %w", err)
+	}
+
+	return albums, nil
+}
+
+func (s *GalleryService) ListPublicAlbums(ctx context.Context, limit, offset int32) ([]domain.GalleryAlbum, error) {
+	albums, err := s.gallery.GetPublicAlbumsList(ctx, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("get public albums list: %w", err)
+	}
+
+	return albums, nil
+}
+
+func (s *GalleryService) GetAlbumPhotos(ctx context.Context, id, limit, offset int32) ([]domain.GalleryPhoto, error) {
+	photos, err := s.gallery.GetGalleryPhotosListByAlbumID(ctx, id, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("get gallery photos: %w", err)
+	}
+
+	return photos, nil
+}
+
+func (s *GalleryService) UploadAlbumPhoto(ctx context.Context, albumID int32, file domain.File) (*domain.GalleryPhoto, error) {
+	folderPath := fmt.Sprintf("albums/%d", albumID)
+
+	path, err := s.storage.Upload(ctx, file, folderPath)
+	if err != nil {
+		return nil, fmt.Errorf("upload gallery photo: %w", err)
+	}
+
+	photo := &domain.GalleryPhoto{
 		AlbumID:      albumID,
-		ImageURL:     newPhoto.ImageUrl,
-		DisplayOrder: newPhoto.DisplayOrder,
-	}, nil
+		ImagePath:    path,
+		DisplayOrder: -1,
+	}
+	if err := s.gallery.AddGalleryPhoto(ctx, photo); err != nil {
+		return nil, fmt.Errorf("add gallery photo: %w", err)
+	}
+
+	return photo, nil
+}
+
+func (s *GalleryService) CleanupOrphanedGalleryPhotos(ctx context.Context) error {
+	photos, err := s.gallery.DeleteOrphanedGalleryPhotos(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, photo := range photos {
+		if err := s.storage.Delete(ctx, photo.ImagePath); err != nil {
+			s.log.Error("failed to delete orphaned gallery photo from storage",
+				slog.String("image_path", photo.ImagePath),
+				slog.String("error", err.Error()),
+			)
+		}
+	}
+
+	return nil
 }

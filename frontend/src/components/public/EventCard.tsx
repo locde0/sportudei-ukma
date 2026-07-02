@@ -7,11 +7,9 @@ import styles from './EventCard.module.css';
 
 interface EventCardProps {
   event: PublicEventListItem;
-  /** На головній — лише превʼю без переходу на детальну сторінку */
-  asPreview?: boolean;
 }
 
-export function EventCard({ event, asPreview = false }: EventCardProps) {
+export function EventCard({ event }: EventCardProps) {
   const content = (
       <>
         <div className={styles.imageWrap}>
@@ -25,16 +23,14 @@ export function EventCard({ event, asPreview = false }: EventCardProps) {
           ) : (
               <div className={styles.placeholder}>Без фото</div>
           )}
-          {event.status && (
-              <div className={styles.statusWrap}>
-                <EventStatusBadge status={event.status} />
-              </div>
-          )}
         </div>
         <div className={styles.body}>
-          <time className={styles.date} dateTime={event.event_date}>
-            {formatEventDate(event.event_date)}
-          </time>
+          <div className={styles.meta}>
+            <time className={styles.date} dateTime={event.event_date}>
+              {formatEventDate(event.event_date)}
+            </time>
+            {event.status && <EventStatusBadge status={event.status} />}
+          </div>
           <h3 className={styles.title}>{event.title}</h3>
           <p className={styles.description}>{event.short_description}</p>
           <span className={styles.location}>{event.location}</span>
@@ -42,10 +38,6 @@ export function EventCard({ event, asPreview = false }: EventCardProps) {
       </>
 
   );
-
-  if (asPreview) {
-    return <article className={`${styles.card} ${styles.preview}`}>{content}</article>;
-  }
 
   return (
     <Link to={`/events/${event.id}`} className={styles.card}>

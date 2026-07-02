@@ -26,7 +26,7 @@ export interface PublicEventDetail {
   content: string;
   event_date: string;
   location: string;
-  registration_url: string;
+  registration_url: string | null;
   status: EventStatus;
   photos: EventPhoto[];
 }
@@ -41,7 +41,6 @@ export interface EventListItem {
   is_published: boolean;
   status: EventStatus;
   main_photo_url: string | null;
-  created_at: string;
 }
 
 export interface EventDetail {
@@ -55,8 +54,6 @@ export interface EventDetail {
   is_published: boolean;
   status: EventStatus;
   photos: EventPhoto[];
-  created_at?: string;
-  updated_at?: string;
 }
 
 export interface EventFormData {

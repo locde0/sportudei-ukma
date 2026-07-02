@@ -20,7 +20,6 @@ const PLATFORMS: { value: ContactPlatform; label: string }[] = [
   { value: 'instagram', label: 'Instagram' },
   { value: 'facebook', label: 'Facebook' },
   { value: 'email', label: 'Email' },
-  { value: 'phone', label: 'Телефон' },
 ];
 
 export function AdminContacts() {
@@ -30,7 +29,8 @@ export function AdminContacts() {
   const [savingOrder, setSavingOrder] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [platform, setPlatform] = useState<ContactPlatform>('telegram');
-  const [value, setValue] = useState('');
+  const [name, setName] = useState('');
+  const [url, setUrl] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
@@ -63,13 +63,14 @@ export function AdminContacts() {
   const resetForm = () => {
     setEditingId(null);
     setPlatform('telegram');
-    setValue('');
+    setName('');
+    setUrl('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuccessMsg('');
-    if (!value.trim()) {
+    if (!name.trim() || !url.trim()) {
       setError(
         editingId
           ? 'Не вдалося зберегти. Перевірте поля та спробуйте ще раз.'
@@ -82,9 +83,14 @@ export function AdminContacts() {
     setError('');
     try {
       if (editingId) {
-        await updateContact(editingId, { platform_name: platform, contact_value: value.trim() });
+        await updateContact(editingId, { platform, name: name.trim(), url: url.trim() });
       } else {
-        await createContact({ platform_name: platform, contact_value: value.trim() });
+        await createContact({
+          platform,
+          name: name.trim(),
+          url: url.trim(),
+          displayOrder: contacts.length,
+        });
       }
       const msg = editingId ? 'Зміни успішно збережено!' : 'Контакт успішно додано!';
       resetForm();
@@ -129,7 +135,9 @@ export function AdminContacts() {
     setContacts(next);
     setSavingOrder(true);
     try {
-      await updateContactOrder(next.map((c) => c.id));
+      await Promise.all(
+        next.map((contact, index) => updateContactOrder(contact.id, index)),
+      );
     } catch {
       setError('Не вдалося зберегти порядок');
       load();
@@ -162,11 +170,19 @@ export function AdminContacts() {
               required
             />
             <AdminField
-              label="Значення"
-              name="value"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder="@username, email або телефон"
+              label="Назва"
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Sportudei UKMA"
+              required
+            />
+            <AdminField
+              label="Посилання"
+              name="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://t.me/... або mailto:..."
               required
             />
           </div>
@@ -210,11 +226,12 @@ export function AdminContacts() {
                 <div className={listStyles.body}>
                   <h2 className={listStyles.title}>
                     <span className={listStyles.id} style={{ marginRight: '0.5rem' }}>#{index + 1}</span>
-                    {PLATFORMS.find((p) => p.value === contact.platform_name)?.label ??
-                      contact.platform_name}
+                    {PLATFORMS.find((p) => p.value === contact.platform)?.label ??
+                      contact.platform}
                   </h2>
                   <div className={listStyles.details}>
-                    <span className={listStyles.detail}>{contact.contact_value}</span>
+                    <span className={listStyles.detail}>{contact.name}</span>
+                    <span className={listStyles.detailMuted}>{contact.url}</span>
                   </div>
                 </div>
                 <div className={listStyles.actions} style={{ marginLeft: 'auto' }}>
@@ -223,8 +240,9 @@ export function AdminContacts() {
                     size="sm"
                     onClick={() => {
                       setEditingId(contact.id);
-                      setPlatform(contact.platform_name);
-                      setValue(contact.contact_value);
+                      setPlatform(contact.platform);
+                      setName(contact.name);
+                      setUrl(contact.url);
                     }}
                   >
                     Редагувати

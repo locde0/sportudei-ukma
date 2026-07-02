@@ -6,155 +6,197 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
+	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	rootdb "github.com/locde0/sportudei-ukma/backend/db"
+	rdb "github.com/locde0/sportudei-ukma/backend/db"
+	"github.com/locde0/sportudei-ukma/backend/internal/auth"
 	"github.com/locde0/sportudei-ukma/backend/internal/config"
-	internaldb "github.com/locde0/sportudei-ukma/backend/internal/db"
+	idb "github.com/locde0/sportudei-ukma/backend/internal/db"
 	"github.com/locde0/sportudei-ukma/backend/internal/email"
 	"github.com/locde0/sportudei-ukma/backend/internal/handler"
 	"github.com/locde0/sportudei-ukma/backend/internal/middleware"
+	"github.com/locde0/sportudei-ukma/backend/internal/pkg/fileutil"
+	"github.com/locde0/sportudei-ukma/backend/internal/repository/postgres"
+	"github.com/locde0/sportudei-ukma/backend/internal/router"
 	"github.com/locde0/sportudei-ukma/backend/internal/service"
+	"github.com/locde0/sportudei-ukma/backend/internal/worker"
 )
 
-type App struct {
-	server *http.Server
-	pool   *pgxpool.Pool
-	log    *slog.Logger
-	store  *internaldb.Store
+type Worker interface {
+	Start(ctx context.Context)
+	Name() string
 }
 
-func New(cfg *config.Config) (*App, error) {
+type App struct {
+	server  *http.Server
+	pool    *pgxpool.Pool
+	tx      *postgres.TxManager
+	log     *slog.Logger
+	workers []Worker
+}
+
+func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
-	pool, err := internaldb.NewPool(context.Background(), cfg.DbURL)
+	pool, err := idb.NewPool(ctx, cfg.DbURL)
 	if err != nil {
-		return nil, fmt.Errorf("db initialization failed: %w", err)
+		return nil, fmt.Errorf("database: %w", err)
 	}
 
 	if cfg.RunMigrations {
-		err := internaldb.RunMigrations(cfg.DbURL, logger, rootdb.MigrationsFS)
-		if err != nil {
-			return nil, fmt.Errorf("migration failed: %w", err)
+		if err := idb.RunMigrations(cfg.DbURL, logger, rdb.MigrationsFS); err != nil {
+			pool.Close()
+			return nil, fmt.Errorf("migrations: %w", err)
 		}
 	}
 
-	if err := os.MkdirAll("uploads", 0755); err != nil {
-		return nil, fmt.Errorf("failed to create uploads directory: %w", err)
+	uploadSubDirs := []string{
+		cfg.UploadDir,
+		filepath.Join(cfg.UploadDir, "events"),
+		filepath.Join(cfg.UploadDir, "albums"),
+		filepath.Join(cfg.UploadDir, "partners"),
+		filepath.Join(cfg.UploadDir, "teams"),
+	}
+	for _, dir := range uploadSubDirs {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			pool.Close()
+			return nil, fmt.Errorf("create upload dir %s: %w", dir, err)
+		}
 	}
 
-	store := internaldb.NewStore(pool)
-	router := handler.NewRouter(cfg.JWTSecret)
+	txManager := postgres.NewTxManager(pool)
 
-	mailer, err := email.NewSMTPMailer(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUsername, cfg.SMTPPassword)
+	tokenProvider := auth.NewJWTProvider(cfg.JWTSecret, cfg.JWTAccessExpDays, cfg.JWTRefreshExpDays)
+	passwordHasher := auth.NewBcryptHasher()
+
+	mailer, err := email.NewSMTPSender(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPass, cfg.SMTPFrom)
 	if err != nil {
-		return nil, fmt.Errorf("failed to initialize mailer: %w", err)
+		pool.Close()
+		return nil, fmt.Errorf("mailer: %w", err)
 	}
 
-	authMiddleware := middleware.Auth(cfg.JWTSecret)
+	storage := fileutil.NewLocalStorage(cfg.UploadDir)
 
-	authService := service.NewAuthService(store, mailer, cfg.JWTSecret, cfg.JWTAccessExpDays, cfg.JWTRefreshExpDays)
-	eventService := service.NewEventService(store)
-	settingsService := service.NewSettingsService(store)
-	contactService := service.NewContactService(store)
-	partnerService := service.NewPartnerService(store)
-	galleryService := service.NewGalleryService(store)
-	gameService := service.NewGameService(store)
+	userRepo := postgres.NewUserRepo(txManager)
+	eventRepo := postgres.NewEventRepo(txManager)
+	galleryRepo := postgres.NewGalleryRepo(txManager)
+	contactRepo := postgres.NewContactRepo(txManager)
+	partnerRepo := postgres.NewPartnerRepo(txManager)
+	teamRepo := postgres.NewTeamRepo(txManager)
+	mohylaGameRepo := postgres.NewMohylaGameRepo(txManager)
+	settingsRepo := postgres.NewSettingsRepo(txManager)
 
-	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays)
+	authService := service.NewAuthService(userRepo, tokenProvider, passwordHasher, mailer)
+	eventService := service.NewEventService(eventRepo, txManager, storage, logger)
+	galleryService := service.NewGalleryService(galleryRepo, txManager, storage, logger)
+	contactService := service.NewContactService(contactRepo)
+	partnerService := service.NewPartnerService(partnerRepo, storage, logger)
+	teamService := service.NewTeamService(teamRepo, storage, logger)
+	mohylaGameService := service.NewMohylaGameService(mohylaGameRepo)
+	settingsService := service.NewSettingsService(settingsRepo)
+
+	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays, cfg.IsProd())
 	eventHandler := handler.NewEventHandler(eventService)
-	settingsHandler := handler.NewSettingsHandler(settingsService)
+	galleryHandler := handler.NewGalleryHandler(galleryService)
 	contactHandler := handler.NewContactHandler(contactService)
 	partnerHandler := handler.NewPartnerHandler(partnerService)
-	galleryHandler := handler.NewGalleryHandler(galleryService)
-	gameHandler := handler.NewGameHandler(gameService)
+	teamHandler := handler.NewTeamHandler(teamService)
+	mohylaGameHandler := handler.NewMohylaGameHandler(mohylaGameService)
+	settingsHandler := handler.NewSettingsHandler(settingsService)
 
-	authHandler.RegisterRoutes(router)
-	eventHandler.RegisterRoutes(router, authMiddleware)
-	settingsHandler.RegisterRoutes(router, authMiddleware)
-	contactHandler.RegisterRoutes(router, authMiddleware)
-	partnerHandler.RegisterRoutes(router, authMiddleware)
-	galleryHandler.RegisterRoutes(router, authMiddleware)
-	gameHandler.RegisterRoutes(router, authMiddleware)
+	authMw := middleware.Auth(tokenProvider)
+
+	mux := router.New(
+		cfg.CORSOrigins,
+		cfg.UploadDir,
+		cfg.IsProd(),
+		authMw,
+		authHandler,
+		eventHandler,
+		galleryHandler,
+		contactHandler,
+		partnerHandler,
+		teamHandler,
+		mohylaGameHandler,
+		settingsHandler,
+	)
+
+	var httpHandler http.Handler = mux
+	httpHandler = middleware.Logging(logger)(httpHandler)
+	httpHandler = middleware.Recovery(logger)(httpHandler)
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,
-		Handler:      router,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		Handler:      httpHandler,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
 	}
 
+	var workers []Worker
+
+	photoCleanupWorker := worker.NewPhotoCleanupWorker(eventService, galleryService, logger, 1*time.Hour)
+	workers = append(workers, photoCleanupWorker)
+
+	eventStatusWorker := worker.NewEventStatusWorker(eventService, logger, 5*time.Minute)
+	workers = append(workers, eventStatusWorker)
+
 	return &App{
-		server: srv,
-		pool:   pool,
-		log:    logger,
-		store:  store,
+		server:  srv,
+		pool:    pool,
+		tx:      txManager,
+		log:     logger,
+		workers: workers,
 	}, nil
 }
 
-func (a *App) Run() error {
-	serverErrors := make(chan error, 1)
+func (a *App) Run(ctx context.Context) error {
+	workerCtx, cancelWorkers := context.WithCancel(context.Background())
+	var wg sync.WaitGroup
 
-	workerCtx, workerCancel := context.WithCancel(context.Background())
-	defer workerCancel()
+	for _, w := range a.workers {
+		wg.Add(1)
+		go func(wrk Worker) {
+			defer wg.Done()
+			a.log.Info("starting background worker", slog.String("name", wrk.Name()))
+			wrk.Start(workerCtx)
+			a.log.Info("background worker stopped", slog.String("name", wrk.Name()))
+		}(w)
+	}
 
-	go a.runBackgroundWorkers(workerCtx)
-
+	serverErr := make(chan error, 1)
 	go func() {
 		a.log.Info("starting server", slog.String("addr", a.server.Addr))
-		serverErrors <- a.server.ListenAndServe()
+		serverErr <- a.server.ListenAndServe()
 	}()
 
-	shutdown := make(chan os.Signal, 1)
-	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
-
 	select {
-	case err := <-serverErrors:
+	case err := <-serverErr:
+		cancelWorkers()
+		wg.Wait()
 		return fmt.Errorf("server error: %w", err)
 
-	case sig := <-shutdown:
-		a.log.Info("graceful shutdown started", slog.String("signal", sig.String()))
-
-		workerCancel()
-
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	case <-ctx.Done():
+		a.log.Info("shutting down server", slog.String("addr", a.server.Addr))
+		sdCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		err := a.server.Shutdown(ctx)
-		if err != nil {
-			a.server.Close()
-			return fmt.Errorf("could not stop server gracefully: %w", err)
+		if err := a.server.Shutdown(sdCtx); err != nil {
+			a.log.Error("shutdown server", slog.String("error", err.Error()))
 		}
 
-		a.pool.Close()
-		a.log.Info("server stopped")
-	}
+		cancelWorkers()
+		wg.Wait()
 
-	return nil
+		a.log.Info("server stopped gracefully")
+		return nil
+	}
 }
 
-func (a *App) runBackgroundWorkers(ctx context.Context) {
-	ticker := time.NewTicker(5 * time.Minute)
-	defer ticker.Stop()
-
-	err := a.store.AutoUpdateEventStatuses(ctx)
-	if err != nil {
-		a.log.Error("failed to initial auto-update event statuses", slog.String("error", err.Error()))
-	}
-
-	for {
-		select {
-		case <-ctx.Done():
-			a.log.Info("stopping background workers")
-			return
-		case <-ticker.C:
-			err := a.store.AutoUpdateEventStatuses(ctx)
-			if err != nil {
-				a.log.Error("failed to auto-update event statuses", slog.String("error", err.Error()))
-			}
-		}
-	}
+func (a *App) Close() {
+	a.pool.Close()
+	a.log.Info("resources released")
 }

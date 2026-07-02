@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
+  buildCreateEventFormData,
   createEvent,
   fetchAdminEvent,
   updateEvent,
@@ -91,28 +92,23 @@ export function EventForm() {
     };
   }, []);
 
-  const buildCreateFormData = (): FormData => {
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('short_description', shortDesc);
-    formData.append('content', content);
-    formData.append('event_date', new Date(eventDate).toISOString());
-    formData.append('location', location);
-    if (registrationUrl) formData.append('registration_url', registrationUrl);
-    formData.append('is_published', String(isPublished));
-
-    const mainIndex = localItems.findIndex((i) => i.isMain);
-    formData.append('main_photo_index', String(mainIndex >= 0 ? mainIndex : 0));
-
-    localItems.forEach((item) => formData.append('photos', item.file));
-    return formData;
-  };
+  const buildCreateFormData = (): FormData =>
+    buildCreateEventFormData({
+      title,
+      short_description: shortDesc,
+      content,
+      event_date: new Date(eventDate).toISOString(),
+      location,
+      registration_url: registrationUrl,
+      is_published: isPublished,
+      photos: localItems.map((item) => item.file),
+    });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!title.trim() || !eventDate || !location.trim()) {
+    if (!title.trim() || !eventDate || !location.trim() || !content.trim()) {
       setError('Не вдалося зберегти. Перевірте поля та спробуйте ще раз.');
       setTimeout(() => setError(''), 3000);
       return;

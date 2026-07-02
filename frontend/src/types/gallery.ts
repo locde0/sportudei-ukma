@@ -3,12 +3,10 @@ export interface GalleryAlbum {
   title: string;
   cover_photo_url: string | null;
   is_published: boolean;
-  photo_count: number;
 }
 
 export interface GalleryPhoto {
   id: number;
-  album_id: number;
   image_url: string;
   display_order: number;
 }
@@ -25,12 +23,12 @@ export interface CreateAlbumPayload {
 
 export interface UpdateAlbumPhotoPayload {
   id: number;
-  is_main: boolean;
   display_order: number;
 }
 
 export interface UpdateAlbumPayload {
   title: string;
   is_published: boolean;
+  cover_image_path?: string | null;
   photos: UpdateAlbumPhotoPayload[];
 }

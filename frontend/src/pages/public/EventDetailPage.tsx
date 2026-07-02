@@ -42,10 +42,6 @@ export function EventDetailPage() {
 
       <div className={styles.meta}>
         <div className={styles.metaItem}>
-          <strong>Статус</strong>
-          {event.status && <EventStatusBadge status={event.status} />}
-        </div>
-        <div className={styles.metaItem}>
           <strong>Дата</strong>
           {formatEventDateTime(event.event_date)}
         </div>
@@ -59,6 +55,10 @@ export function EventDetailPage() {
             {event.photos.length} знімків
           </div>
         )}
+        <div className={`${styles.metaItem} ${styles.metaStatus}`}>
+          <strong>Статус</strong>
+          {event.status && <EventStatusBadge status={event.status} />}
+        </div>
       </div>
 
       <h1 className={styles.title}>{event.title}</h1>
