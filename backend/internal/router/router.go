@@ -14,6 +14,7 @@ import (
 func New(
 	corsOrigins []string,
 	uploadDir string,
+	isProd bool,
 	authMw func(http.Handler) http.Handler,
 	authHandler *handler.AuthHandler,
 	eventHandler *handler.EventHandler,
@@ -36,8 +37,12 @@ func New(
 		MaxAge:           300,
 	}))
 
-	fileServer := http.FileServer(http.Dir(uploadDir))
-	r.Handle("/uploads/*", http.StripPrefix("/uploads/", fileServer))
+	// In production, nginx serves /uploads/ directly for better performance.
+	// In dev, the Go backend serves them as a convenience.
+	if !isProd {
+		fileServer := http.FileServer(http.Dir(uploadDir))
+		r.Handle("/uploads/*", http.StripPrefix("/uploads/", fileServer))
+	}
 
 	r.Get("/api/health", HealthCheck)
 

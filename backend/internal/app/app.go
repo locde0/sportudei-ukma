@@ -112,6 +112,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	mux := router.New(
 		cfg.CORSOrigins,
 		cfg.UploadDir,
+		cfg.IsProd(),
 		authMw,
 		authHandler,
 		eventHandler,
