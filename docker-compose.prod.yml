@@ -1,10 +1,9 @@
 # ============================================================================
-# sportudei-ukma — PRODUCTION docker-compose
+# sportudei — PRODUCTION
 # Usage: docker compose -f docker-compose.prod.yml up -d --build
 # ============================================================================
 
 services:
-  # ─── PostgreSQL ──────────────────────────────────────────────────────
   db:
     image: postgres:18-alpine
     restart: unless-stopped
@@ -16,19 +15,16 @@ services:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
-      start_period: 10s
-    networks:
-      - internal
+      retries: 10
+      start_period: 30s
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
 
-  # ─── Go Backend (API) ───────────────────────────────────────────────
   backend:
     build:
       context: ./backend
@@ -43,47 +39,27 @@ services:
         condition: service_healthy
     volumes:
       - uploads:/app/uploads
-    networks:
-      - internal
-      - web
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
 
-  # ─── Frontend (init container — builds and copies static files) ─────
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_URL: ${VITE_API_URL:-/api}
-        VITE_MEDIA_URL: ${VITE_MEDIA_URL:-}
-        VITE_USE_MOCK: "false"
-    # Copy built dist into the shared volume, then exit
-    entrypoint: ["sh", "-c", "cp -r /app/dist/* /frontend_dist/ && echo 'Frontend files copied successfully'"]
-    volumes:
-      - frontend_dist:/frontend_dist
-
-  # ─── Nginx (reverse proxy + static files) ──────────────────────────
   nginx:
     build:
-      context: ./nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: nginx/Dockerfile
+      args:
+        VITE_API_URL: /api
+        VITE_MEDIA_URL: ""
     restart: unless-stopped
     ports:
       - "80:80"
     volumes:
-      - frontend_dist:/usr/share/nginx/html:ro
       - uploads:/app/uploads:ro
     depends_on:
-      frontend:
-        condition: service_completed_successfully
       backend:
         condition: service_started
-    networks:
-      - web
     logging:
       driver: json-file
       options:
@@ -92,15 +68,4 @@ services:
 
 volumes:
   pgdata:
-    driver: local
   uploads:
-    driver: local
-  frontend_dist:
-    driver: local
-
-networks:
-  internal:
-    driver: bridge
-    internal: true
-  web:
-    driver: bridge
