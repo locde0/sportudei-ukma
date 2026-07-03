@@ -1,3 +1,9 @@
+# ============================================================================
+# sportudei — DEV
+# Usage: docker compose up -d
+# Frontend: run separately with `cd frontend && npm run dev`
+# ============================================================================
+
 services:
   db:
     image: postgres:18-alpine
@@ -8,15 +14,16 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 3s
       retries: 5
+      start_period: 10s
 
   backend:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
     env_file:
@@ -30,18 +37,6 @@ services:
         condition: service_healthy
     volumes:
       - ./backend/uploads:/app/uploads
-
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "5173:5173"
-  #   volumes:
-  #     - ./frontend:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - backend
 
 volumes:
   pgdata:

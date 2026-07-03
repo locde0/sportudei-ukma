@@ -1,0 +1,8 @@
+.git
+.idea
+.env
+.env.production
+frontend/node_modules
+frontend/dist
+backend/.idea
+backend/tmp
