@@ -1,4 +1,4 @@
-import { useRef, useState, type DragEvent } from 'react';
+import { useEffect, useRef, useState, type DragEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createAlbum, fetchAdminAlbums } from '../../api/gallery';
 import { AdminField } from '../../components/admin/AdminField';

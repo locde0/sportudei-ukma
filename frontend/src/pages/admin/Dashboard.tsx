@@ -5,12 +5,8 @@ import { Badge } from '../../components/ui/Badge';
 import { LinkButton } from '../../components/ui/Button';
 import { fetchAdminEvents } from '../../api/events';
 import { fetchAdminTeams } from '../../api/teams';
-import { fetchAdminPartners } from '../../api/partners';
-import { fetchAdminAlbums } from '../../api/gallery';
 import type { EventListItem } from '../../types/event';
 import type { Team } from '../../types/team';
-import type { Partner } from '../../types/partner';
-import type { GalleryAlbum } from '../../types/gallery';
 import { formatEventDate } from '../../utils/date';
 import { resolveImageUrl } from '../../utils/imageUrl';
 import styles from './Dashboard.module.css';
@@ -18,22 +14,16 @@ import styles from './Dashboard.module.css';
 export function Dashboard() {
   const [events, setEvents] = useState<EventListItem[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
-  const [partners, setPartners] = useState<Partner[]>([]);
-  const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       fetchAdminEvents().catch(() => [] as EventListItem[]),
       fetchAdminTeams().catch(() => [] as Team[]),
-      fetchAdminPartners().catch(() => [] as Partner[]),
-      fetchAdminAlbums().catch(() => [] as GalleryAlbum[]),
     ])
-      .then(([eventsData, teamsData, partnersData, albumsData]) => {
+      .then(([eventsData, teamsData]) => {
         setEvents(eventsData);
         setTeams(teamsData);
-        setPartners(partnersData);
-        setAlbums(albumsData);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -155,19 +145,19 @@ export function Dashboard() {
         <section className={styles.widget}>
           <h2 className={styles.widgetHeader}>Швидкі дії</h2>
           <div className={styles.list}>
-            <LinkButton to="/admin/events/new" variant="secondary" fullWidth style={{ justifyContent: 'center' }}>
+            <LinkButton to="/admin/events/new" variant="secondary" style={{ width: '100%', justifyContent: 'center' }}>
               Створити подію
             </LinkButton>
-            <LinkButton to="/admin/teams/new" variant="secondary" fullWidth style={{ justifyContent: 'center' }}>
+            <LinkButton to="/admin/teams/new" variant="secondary" style={{ width: '100%', justifyContent: 'center' }}>
               Додати команду
             </LinkButton>
-            <LinkButton to="/admin/partners/new" variant="secondary" fullWidth style={{ justifyContent: 'center' }}>
+            <LinkButton to="/admin/partners/new" variant="secondary" style={{ width: '100%', justifyContent: 'center' }}>
               Новий партнер
             </LinkButton>
-            <LinkButton to="/admin/gallery" variant="secondary" fullWidth style={{ justifyContent: 'center' }}>
+            <LinkButton to="/admin/gallery" variant="secondary" style={{ width: '100%', justifyContent: 'center' }}>
               Фотоальбоми
             </LinkButton>
-            <LinkButton to="/admin/settings" variant="secondary" fullWidth style={{ justifyContent: 'center' }}>
+            <LinkButton to="/admin/settings" variant="secondary" style={{ width: '100%', justifyContent: 'center' }}>
               Налаштування сайту
             </LinkButton>
           </div>
