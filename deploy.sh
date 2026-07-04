@@ -39,7 +39,7 @@ else
     echo "  FAIL: backend — check: $COMPOSE logs backend"
 fi
 
-if docker compose -f docker-compose.prod.yml exec -T nginx wget -qO- http://localhost/nginx-health > /dev/null 2>&1; then
+if docker compose -f docker-compose.prod.yml exec -T nginx wget -qO- http://127.0.0.1/nginx-health > /dev/null 2>&1; then
     echo "  OK: nginx"
 else
     echo "  FAIL: nginx — check: $COMPOSE logs nginx"
