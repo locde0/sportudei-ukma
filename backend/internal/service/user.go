@@ -56,9 +56,7 @@ func (s *AuthService) Login(ctx context.Context, email, password string) error {
 	}
 
 	if err := s.mailer.SendOTPCode(email, code); err != nil {
-		fmt.Printf("WARNING: Failed to send OTP email to %s (Error: %v)\n", email, err)
-		fmt.Printf("🔑 YOUR OTP CODE IS: %s\n", code)
-		// We do not return an error here so the login can proceed without a real SMTP server
+		return fmt.Errorf("send otp: %w", err)
 	}
 
 	return nil
