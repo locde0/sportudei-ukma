@@ -18,11 +18,8 @@ type Config struct {
 	JWTAccessExpDays  int
 	JWTRefreshExpDays int
 
-	SMTPHost string
-	SMTPPort string
-	SMTPUser string
-	SMTPPass string
-	SMTPFrom string
+	ResendAPIKey string
+	EmailFrom    string
 
 	CORSOrigins []string
 
@@ -38,11 +35,8 @@ func Load() *Config {
 		JWTSecret:         os.Getenv("JWT_SECRET"),
 		JWTAccessExpDays:  envInt("JWT_ACCESS_EXP_DAYS", 1),
 		JWTRefreshExpDays: envInt("JWT_REFRESH_EXP_DAYS", 3),
-		SMTPHost:          os.Getenv("SMTP_HOST"),
-		SMTPPort:          os.Getenv("SMTP_PORT"),
-		SMTPUser:          os.Getenv("SMTP_USER"),
-		SMTPPass:          os.Getenv("SMTP_PASS"),
-		SMTPFrom:          envOr("SMTP_FROM", "noreply@sportudei.com"),
+		ResendAPIKey:      os.Getenv("RESEND_API_KEY"),
+		EmailFrom:         envOr("EMAIL_FROM", "noreply@sportudei.com"),
 		CORSOrigins:       strings.Split(envOr("CORS_ORIGINS", "http://localhost:*"), ","),
 		UploadDir:         envOr("UPLOAD_DIR", "uploads"),
 	}
@@ -68,8 +62,8 @@ func (c *Config) validate() error {
 	if len(c.JWTSecret) < 32 {
 		return fmt.Errorf("JWT_SECRET must be at least 32 characters")
 	}
-	if c.SMTPHost == "" {
-		return fmt.Errorf("SMTP_HOST is required")
+	if c.ResendAPIKey == "" {
+		return fmt.Errorf("RESEND_API_KEY is required")
 	}
 	return nil
 }

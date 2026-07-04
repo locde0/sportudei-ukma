@@ -72,7 +72,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	tokenProvider := auth.NewJWTProvider(cfg.JWTSecret, cfg.JWTAccessExpDays, cfg.JWTRefreshExpDays)
 	passwordHasher := auth.NewBcryptHasher()
 
-	mailer, err := email.NewSMTPSender(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPass, cfg.SMTPFrom)
+	mailer, err := email.NewResendSender(cfg.ResendAPIKey, cfg.EmailFrom)
 	if err != nil {
 		pool.Close()
 		return nil, fmt.Errorf("mailer: %w", err)

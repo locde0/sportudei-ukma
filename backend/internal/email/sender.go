@@ -5,7 +5,8 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
-	"net/smtp"
+
+	"github.com/resend/resend-go/v2"
 )
 
 //go:embed templates/*.html
@@ -15,44 +16,44 @@ type EmailSender interface {
 	SendOTPCode(email, code string) error
 }
 
-type SMTPSender struct {
-	host     string
-	port     string
-	username string
-	password string
-	from     string
-	tmpl     *template.Template
+type ResendSender struct {
+	client *resend.Client
+	from   string
+	tmpl   *template.Template
 }
 
-func NewSMTPSender(host, port, username, password, from string) (*SMTPSender, error) {
+func NewResendSender(apiKey, from string) (*ResendSender, error) {
 	tmpl, err := template.ParseFS(templateFS, "templates/*.html")
 	if err != nil {
 		return nil, fmt.Errorf("parse email templates: %w", err)
 	}
-	return &SMTPSender{
-		host:     host,
-		port:     port,
-		username: username,
-		password: password,
-		from:     from,
-		tmpl:     tmpl,
+	
+	client := resend.NewClient(apiKey)
+	
+	return &ResendSender{
+		client: client,
+		from:   from,
+		tmpl:   tmpl,
 	}, nil
 }
 
-func (s *SMTPSender) SendOTPCode(email, code string) error {
+func (s *ResendSender) SendOTPCode(email, code string) error {
 	var body bytes.Buffer
 	if err := s.tmpl.ExecuteTemplate(&body, "otp.html", struct{ Code string }{Code: code}); err != nil {
 		return fmt.Errorf("execute otp template: %w", err)
 	}
 
-	msg := fmt.Sprintf(
-		"From: %s\r\nTo: %s\r\nSubject: Код доступу до адмінки\r\n"+
-			"MIME-version: 1.0\r\nContent-Type: text/html; charset=\"UTF-8\"\r\n\r\n%s",
-		s.from, email, body.String(),
-	)
+	params := &resend.SendEmailRequest{
+		From:    s.from,
+		To:      []string{email},
+		Subject: "Код доступу до адмінки",
+		Html:    body.String(),
+	}
 
-	auth := smtp.PlainAuth("", s.username, s.password, s.host)
-	addr := fmt.Sprintf("%s:%s", s.host, s.port)
+	_, err := s.client.Emails.Send(params)
+	if err != nil {
+		return fmt.Errorf("send resend email: %w", err)
+	}
 
-	return smtp.SendMail(addr, auth, s.from, []string{email}, []byte(msg))
+	return nil
 }
