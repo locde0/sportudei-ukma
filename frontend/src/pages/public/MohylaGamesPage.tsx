@@ -41,22 +41,27 @@ export function MohylaGamesPage() {
       </header>
 
       {game.content && (
-        <div className={styles.content}>{game.content}</div>
+        <div className={styles.prose}>
+          {game.content}
+        </div>
       )}
 
-      {teams.length > 0 && (
-        <section className={styles.teamsSection}>
-          <h2 className={styles.teamsTitle}>Команди-учасниці</h2>
-          <p className={styles.teamsSubtitle}>
-            Спортивні колективи, що беруть участь у Могилянських іграх
-          </p>
+      <section className={styles.teamsSection}>
+        <h2 className={styles.teamsTitle}>Учасники</h2>
+        <p className={styles.teamsSubtitle}>
+          Спортивні колективи, що беруть участь у Могилянських іграх
+        </p>
+        
+        {teams.length === 0 ? (
+          <p className={page.empty}>Наразі немає зареєстрованих команд</p>
+        ) : (
           <div className={page.grid}>
             {teams.map((team) => (
               <TeamCard key={team.id} team={team} />
             ))}
           </div>
-        </section>
-      )}
+        )}
+      </section>
     </article>
   );
 }

@@ -23,6 +23,12 @@ export function AdminPartners() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+
+  useEffect(() => {
+    if (error || successMsg) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [error, successMsg]);
   const [savingOrder, setSavingOrder] = useState(false);
   const [confirmId, setConfirmId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);

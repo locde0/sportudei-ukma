@@ -27,6 +27,12 @@ export function PartnerForm() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    if (error) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [error]);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDraggingFiles, setIsDraggingFiles] = useState(false);
 

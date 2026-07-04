@@ -48,6 +48,12 @@ export function EventForm() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (error) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [error]);
+
+  useEffect(() => {
     if (!isEdit) {
       localItemsRef.current.forEach((item) => URL.revokeObjectURL(item.previewUrl));
       setTitle('');

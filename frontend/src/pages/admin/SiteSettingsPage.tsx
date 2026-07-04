@@ -17,6 +17,12 @@ export function SiteSettingsPage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
+    if (error || saved) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [error, saved]);
+
+  useEffect(() => {
     fetchSiteSettings()
       .then(setForm)
       .catch(() => setError('Не вдалося завантажити налаштування'))
@@ -69,16 +75,16 @@ export function SiteSettingsPage() {
           {saved && <div className={styles.success} style={{ marginBottom: '0.25rem' }}>Налаштування успішно збережено!</div>}
           <AdminSection icon="◈" title="Розділи сайту" description="Увімкніть або вимкніть блоки">
             <AdminToggle
-              id="events"
-              label="Події"
-              checked={form.is_events_enabled}
-              onChange={(v) => patch({ is_events_enabled: v })}
-            />
-            <AdminToggle
               id="mohyla"
               label="Могилянські ігри"
               checked={form.is_mohyla_game_enabled}
               onChange={(v) => patch({ is_mohyla_game_enabled: v })}
+            />
+            <AdminToggle
+              id="events"
+              label="Події"
+              checked={form.is_events_enabled}
+              onChange={(v) => patch({ is_events_enabled: v })}
             />
             <AdminToggle
               id="teams"
@@ -87,16 +93,16 @@ export function SiteSettingsPage() {
               onChange={(v) => patch({ is_teams_enabled: v })}
             />
             <AdminToggle
-              id="partners"
-              label="Партнери"
-              checked={form.is_partners_enabled}
-              onChange={(v) => patch({ is_partners_enabled: v })}
-            />
-            <AdminToggle
               id="gallery"
               label="Галерея"
               checked={form.is_gallery_enabled}
               onChange={(v) => patch({ is_gallery_enabled: v })}
+            />
+            <AdminToggle
+              id="partners"
+              label="Партнери"
+              checked={form.is_partners_enabled}
+              onChange={(v) => patch({ is_partners_enabled: v })}
             />
             <AdminToggle
               id="contacts"

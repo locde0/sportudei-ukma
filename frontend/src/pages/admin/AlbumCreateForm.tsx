@@ -19,6 +19,12 @@ export function AlbumCreateForm() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    if (error) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [error]);
+
   const handleFileSelect = (file: File | undefined) => {
     if (!file || !file.type.startsWith('image/')) return;
     if (previewUrl) URL.revokeObjectURL(previewUrl);

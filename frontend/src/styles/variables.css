@@ -12,7 +12,7 @@
   --radius-lg: 12px;
   --max-content: 1200px;
   --sidebar-width: 260px;
-  --header-height: 68px;
+  --header-height: 88px;
 }
 
 /* Світла тема (за замовчуванням) */
@@ -20,10 +20,11 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  --color-bg: #f4f6f1;
+  --color-bg: #f5f7f2;
   --color-surface: #ffffff;
   --color-surface-elevated: #ffffff;
-  --color-header-bg: rgba(255, 255, 255, 0.9);
+  --color-header-bg: rgba(255, 255, 255, 0.7);
+  --color-glass: rgba(255, 255, 255, 0.6);
   --color-footer-bg: #000000;
 
   --color-border: rgba(0, 0, 0, 0.09);
@@ -54,19 +55,22 @@
   --color-danger-bg: rgba(211, 47, 47, 0.1);
 
   --text-shadow-brand: none;
-  --glow-green: 0 4px 20px rgba(138, 224, 40, 0.3);
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.08);
+  --glow-green: 0 4px 20px rgba(138, 224, 40, 0.4);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.12);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 /* Темна тема */
 [data-theme='dark'] {
   color-scheme: dark;
 
-  --color-bg: #000000;
-  --color-surface: #0d0d0d;
-  --color-surface-elevated: #161616;
-  --color-header-bg: rgba(0, 0, 0, 0.92);
+  --color-bg: #050505;
+  --color-surface: #111111;
+  --color-surface-elevated: #1a1a1a;
+  --color-header-bg: rgba(5, 5, 5, 0.7);
+  --color-glass: rgba(20, 20, 20, 0.6);
   --color-footer-bg: #000000;
 
   --color-border: rgba(255, 255, 255, 0.12);
@@ -96,8 +100,10 @@
   --color-danger: #ff5252;
   --color-danger-bg: rgba(255, 82, 82, 0.12);
 
-  --text-shadow-brand: 0 2px 50px rgba(0, 0, 0, 0.9);
-  --glow-green: 0 0 24px var(--color-accent-glow);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
-  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.55);
+  --text-shadow-brand: 0 2px 40px rgba(138, 224, 40, 0.4);
+  --glow-green: 0 0 32px var(--color-accent-glow);
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 12px 36px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 20px 48px rgba(0, 0, 0, 0.8), 0 0 24px rgba(138, 224, 40, 0.15);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
 }

@@ -16,6 +16,12 @@ export function MohylaGamesForm() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
+    if (error || saved) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [error, saved]);
+
+  useEffect(() => {
     fetchMohylaGame()
       .then((game) => {
         setTitle(game.title);

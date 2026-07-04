@@ -42,39 +42,46 @@ export function PublicLayout() {
     setActiveHash(hash);
   }, [hash]);
 
-  // Scroll-spy: observe section elements and update activeHash
+  // Scroll-spy: track scroll position to update activeHash
   useEffect(() => {
     if (!isHome) return;
 
-    const sectionIds = NAV_ITEMS.filter((item) => settings[item.flag]).map(
-      (item) => item.hash,
-    );
-    const elements = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter(Boolean) as HTMLElement[];
+    const handleScroll = () => {
+      if (!isScrollSpyActive.current) return;
 
-    if (elements.length === 0) return;
+      const sectionIds = NAV_ITEMS.filter((item) => settings[item.flag]).map((item) => item.hash);
+      if (sectionIds.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!isScrollSpyActive.current) return;
-        // Find the first entry that is intersecting (top-most visible section)
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const newHash = `#${entry.target.id}`;
-            setActiveHash(newHash);
-            break;
-          }
+      // Check if we're at the very bottom of the page
+      const isAtBottom = Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 50;
+      if (isAtBottom) {
+        setActiveHash(`#${sectionIds[sectionIds.length - 1]}`);
+        return;
+      }
+
+      let currentActive = '';
+      // Offset to consider a section "active" (e.g., considering a fixed header height)
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
+
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPosition) {
+          currentActive = `#${id}`;
         }
-      },
-      {
-        rootMargin: '-20% 0px -60% 0px',
-        threshold: 0,
-      },
-    );
+      }
 
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+      // If we scroll to the very top, clear active hash (or set it to hero, but hero isn't in NAV_ITEMS)
+      if (window.scrollY < 100) {
+        currentActive = '';
+      }
+
+      setActiveHash(currentActive);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Init on mount
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [isHome, settings]);
 
   const visibleNav = NAV_ITEMS.filter((item) => settings[item.flag]);
@@ -135,10 +142,7 @@ export function PublicLayout() {
         <div className={styles.footerInner}>
           <div className={styles.footerBrandRow}>
             <Logo size={36} showText={false} to="/" />
-            <div className={styles.footerText}>
-              <span className={styles.footerBrand}>Спортудей</span>
-              <span className={styles.footerMotto}>Спорт завжди!</span>
-            </div>
+            <span className={styles.footerBrand}>Спортудей</span>
           </div>
           {isHome && visibleNav.length > 0 && (
             <nav className={styles.footerNav} aria-label="Розділи сторінки">
@@ -160,7 +164,7 @@ export function PublicLayout() {
             </Link>
           )}
           <span className={styles.footerCopy}>
-            © {new Date().getFullYear()} Студентська організація НаУКМА
+            © {new Date().getFullYear()} Спортудей. Студентська спільнота НаУКМА
           </span>
         </div>
       </footer>

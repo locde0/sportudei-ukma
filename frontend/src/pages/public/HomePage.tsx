@@ -42,8 +42,15 @@ export function HomePage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [game, setGame] = useState<MohylaGame | null>(null);
   const [loadingEvents, setLoadingEvents] = useState(settings.is_events_enabled);
-  const [loadingGame, setLoadingGame] = useState(settings.is_mohyla_game_enabled);
   const [errorEvents, setErrorEvents] = useState('');
+
+  const [loadingTeams, setLoadingTeams] = useState(settings.is_teams_enabled);
+  const [errorTeams, setErrorTeams] = useState('');
+
+  const [loadingAlbums, setLoadingAlbums] = useState(settings.is_gallery_enabled);
+  const [errorAlbums, setErrorAlbums] = useState('');
+
+  const [loadingGame, setLoadingGame] = useState(settings.is_mohyla_game_enabled);
 
   useEffect(() => {
     scrollToHash(hash);
@@ -68,14 +75,22 @@ export function HomePage() {
 
   useEffect(() => {
     if (!settings.is_gallery_enabled) return;
-    fetchPublicAlbums(3, 0).then(setAlbums).catch(() => setAlbums([]));
+    let ignore = false;
+    fetchPublicAlbums(3, 0)
+      .then((data) => { if (!ignore) setAlbums(data); })
+      .catch(() => { if (!ignore) setErrorAlbums('Не вдалося завантажити галерею'); })
+      .finally(() => { if (!ignore) setLoadingAlbums(false); });
+    return () => { ignore = true; };
   }, [settings.is_gallery_enabled]);
 
   useEffect(() => {
     if (!settings.is_teams_enabled) return;
+    let ignore = false;
     fetchTeams()
-      .then(setTeams)
-      .catch(() => setTeams([]));
+      .then((data) => { if (!ignore) setTeams(data); })
+      .catch(() => { if (!ignore) setErrorTeams('Не вдалося завантажити команди'); })
+      .finally(() => { if (!ignore) setLoadingTeams(false); });
+    return () => { ignore = true; };
   }, [settings.is_teams_enabled]);
 
   useEffect(() => {
@@ -113,38 +128,36 @@ export function HomePage() {
 
       {settings.is_mohyla_game_enabled && (
         <section id="mohyla-games" className={`${styles.section} ${styles.anchorSection}`}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <h2 className={styles.sectionTitle}>Могилянські ігри</h2>
-              <p className={styles.sectionSubtitle}>
-                Головний спортивний турнір студентської спільноти
-              </p>
-            </div>
-          </div>
-
           {loadingGame && <p className={styles.loading}>Завантаження...</p>}
+          
+          {!loadingGame && !game?.title && (
+            <>
+              <div className={styles.sectionHeader}>
+                <div>
+                  <h2 className={styles.sectionTitle}>Могилянські ігри</h2>
+                  <p className={styles.sectionSubtitle}>Головний спортивний турнір студентської спільноти</p>
+                </div>
+              </div>
+              <p className={styles.empty}>Інформація про ігри зʼявиться незабаром</p>
+            </>
+          )}
+
           {!loadingGame && game?.title && (
-            <div className={styles.gamePreview}>
-              <h3 className={styles.gameTitle}>{game.title}</h3>
+            <div className={styles.gameBanner}>
               {game.description && (
-                <p className={styles.gameLead}>{game.description}</p>
+                <div className={styles.gameBannerLead}>{game.description}</div>
               )}
+              <h3 className={styles.gameBannerTitle}>{game.title}</h3>
               {game.content && (
-                <p className={styles.gameExcerpt}>
-                  {game.content.length > 220 ? `${game.content.slice(0, 220)}…` : game.content}
+                <p className={styles.gameBannerExcerpt}>
+                  {game.content}
                 </p>
               )}
+              <Link to="/mohyla-games" className={styles.sectionCta}>
+                Дізнатися більше
+              </Link>
             </div>
           )}
-          {!loadingGame && !game?.title && (
-            <p className={styles.empty}>Інформація про ігри зʼявиться незабаром</p>
-          )}
-
-          <div className={styles.sectionFooter}>
-            <Link to="/mohyla-games" className={styles.sectionCta}>
-              Дізнатися більше
-            </Link>
-          </div>
         </section>
       )}
 
@@ -160,21 +173,22 @@ export function HomePage() {
           {loadingEvents && <p className={styles.loading}>Завантаження...</p>}
           {errorEvents && <p className={styles.error}>{errorEvents}</p>}
           {!loadingEvents && !errorEvents && events.length === 0 && (
-            <p className={styles.empty}>Наразі немає опублікованих подій</p>
+            <p className={styles.empty}>Подій наразі немає</p>
           )}
           {!loadingEvents && !errorEvents && events.length > 0 && (
-            <div className={styles.grid}>
-              {events.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
+            <>
+              <div className={styles.grid}>
+                {events.map((event) => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
+              <div className={styles.sectionFooter}>
+                <Link to="/events" className={styles.sectionCta}>
+                  Усі події
+                </Link>
+              </div>
+            </>
           )}
-
-          <div className={styles.sectionFooter}>
-            <Link to="/events" className={styles.sectionCta}>
-              Усі події
-            </Link>
-          </div>
         </section>
       )}
 
@@ -187,23 +201,24 @@ export function HomePage() {
             </div>
           </div>
 
-          {teams.length === 0 && (
-            <p className={styles.empty}>Активних команд наразі немає</p>
+          {loadingTeams && <p className={styles.loading}>Завантаження...</p>}
+          {errorTeams && <p className={styles.error}>{errorTeams}</p>}
+          {!loadingTeams && !errorTeams && teams.length === 0 && (
+            <p className={styles.empty}>Команд наразі немає</p>
           )}
-          {teams.length > 0 && (
-            <div className={styles.grid}>
-              {teams.slice(0, 4).map((team) => (
-                <TeamCard key={team.id} team={team} />
-              ))}
-            </div>
-          )}
-
-          {teams.length > 4 && (
-            <div className={styles.sectionFooter}>
-              <Link to="/teams" className={styles.sectionCta}>
-                Усі команди
-              </Link>
-            </div>
+          {!loadingTeams && !errorTeams && teams.length > 0 && (
+            <>
+              <div className={styles.grid}>
+                {teams.slice(0, 4).map((team) => (
+                  <TeamCard key={team.id} team={team} />
+                ))}
+              </div>
+              <div className={styles.sectionFooter}>
+                <Link to="/teams" className={styles.sectionCta}>
+                  Усі команди
+                </Link>
+              </div>
+            </>
           )}
         </section>
       )}
@@ -217,22 +232,25 @@ export function HomePage() {
             </div>
           </div>
 
-          {albums.length === 0 && (
+          {loadingAlbums && <p className={styles.loading}>Завантаження...</p>}
+          {errorAlbums && <p className={styles.error}>{errorAlbums}</p>}
+          {!loadingAlbums && !errorAlbums && albums.length === 0 && (
             <p className={styles.empty}>Альбомів наразі немає</p>
           )}
-          {albums.length > 0 && (
-            <div className={styles.grid}>
-              {albums.map((album) => (
-                <AlbumCard key={album.id} album={album} />
-              ))}
-            </div>
+          {!loadingAlbums && !errorAlbums && albums.length > 0 && (
+            <>
+              <div className={styles.grid}>
+                {albums.map((album) => (
+                  <AlbumCard key={album.id} album={album} />
+                ))}
+              </div>
+              <div className={styles.sectionFooter}>
+                <Link to="/gallery" className={styles.sectionCta}>
+                  Уся галерея
+                </Link>
+              </div>
+            </>
           )}
-
-          <div className={styles.sectionFooter}>
-            <Link to="/gallery" className={styles.sectionCta}>
-              Уся галерея
-            </Link>
-          </div>
         </section>
       )}
 

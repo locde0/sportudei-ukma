@@ -28,6 +28,12 @@ export function AdminContacts() {
   const [error, setError] = useState('');
   const [savingOrder, setSavingOrder] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+
+  useEffect(() => {
+    if (error || successMsg) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [error, successMsg]);
   const [platform, setPlatform] = useState<ContactPlatform>('telegram');
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');

@@ -31,6 +31,12 @@ export function AlbumForm() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (error) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [error]);
+
+  useEffect(() => {
     if (!id) return;
     fetchAdminAlbumDetail(Number(id))
       .then(({ album, photos: albumPhotos }) => {

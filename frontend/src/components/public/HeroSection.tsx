@@ -12,7 +12,7 @@ export function HeroSection() {
     <section id="hero" className={styles.hero}>
       <div className={styles.inner}>
         <div>
-          <span className={styles.eyebrow}>Спортудей · НаУКМА</span>
+          <span className={styles.eyebrow}>🔥 Твоя спортивна спільнота</span>
           <h1 className={styles.title}>
             <span className={styles.titleAccent}>{HERO_TITLE_LINE_1}</span>
             <br />
