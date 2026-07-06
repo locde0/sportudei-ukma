@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, type DragEvent } from 'react';
 import type { EventPhoto, LocalGalleryItem } from '../../types/event';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import styles from './EventGalleryEditor.module.css';
 
 function reorder<T>(list: T[], from: number, to: number): T[] {
@@ -39,6 +39,7 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ done: number; total: number } | null>(null);
   const [error, setError] = useState('');
 
   const loadMoreRef = useCallback(
@@ -84,13 +85,18 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
     }
 
     setUploading(true);
+    setUploadProgress({ done: 0, total: images.length });
     try {
-      const newPhotos: EventPhoto[] = [];
-      for (const file of images) {
-        const p = await props.onUpload(file);
-        newPhotos.push(p);
+      // Upload in parallel with concurrency limit of 4
+      const CONCURRENCY = 4;
+      const results: EventPhoto[] = [];
+      for (let i = 0; i < images.length; i += CONCURRENCY) {
+        const batch = images.slice(i, i + CONCURRENCY);
+        const batchResults = await Promise.all(batch.map((f) => props.onUpload(f)));
+        results.push(...batchResults);
+        setUploadProgress({ done: Math.min(i + CONCURRENCY, images.length), total: images.length });
       }
-      const next = [...props.photos, ...newPhotos];
+      const next = [...props.photos, ...results];
       const normalized =
         !next.some((p) => p.is_main) && next.length > 0
           ? next.map((p, i) => ({ ...p, is_main: i === 0 }))
@@ -100,6 +106,7 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
       setError('Не вдалося завантажити фото');
     } finally {
       setUploading(false);
+      setUploadProgress(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -240,7 +247,7 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
       onDragEnd={handleCardDragEnd}
     >
       <img
-        src={resolveImageUrl(photo.image_url)}
+        src={resolveVariantUrl(photo.image_url, 'md')}
         alt={`Фото ${index + 1}`}
         draggable={false}
       />
@@ -272,40 +279,49 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
   return (
     <div className={styles.root}>
       <div
-        className={`${styles.zone} ${isDraggingFiles ? styles.zoneDragging : ''}`}
+        className={`${styles.zone} ${isDraggingFiles && !uploading ? styles.zoneDragging : ''} ${uploading ? styles.zoneUploading : ''}`}
         onClick={() => !uploading && fileInputRef.current?.click()}
         onDragOver={(e) => {
           e.preventDefault();
-          setIsDraggingFiles(true);
+          if (!uploading) setIsDraggingFiles(true);
         }}
         onDragLeave={() => setIsDraggingFiles(false)}
-        onDrop={handleFileDrop}
+        onDrop={(e) => { if (!uploading) handleFileDrop(e); else e.preventDefault(); }}
         role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+        tabIndex={uploading ? -1 : 0}
+        aria-disabled={uploading}
+        onKeyDown={(e) => !uploading && e.key === 'Enter' && fileInputRef.current?.click()}
       >
-        <div className={styles.zoneIcon}>+</div>
-        <p className={styles.zoneText}>Додати фотографії</p>
-        <p className={styles.zoneHint}>
-          Натисніть або перетягніть (PNG, JPEG, WebP, SVG)
-        </p>
+        {uploading && uploadProgress ? (
+          <>
+            <div className={styles.zoneProgressRing}>
+              <span className={styles.spinnerLg} />
+              <span className={styles.zoneProgressCount}>
+                {uploadProgress.done}/{uploadProgress.total}
+              </span>
+            </div>
+            <p className={styles.zoneText}>Обробка фотографій…</p>
+            <p className={styles.zoneHint}>Зачекайте, нові фото можна буде додати після завершення</p>
+          </>
+        ) : (
+          <>
+            <div className={styles.zoneIcon}>+</div>
+            <p className={styles.zoneText}>Додати фотографії</p>
+            <p className={styles.zoneHint}>
+              Натисніть або перетягніть (PNG, JPEG, WebP)
+            </p>
+          </>
+        )}
         <input
           ref={fileInputRef}
           type="file"
           multiple
-          accept="image/png,image/jpeg,image/webp"
+          accept="image/jpeg, image/png, image/webp"
           className={styles.fileInput}
           disabled={uploading}
           onChange={(e) => acceptFiles(e.target.files)}
         />
       </div>
-
-      {uploading && (
-        <div className={styles.uploading}>
-          <span className={styles.spinner} />
-          Завантаження…
-        </div>
-      )}
 
       {error && <div className={styles.error}>{error}</div>}
 

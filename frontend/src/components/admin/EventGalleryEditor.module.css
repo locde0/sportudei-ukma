@@ -25,6 +25,14 @@
   box-shadow: var(--glow-green);
 }
 
+.zoneUploading {
+  border-color: var(--color-accent);
+  background: var(--color-accent-muted);
+  cursor: not-allowed;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
 .zoneIcon {
   width: 44px;
   height: 44px;
@@ -237,6 +245,33 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+.zoneProgressRing {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinnerLg {
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.zoneProgressCount {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  position: relative;
+  z-index: 1;
 }
 
 .error {

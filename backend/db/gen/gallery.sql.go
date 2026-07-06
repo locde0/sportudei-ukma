@@ -136,7 +136,11 @@ func (q *Queries) GetAlbumByID(ctx context.Context, arg GetAlbumByIDParams) (Gal
 const getAlbumsList = `-- name: GetAlbumsList :many
 select
     ga.id, ga.title, ga.cover_image_path, ga.is_published, ga.created_at,
-    (select count(*)::int from gallery_photos gp where gp.album_id = ga.id) as photo_count
+    (
+        select count(*)::int
+        from gallery_photos gp
+        where gp.album_id = ga.id and gp.display_order != -1
+    ) as photo_count
 from gallery_albums ga
 where (ga.is_published = true or $3::bool = true)
 order by ga.created_at asc

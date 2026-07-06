@@ -3,7 +3,7 @@ import { deleteTeam, fetchAdminTeams } from '../../api/teams';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { Badge } from '../../components/ui/Badge';
 import { Button, LinkButton } from '../../components/ui/Button';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import type { Team } from '../../types/team';
 import styles from './AdminListLayout.module.css';
 
@@ -123,11 +123,11 @@ export function AdminTeams() {
             return (
             <article
               key={team.id}
-              className={`${styles.card} ${isConfirming ? styles.cardConfirming : ''}`}
+              className={`${styles.card} ${styles.cardSquareThumb} ${isConfirming ? styles.cardConfirming : ''}`}
             >
-              <div className={styles.thumbWrap}>
+              <div className={styles.thumbWrapSquare}>
                 {team.logo_url ? (
-                  <img src={resolveImageUrl(team.logo_url)} alt="" className={styles.thumbContain} />
+                  <img src={resolveVariantUrl(team.logo_url, 'sm')} alt="" className={styles.thumb} />
                 ) : (
                   <div className={styles.thumbEmpty}>◎</div>
                 )}

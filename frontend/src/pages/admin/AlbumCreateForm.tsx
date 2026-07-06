@@ -121,7 +121,7 @@ export function AlbumCreateForm() {
               >
                 <div className={styles.fileZoneIcon}>+</div>
                 <p className={styles.fileZoneText}>Додайте обкладинку</p>
-                <p className={styles.fileZoneHint}>Натисніть або перетягніть (PNG, JPEG, WebP, SVG)</p>
+                <p className={styles.fileZoneHint}>Натисніть або перетягніть (PNG, JPEG, WebP)</p>
 
                 {previewUrl && (
                   <div style={{ marginTop: '1rem' }}>
@@ -130,7 +130,7 @@ export function AlbumCreateForm() {
                 )}
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg, image/png, image/webp"
                   className={styles.fileInput}
                   ref={fileInputRef}
                   onChange={handleInputChange}

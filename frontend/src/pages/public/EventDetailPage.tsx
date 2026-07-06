@@ -38,7 +38,7 @@ export function EventDetailPage() {
       </button>
 
       {event.photos.length > 0 && (
-        <EventGallery photos={event.photos} title={event.title} />
+        <EventGallery photos={event.photos} title={event.title} viewerVariant="full" />
       )}
 
       <div className={styles.meta}>

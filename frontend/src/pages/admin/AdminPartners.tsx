@@ -13,7 +13,7 @@ import { AdminSection } from '../../components/admin/AdminSection';
 import { SortableList } from '../../components/admin/SortableList';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import type { Partner } from '../../types/partner';
 import styles from './AdminCrudList.module.css';
 import listStyles from './AdminListLayout.module.css';
@@ -252,11 +252,11 @@ export function AdminPartners() {
             >
               <div className={styles.fileZoneIcon}>+</div>
               <p className={styles.fileZoneText}>Додати логотип</p>
-              <p className={styles.fileZoneHint}>Натисніть або перетягніть (PNG, JPEG, WebP, SVG)</p>
+              <p className={styles.fileZoneHint}>Натисніть або перетягніть (PNG, JPEG, WebP)</p>
               
               {currentLogoUrl && !logo && (
                 <div style={{ marginTop: '1rem' }}>
-                  <img src={resolveImageUrl(currentLogoUrl)} alt="" className={styles.preview} />
+                  <img src={resolveVariantUrl(currentLogoUrl, 'md')} alt="" className={styles.preview} />
                 </div>
               )}
               {logo && (
@@ -268,7 +268,7 @@ export function AdminPartners() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/jpeg, image/png, image/webp"
                 className={styles.fileInput}
                 onChange={(e) => setLogo(e.target.files?.[0] ?? null)}
               />
@@ -312,8 +312,8 @@ export function AdminPartners() {
             confirmingId={confirmId}
             renderItem={(partner, index) => (
               <div style={{ display: 'flex', width: '100%', alignItems: 'center', gap: '1.25rem' }}>
-                <div className={listStyles.thumbWrap} style={{ width: '64px', height: '48px' }}>
-                  <img src={resolveImageUrl(partner.logo_url)} alt="" className={listStyles.thumbContain} />
+                <div className={listStyles.thumbWrapSquare}>
+                  <img src={resolveVariantUrl(partner.logo_url, 'sm')} alt="" className={listStyles.thumb} />
                 </div>
                 <div className={listStyles.body}>
                   <div className={listStyles.meta}>

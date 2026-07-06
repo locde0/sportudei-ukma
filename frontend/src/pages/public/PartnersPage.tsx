@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchPublicPartners } from '../../api/partners';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import { formatExternalUrl } from '../../utils/url';
 import type { Partner } from '../../types/partner';
 import styles from './PartnersPage.module.css';
@@ -36,7 +36,7 @@ export function PartnersPage() {
               <>
                 <div className={styles.logoWrapper}>
                   <img
-                    src={resolveImageUrl(partner.logo_url)}
+                    src={resolveVariantUrl(partner.logo_url, 'md')}
                     alt={partner.name}
                     className={styles.logo}
                     loading="lazy"

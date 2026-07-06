@@ -1,5 +1,5 @@
 import type { Partner } from '../../types/partner';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import { formatExternalUrl } from '../../utils/url';
 import styles from './PartnerCard.module.css';
 
@@ -12,7 +12,7 @@ export function PartnerCard({ partner }: PartnerCardProps) {
     <>
       <div className={styles.logoWrapper}>
         <img
-          src={resolveImageUrl(partner.logo_url)}
+          src={resolveVariantUrl(partner.logo_url, 'md')}
           alt={partner.name}
           className={styles.logo}
           loading="lazy"

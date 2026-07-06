@@ -3,7 +3,7 @@ import { deleteAlbum, fetchAdminAlbums } from '../../api/gallery';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { Badge } from '../../components/ui/Badge';
 import { LinkButton, Button } from '../../components/ui/Button';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import type { GalleryAlbum } from '../../types/gallery';
 import styles from './AdminListLayout.module.css';
 
@@ -138,7 +138,7 @@ export function AdminGallery() {
               <div className={styles.thumbWrap}>
                 {album.cover_photo_url ? (
                   <img
-                    src={resolveImageUrl(album.cover_photo_url)}
+                    src={resolveVariantUrl(album.cover_photo_url, 'md')}
                     alt=""
                     className={styles.thumb}
                   />

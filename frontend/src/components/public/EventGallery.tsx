@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { EventPhoto } from '../../types/event';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveImageUrl, resolveVariantUrl } from '../../utils/imageUrl';
 import styles from './EventGallery.module.css';
 
 interface EventGalleryProps {
   photos: EventPhoto[];
   title: string;
   layout?: 'default' | 'masonry';
+  viewerVariant?: 'md' | 'full';
 }
 
 function sortPhotos(photos: EventPhoto[]): EventPhoto[] {
@@ -17,7 +18,7 @@ function sortPhotos(photos: EventPhoto[]): EventPhoto[] {
   });
 }
 
-export function EventGallery({ photos, title, layout = 'default' }: EventGalleryProps) {
+export function EventGallery({ photos, title, layout = 'default', viewerVariant = 'md' }: EventGalleryProps) {
   const sorted = useMemo(() => sortPhotos(photos), [photos]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -97,7 +98,7 @@ export function EventGallery({ photos, title, layout = 'default' }: EventGallery
                 }
               }}
             >
-              <img src={resolveImageUrl(photo.image_url)} alt="" loading="lazy" />
+              <img src={resolveVariantUrl(photo.image_url, 'md')} alt="" loading="lazy" />
             </div>
           ))}
         </div>
@@ -112,7 +113,7 @@ export function EventGallery({ photos, title, layout = 'default' }: EventGallery
         aria-label="Відкрити фото на весь екран"
       >
         <img
-          src={resolveImageUrl(active.image_url)}
+          src={viewerVariant === 'full' ? resolveImageUrl(active.image_url) : resolveVariantUrl(active.image_url, 'md')}
           alt={`${title} — фото ${activeIndex + 1}`}
           className={`${styles.viewerImage} ${fading ? styles.viewerFade : ''}`}
         />
@@ -168,7 +169,7 @@ export function EventGallery({ photos, title, layout = 'default' }: EventGallery
               onClick={() => goTo(idx)}
               ref={idx === activeIndex ? mainThumbRef : null}
             >
-              <img src={resolveImageUrl(photo.image_url)} alt="" loading="lazy" />
+              <img src={resolveVariantUrl(photo.image_url, 'sm')} alt="" loading="lazy" />
             </button>
           ))}
         </div>
@@ -245,7 +246,7 @@ export function EventGallery({ photos, title, layout = 'default' }: EventGallery
                       onClick={() => goTo(idx)}
                       ref={idx === activeIndex ? activeThumbRef : null}
                     >
-                      <img src={resolveImageUrl(photo.image_url)} alt="" />
+                      <img src={resolveVariantUrl(photo.image_url, 'sm')} alt="" />
                     </button>
                   ))}
                 </div>

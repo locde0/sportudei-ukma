@@ -22,7 +22,11 @@ limit 1;
 -- name: GetAlbumsList :many
 select
     sqlc.embed(ga),
-    (select count(*)::int from gallery_photos gp where gp.album_id = ga.id) as photo_count
+    (
+        select count(*)::int
+        from gallery_photos gp
+        where gp.album_id = ga.id and gp.display_order != -1
+    ) as photo_count
 from gallery_albums ga
 where (ga.is_published = true or sqlc.arg('show_all')::bool = true)
 order by ga.created_at asc

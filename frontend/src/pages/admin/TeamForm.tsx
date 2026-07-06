@@ -5,7 +5,7 @@ import { AdminField } from '../../components/admin/AdminField';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { AdminSection } from '../../components/admin/AdminSection';
 import { Button, LinkButton } from '../../components/ui/Button';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import styles from './AdminFormLayout.module.css';
 
 export function TeamForm() {
@@ -139,11 +139,11 @@ export function TeamForm() {
               >
                 <div className={styles.fileZoneIcon}>+</div>
                 <p className={styles.fileZoneText}>Додати логотип</p>
-                <p className={styles.fileZoneHint}>Натисніть або перетягніть (PNG, JPEG, WebP, SVG)</p>
+                <p className={styles.fileZoneHint}>Натисніть або перетягніть (PNG, JPEG, WebP)</p>
                 
                 {currentLogoUrl && !logo && (
                   <div style={{ marginTop: '1rem' }}>
-                    <img src={resolveImageUrl(currentLogoUrl)} alt="" className={styles.preview} />
+                    <img src={resolveVariantUrl(currentLogoUrl, 'md')} alt="" className={styles.preview} />
                   </div>
                 )}
                 {logo && (
@@ -153,7 +153,7 @@ export function TeamForm() {
                 )}
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg, image/png, image/webp"
                   className={styles.fileInput}
                   ref={fileInputRef}
                   onChange={(e) => setLogo(e.target.files?.[0] ?? null)}

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { PublicEventListItem } from '../../types/event';
 import { formatEventDate } from '../../utils/date';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import { EventStatusBadge } from '../ui/EventStatusBadge';
 import styles from './EventCard.module.css';
 
@@ -15,7 +15,7 @@ export function EventCard({ event }: EventCardProps) {
         <div className={styles.imageWrap}>
           {event.main_photo_url ? (
               <img
-                  src={resolveImageUrl(event.main_photo_url)}
+                  src={resolveVariantUrl(event.main_photo_url, 'md')}
                   alt={event.title}
                   className={styles.image}
                   loading="lazy"

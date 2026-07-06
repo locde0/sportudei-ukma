@@ -8,7 +8,7 @@ import { fetchAdminTeams } from '../../api/teams';
 import type { EventListItem } from '../../types/event';
 import type { Team } from '../../types/team';
 import { formatEventDate } from '../../utils/date';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import styles from './Dashboard.module.css';
 
 export function Dashboard() {
@@ -94,7 +94,7 @@ export function Dashboard() {
                 <Link key={event.id} to={`/admin/events/${event.id}`} className={styles.listItem}>
                   <div className={styles.thumbWrap}>
                     {event.main_photo_url ? (
-                      <img src={resolveImageUrl(event.main_photo_url)} alt="" className={styles.thumb} />
+                      <img src={resolveVariantUrl(event.main_photo_url, 'sm')} alt="" className={styles.thumb} />
                     ) : (
                       <span className={styles.thumbIcon}>◎</span>
                     )}
@@ -123,7 +123,7 @@ export function Dashboard() {
                 <Link key={event.id} to={`/admin/events/${event.id}`} className={styles.listItem}>
                   <div className={styles.thumbWrap}>
                     {event.main_photo_url ? (
-                      <img src={resolveImageUrl(event.main_photo_url)} alt="" className={styles.thumb} />
+                      <img src={resolveVariantUrl(event.main_photo_url, 'sm')} alt="" className={styles.thumb} />
                     ) : (
                       <span className={styles.thumbIcon}>◎</span>
                     )}

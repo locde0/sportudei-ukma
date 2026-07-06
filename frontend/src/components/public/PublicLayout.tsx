@@ -60,12 +60,16 @@ export function PublicLayout() {
       }
 
       let currentActive = '';
-      // Offset to consider a section "active" (e.g., considering a fixed header height)
       const scrollPosition = window.scrollY + window.innerHeight / 3;
 
-      for (const id of sectionIds) {
-        const el = document.getElementById(id);
-        if (el && el.offsetTop <= scrollPosition) {
+      // Get valid elements and sort them by offsetTop
+      const elements = sectionIds
+        .map((id) => ({ id, el: document.getElementById(id) }))
+        .filter(({ el }) => el !== null)
+        .sort((a, b) => a.el!.offsetTop - b.el!.offsetTop);
+
+      for (const { id, el } of elements) {
+        if (el!.offsetTop <= scrollPosition) {
           currentActive = `#${id}`;
         }
       }

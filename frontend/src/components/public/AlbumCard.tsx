@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { GalleryAlbum } from '../../types/gallery';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import page from '../../styles/publicPage.module.css';
 
 interface AlbumCardProps {
@@ -13,7 +13,7 @@ export function AlbumCard({ album }: AlbumCardProps) {
       <div className={page.coverWrap}>
         {album.cover_photo_url ? (
           <img
-            src={resolveImageUrl(album.cover_photo_url)}
+            src={resolveVariantUrl(album.cover_photo_url, 'md')}
             alt=""
             className={page.cover}
             loading="lazy"

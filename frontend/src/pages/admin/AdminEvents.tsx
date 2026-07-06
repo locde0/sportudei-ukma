@@ -6,7 +6,7 @@ import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { deleteEvent, fetchAdminEvents } from '../../api/events';
 import type { EventListItem } from '../../types/event';
 import { formatEventDate } from '../../utils/date';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveVariantUrl } from '../../utils/imageUrl';
 import styles from './AdminListLayout.module.css';
 
 const PAGE_SIZE = 10;
@@ -138,7 +138,7 @@ export function AdminEvents() {
               <div className={styles.thumbWrap}>
                 {event.main_photo_url ? (
                   <img
-                    src={resolveImageUrl(event.main_photo_url)}
+                    src={resolveVariantUrl(event.main_photo_url, 'sm')}
                     alt=""
                     className={styles.thumb}
                   />
