@@ -53,8 +53,17 @@ export function HomePage() {
   const [loadingGame, setLoadingGame] = useState(settings.is_mohyla_game_enabled);
 
   useEffect(() => {
-    scrollToHash(hash);
-  }, [hash]);
+    if (settings.is_mohyla_game_enabled && loadingGame) return;
+    if (settings.is_events_enabled && loadingEvents) return;
+    if (settings.is_teams_enabled && loadingTeams) return;
+    if (settings.is_gallery_enabled && loadingAlbums) return;
+
+    // Small timeout to ensure DOM has updated after state change
+    const t = setTimeout(() => {
+      scrollToHash(hash);
+    }, 50);
+    return () => clearTimeout(t);
+  }, [hash, loadingGame, loadingEvents, loadingTeams, loadingAlbums, settings]);
 
   useEffect(() => {
     if (!settings.is_events_enabled) return;
@@ -197,7 +206,7 @@ export function HomePage() {
           <div className={styles.sectionHeader}>
             <div>
               <h2 className={styles.sectionTitle}>Команди</h2>
-              <p className={styles.sectionSubtitle}>Спортивні колективи НаУКМА</p>
+              <p className={styles.sectionSubtitle}>Спортивні колективи</p>
             </div>
           </div>
 

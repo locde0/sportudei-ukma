@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchPublicEvents } from '../../api/events';
 import { EventCard } from '../../components/public/EventCard';
 import { Button } from '../../components/ui/Button';
@@ -72,17 +73,17 @@ export function EventsCatalog() {
 
   return (
     <div className={page.page}>
+      <Link to="/#events" className={page.back}>
+        ← На головну
+      </Link>
       <header className={page.header}>
         <h1 className={page.title}>Каталог подій</h1>
-        <p className={page.subtitle}>
-          Марафони, турніри, лекції та інші активності Sportudei-UKMA
-        </p>
       </header>
 
       {loading && <p className={page.loading}>Завантаження...</p>}
       {error && <p className={page.error}>{error}</p>}
       {!loading && !error && events.length === 0 && (
-        <p className={page.empty}>Наразі немає опублікованих подій</p>
+        <p className={page.empty}>Подій наразі немає</p>
       )}
       {!loading && !error && events.length > 0 && (
         <>

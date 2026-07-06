@@ -1,7 +1,7 @@
 .page {
   max-width: 960px;
   margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
+  padding: 2rem 1.5rem 4rem;
 }
 
 .back {
@@ -14,7 +14,12 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
   transition: color 0.2s;
 }
 

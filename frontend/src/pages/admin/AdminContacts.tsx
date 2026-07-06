@@ -19,6 +19,8 @@ const PLATFORMS: { value: ContactPlatform; label: string }[] = [
   { value: 'telegram', label: 'Telegram' },
   { value: 'instagram', label: 'Instagram' },
   { value: 'facebook', label: 'Facebook' },
+  { value: 'tiktok', label: 'TikTok' },
+  { value: 'whatsapp', label: 'WhatsApp' },
   { value: 'email', label: 'Email' },
 ];
 
@@ -76,7 +78,11 @@ export function AdminContacts() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuccessMsg('');
-    if (!name.trim() || !url.trim()) {
+    
+    const finalName = platform === 'email' ? url.trim() : name.trim();
+    const finalUrl = url.trim();
+
+    if (!finalName || !finalUrl) {
       setError(
         editingId
           ? 'Не вдалося зберегти. Перевірте поля та спробуйте ще раз.'
@@ -89,12 +95,12 @@ export function AdminContacts() {
     setError('');
     try {
       if (editingId) {
-        await updateContact(editingId, { platform, name: name.trim(), url: url.trim() });
+        await updateContact(editingId, { platform, name: finalName, url: finalUrl });
       } else {
         await createContact({
           platform,
-          name: name.trim(),
-          url: url.trim(),
+          name: finalName,
+          url: finalUrl,
           displayOrder: contacts.length,
         });
       }
@@ -157,7 +163,7 @@ export function AdminContacts() {
       <AdminPageHeader
         eyebrow="Управління"
         title="Контакти"
-        description="Керуйте контактними даними. Перетягніть для зміни порядку."
+        description="Керуйте контактними даними."
       />
 
       {error && <div className={styles.error}>{error}</div>}
@@ -175,22 +181,39 @@ export function AdminContacts() {
               options={PLATFORMS}
               required
             />
-            <AdminField
-              label="Назва"
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Sportudei UKMA"
-              required
-            />
-            <AdminField
-              label="Посилання"
-              name="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://t.me/... або mailto:..."
-              required
-            />
+            {platform === 'email' ? (
+              <AdminField
+                label="Email"
+                name="url"
+                type="email"
+                value={url}
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  setName(e.target.value);
+                }}
+                placeholder="sportudei@ukma.edu.ua"
+                required
+              />
+            ) : (
+              <>
+                <AdminField
+                  label="Назва"
+                  name="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="@sportudei"
+                  required
+                />
+                <AdminField
+                  label="Посилання"
+                  name="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://..."
+                  required
+                />
+              </>
+            )}
           </div>
           <div className={styles.formActions}>
             <Button type="submit" disabled={submitting}>
@@ -245,6 +268,7 @@ export function AdminContacts() {
                     variant="secondary"
                     size="sm"
                     onClick={() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
                       setEditingId(contact.id);
                       setPlatform(contact.platform);
                       setName(contact.name);

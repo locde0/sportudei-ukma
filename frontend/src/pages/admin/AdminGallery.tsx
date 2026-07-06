@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { deleteAlbum, fetchAdminAlbums } from '../../api/gallery';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { Badge } from '../../components/ui/Badge';
@@ -7,25 +7,57 @@ import { resolveImageUrl } from '../../utils/imageUrl';
 import type { GalleryAlbum } from '../../types/gallery';
 import styles from './AdminListLayout.module.css';
 
+const PAGE_SIZE = 12;
+
 export function AdminGallery() {
   const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState('');
+  const [hasMore, setHasMore] = useState(false);
   const [confirmId, setConfirmId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deleteErrorId, setDeleteErrorId] = useState<number | null>(null);
 
-  const load = useCallback(() => {
-    setLoading(true);
-    fetchAdminAlbums()
-      .then(setAlbums)
-      .catch(() => setError('Не вдалося завантажити альбоми'))
-      .finally(() => setLoading(false));
+  const loadPage = useCallback(async (offset: number, append: boolean) => {
+    const batch = await fetchAdminAlbums(PAGE_SIZE, offset);
+    setAlbums((prev) => (append ? [...prev, ...batch] : batch));
+    setHasMore(batch.length === PAGE_SIZE);
   }, []);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    let ignore = false;
+    loadPage(0, false)
+      .catch(() => {
+        if (!ignore) setError('Не вдалося завантажити альбоми');
+      })
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [loadPage]);
+
+  const loadMoreRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (loadingMore) return;
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setLoadingMore(true);
+          loadPage(albums.length, true)
+            .catch(() => setError('Не вдалося завантажити ще альбоми'))
+            .finally(() => setLoadingMore(false));
+        }
+      }, { rootMargin: '200px' });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loadingMore, hasMore, loadPage, albums.length],
+  );
 
   useEffect(() => {
     if (confirmId === null) return;
@@ -53,7 +85,7 @@ export function AdminGallery() {
     setDeleteErrorId(null);
     try {
       await deleteAlbum(id);
-      load();
+      loadPage(0, false);
       setConfirmId(null);
     } catch {
       setDeleteErrorId(id);
@@ -118,6 +150,9 @@ export function AdminGallery() {
                 <div className={styles.meta}>
                   <span className={styles.id}>#{album.id}</span>
                   <Badge published={album.is_published} />
+                  <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                    {album.photo_count} фото
+                  </span>
                 </div>
                 <h2 className={styles.title}>{album.title}</h2>
               </div>
@@ -177,6 +212,28 @@ export function AdminGallery() {
               )}
             </article>
           )})}
+        </div>
+      )}
+
+      {!loading && !error && albums.length > 0 && hasMore && (
+        <div
+          ref={loadMoreRef}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginTop: '2rem',
+            color: 'var(--color-text-muted)',
+            fontSize: '0.875rem'
+          }}
+        >
+          {loadingMore && (
+            <>
+              <span className={styles.spinner} style={{ width: '1rem', height: '1rem', borderTopColor: 'var(--color-text-muted)' }} />
+              Завантаження...
+            </>
+          )}
         </div>
       )}
     </div>

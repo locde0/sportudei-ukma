@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   eventPhotoToGalleryUpdate,
   fetchAdminAlbumDetail,
+  fetchAlbumPhotos,
   galleryPhotoToEventPhoto,
   updateAlbum,
   uploadAlbumPhoto,
@@ -27,6 +28,8 @@ export function AlbumForm() {
   const [isPublished, setIsPublished] = useState(false);
   const [photos, setPhotos] = useState<EventPhoto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMorePhotos, setLoadingMorePhotos] = useState(false);
+  const [hasMorePhotos, setHasMorePhotos] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -44,10 +47,27 @@ export function AlbumForm() {
         setIsPublished(album.is_published);
         const sorted = [...albumPhotos].sort((a, b) => a.display_order - b.display_order);
         setPhotos(sorted.map((p) => galleryPhotoToEventPhoto(p, p.image_url === album.cover_photo_url)));
+        setHasMorePhotos(albumPhotos.length === 16);
       })
       .catch(() => setError('Не вдалося завантажити альбом'))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handleLoadMorePhotos = async () => {
+    if (!id) return;
+    setLoadingMorePhotos(true);
+    try {
+      const morePhotos = await fetchAlbumPhotos(Number(id), 16, photos.length);
+      const sorted = [...morePhotos].sort((a, b) => a.display_order - b.display_order);
+      const newMapped = sorted.map((p) => galleryPhotoToEventPhoto(p, false));
+      setPhotos((prev) => [...prev, ...newMapped]);
+      setHasMorePhotos(morePhotos.length === 16);
+    } catch {
+      setError('Не вдалося завантажити фото');
+    } finally {
+      setLoadingMorePhotos(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,13 +117,12 @@ export function AlbumForm() {
   return (
     <div className={styles.page}>
       <button type="button" className={styles.back} onClick={() => navigate('/admin/gallery')}>
-        ← До галереї
+        ← До списку альбомів
       </button>
 
       <AdminPageHeader
         eyebrow="Галерея"
         title={title || 'Альбом'}
-        description="Завантажуйте фото, змінюйте порядок і обкладинку. Зміни застосовуються після збереження."
       />
 
       {error && <div className={styles.error}>{error}</div>}
@@ -130,6 +149,9 @@ export function AlbumForm() {
                   const p = await uploadAlbumPhoto(Number(id), file);
                   return galleryPhotoToEventPhoto(p, false);
                 }}
+                hasMore={hasMorePhotos}
+                loadingMore={loadingMorePhotos}
+                onLoadMore={handleLoadMorePhotos}
               />
             )}
           </AdminSection>

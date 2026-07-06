@@ -86,7 +86,7 @@ export function TeamForm() {
   return (
     <div className={styles.page}>
       <button type="button" className={styles.back} onClick={() => navigate('/admin/teams')}>
-        ← До списку
+        ← До списку команд
       </button>
 
       <AdminPageHeader

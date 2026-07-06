@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { EventPhoto } from '../../types/event';
 import { resolveImageUrl } from '../../utils/imageUrl';
@@ -7,6 +7,7 @@ import styles from './EventGallery.module.css';
 interface EventGalleryProps {
   photos: EventPhoto[];
   title: string;
+  layout?: 'default' | 'masonry';
 }
 
 function sortPhotos(photos: EventPhoto[]): EventPhoto[] {
@@ -16,11 +17,22 @@ function sortPhotos(photos: EventPhoto[]): EventPhoto[] {
   });
 }
 
-export function EventGallery({ photos, title }: EventGalleryProps) {
+export function EventGallery({ photos, title, layout = 'default' }: EventGalleryProps) {
   const sorted = useMemo(() => sortPhotos(photos), [photos]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [fading, setFading] = useState(false);
+  const activeThumbRef = useRef<HTMLButtonElement>(null);
+  const mainThumbRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (lightboxOpen && activeThumbRef.current) {
+      activeThumbRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+    if (!lightboxOpen && mainThumbRef.current) {
+      mainThumbRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [activeIndex, lightboxOpen]);
 
   const goTo = useCallback(
     (index: number) => {
@@ -66,7 +78,32 @@ export function EventGallery({ photos, title }: EventGalleryProps) {
 
   return (
     <section className={styles.gallery} aria-label="Галерея події">
-      <div
+      {layout === 'masonry' ? (
+        <div className={styles.masonryGrid}>
+          {sorted.map((photo, idx) => (
+            <div
+              key={photo.id}
+              className={styles.masonryItem}
+              onClick={() => {
+                goTo(idx);
+                setLightboxOpen(true);
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  goTo(idx);
+                  setLightboxOpen(true);
+                }
+              }}
+            >
+              <img src={resolveImageUrl(photo.image_url)} alt="" loading="lazy" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <>
+          <div
         className={styles.viewer}
         onClick={() => setLightboxOpen(true)}
         role="button"
@@ -129,11 +166,14 @@ export function EventGallery({ photos, title }: EventGalleryProps) {
               aria-label={`Фото ${idx + 1}`}
               className={`${styles.thumb} ${idx === activeIndex ? styles.thumbActive : ''}`}
               onClick={() => goTo(idx)}
+              ref={idx === activeIndex ? mainThumbRef : null}
             >
               <img src={resolveImageUrl(photo.image_url)} alt="" loading="lazy" />
             </button>
           ))}
         </div>
+      )}
+      </>
       )}
 
       {lightboxOpen &&
@@ -203,6 +243,7 @@ export function EventGallery({ photos, title }: EventGalleryProps) {
                         idx === activeIndex ? styles.lightboxThumbActive : ''
                       }`}
                       onClick={() => goTo(idx)}
+                      ref={idx === activeIndex ? activeThumbRef : null}
                     >
                       <img src={resolveImageUrl(photo.image_url)} alt="" />
                     </button>

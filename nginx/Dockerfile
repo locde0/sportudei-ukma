@@ -1,4 +1,3 @@
-# ── Stage 1: Build frontend ──────────────────────────────────────────────────
 FROM node:20-alpine AS frontend
 
 WORKDIR /app
@@ -15,7 +14,6 @@ RUN VITE_API_URL=${VITE_API_URL} \
     VITE_MEDIA_URL=${VITE_MEDIA_URL} \
     npm run build
 
-# ── Stage 2: Nginx ───────────────────────────────────────────────────────────
 FROM nginx:1.27-alpine
 
 RUN rm /etc/nginx/conf.d/default.conf

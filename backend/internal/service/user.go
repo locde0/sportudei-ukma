@@ -49,7 +49,7 @@ func (s *AuthService) Login(ctx context.Context, email, password string) error {
 		return fmt.Errorf("%w: invalid email or password", domain.ErrUnauthorized)
 	}
 
-	code := strconv.Itoa(rand.IntN(1000000))
+	code := strconv.Itoa(rand.IntN(900000) + 100000)
 	expiresAt := time.Now().Add(s.otpTTL)
 	if err := s.users.SetOTPCode(ctx, email, code, expiresAt); err != nil {
 		return fmt.Errorf("set otp: %w", err)

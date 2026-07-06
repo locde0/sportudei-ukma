@@ -14,6 +14,7 @@ function mapAlbum(raw: Record<string, unknown>): GalleryAlbum {
     title: str(raw.title),
     cover_photo_url: optionalStr(raw.cover_image_path ?? raw.cover_photo_url),
     is_published: bool(raw.is_published, false),
+    photo_count: num(raw.photo_count, 0),
   };
 }
 
@@ -49,7 +50,7 @@ export async function fetchAlbum(id: number): Promise<GalleryAlbumDetail> {
   const { data: albumData } = await apiClient.get<Record<string, unknown>>(`/gallery/${id}`);
   const { data: photosData } = await apiClient.get<{ photos: Record<string, unknown>[] }>(
     `/gallery/${id}/photos`,
-    { params: { limit: 100, offset: 0 } },
+    { params: { limit: 24, offset: 0 } },
   );
   return {
     album: mapAlbum(albumData ?? {}),
@@ -61,7 +62,7 @@ export async function fetchAdminAlbumDetail(id: number): Promise<GalleryAlbumDet
   const { data: albumData } = await apiClient.get<Record<string, unknown>>(`/admin/gallery/${id}`);
   const { data: photosData } = await apiClient.get<{ photos: Record<string, unknown>[] }>(
     `/gallery/${id}/photos`,
-    { params: { limit: 100, offset: 0 } },
+    { params: { limit: 16, offset: 0 } },
   );
   return {
     album: mapAlbum(albumData ?? {}),

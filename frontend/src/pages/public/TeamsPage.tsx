@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchTeams } from '../../api/teams';
 import { TeamCard } from '../../components/public/TeamCard';
 import type { Team } from '../../types/team';
@@ -18,15 +19,17 @@ export function TeamsPage() {
 
   return (
     <div className={page.page}>
+      <Link to="/#teams" className={page.back}>
+        ← На головну
+      </Link>
       <header className={page.header}>
         <h1 className={page.title}>Команди</h1>
-        <p className={page.subtitle}>Спортивні колективи студентської організації</p>
       </header>
 
       {loading && <p className={page.state}>Завантаження...</p>}
       {error && <p className={page.error}>{error}</p>}
       {!loading && !error && teams.length === 0 && (
-        <p className={page.state}>Команд поки немає</p>
+        <p className={page.empty}>Команд наразі немає</p>
       )}
       {!loading && !error && teams.length > 0 && (
         <div className={page.grid}>

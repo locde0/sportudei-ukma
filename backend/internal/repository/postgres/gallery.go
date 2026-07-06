@@ -88,7 +88,7 @@ func (r *GalleryRepo) GetAdminAlbumsList(ctx context.Context, limit, offset int3
 		}
 		return nil, fmt.Errorf("get admin albums list: %w", err)
 	}
-	return mapSlice(rows, r.toGalleryAlbumDomain), nil
+	return mapSlice(rows, r.toGalleryAlbumsListDomain), nil
 }
 
 func (r *GalleryRepo) GetPublicAlbumsList(ctx context.Context, limit, offset int32) ([]domain.GalleryAlbum, error) {
@@ -103,7 +103,7 @@ func (r *GalleryRepo) GetPublicAlbumsList(ctx context.Context, limit, offset int
 		}
 		return nil, fmt.Errorf("get public albums list: %w", err)
 	}
-	return mapSlice(rows, r.toGalleryAlbumDomain), nil
+	return mapSlice(rows, r.toGalleryAlbumsListDomain), nil
 }
 
 func (r *GalleryRepo) AddGalleryPhoto(ctx context.Context, photo *domain.GalleryPhoto) error {
@@ -170,6 +170,16 @@ func (r *GalleryRepo) toGalleryAlbumDomain(row *gen.GalleryAlbum) domain.Gallery
 		Title:          row.Title,
 		CoverImagePath: row.CoverImagePath,
 		IsPublished:    row.IsPublished,
+	}
+}
+
+func (r *GalleryRepo) toGalleryAlbumsListDomain(row *gen.GetAlbumsListRow) domain.GalleryAlbum {
+	return domain.GalleryAlbum{
+		ID:             row.GalleryAlbum.ID,
+		Title:          row.GalleryAlbum.Title,
+		CoverImagePath: row.GalleryAlbum.CoverImagePath,
+		IsPublished:    row.GalleryAlbum.IsPublished,
+		PhotoCount:     row.PhotoCount,
 	}
 }
 

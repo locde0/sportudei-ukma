@@ -175,11 +175,6 @@ export function EventForm() {
       <AdminPageHeader
         eyebrow={isEdit ? 'Редагування' : 'Створення'}
         title={isEdit ? title || 'Подія' : 'Нова подія'}
-        description={
-          isEdit
-            ? 'Оновіть інформацію про подію та галерею.'
-            : 'Додайте фото, змініть порядок перетягуванням і оберіть обкладинку.'
-        }
       />
 
       {error && <div className={styles.error}>{error}</div>}
@@ -197,7 +192,6 @@ export function EventForm() {
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Благодійний марафон NaUKMA"
             />
             <AdminField
               id="shortDesc"
@@ -206,7 +200,6 @@ export function EventForm() {
               maxLength={SHORT_DESC_MAX}
               value={shortDesc}
               onChange={(e) => setShortDesc(e.target.value)}
-              placeholder="До 200 символів для картки події"
               footer={
                 <span
                   style={{
@@ -236,7 +229,6 @@ export function EventForm() {
               required
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Розклад, правила участі, що взяти з собою…"
             />
           </AdminSection>
 
@@ -258,7 +250,6 @@ export function EventForm() {
                 required
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="КМЦ, парк НаУКМА, Google Meet…"
               />
             </div>
             <AdminField
@@ -267,7 +258,7 @@ export function EventForm() {
               type="url"
               value={registrationUrl}
               onChange={(e) => setRegistrationUrl(e.target.value)}
-              placeholder="https://forms.gle/…"
+              placeholder="https://..."
               hint="Необовʼязково — кнопка зʼявиться на сторінці події"
             />
             </AdminSection>

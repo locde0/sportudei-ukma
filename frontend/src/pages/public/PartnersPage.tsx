@@ -21,13 +21,13 @@ export function PartnersPage() {
     <div className={styles.page}>
       <header className={styles.header}>
         <h1 className={styles.title}>Партнери</h1>
-        <p className={styles.subtitle}>Організації, що підтримують Sportudei</p>
+        <p className={styles.subtitle}>Разом робимо спорт доступнішим</p>
       </header>
 
       {loading && <p className={styles.state}>Завантаження...</p>}
       {error && <p className={styles.error}>{error}</p>}
       {!loading && !error && partners.length === 0 && (
-        <p className={styles.state}>Партнерів поки немає</p>
+        <p className={styles.state}>Партнерів наразі немає</p>
       )}
       {!loading && !error && partners.length > 0 && (
         <div className={styles.cloud}>

@@ -9,6 +9,7 @@ type GalleryAlbum struct {
 	Title          string
 	CoverImagePath *string
 	IsPublished    bool
+	PhotoCount     int32
 }
 
 type GalleryPhoto struct {

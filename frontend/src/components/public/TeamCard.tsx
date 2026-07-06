@@ -17,10 +17,8 @@ export function TeamCard({ team }: TeamCardProps) {
       <div className={page.cardBody}>
         <h3 className={page.cardTitle}>{team.name}</h3>
         {team.description && (
-          <p className={page.cardText}>
-            {team.description.length > 100
-              ? `${team.description.slice(0, 100)}…`
-              : team.description}
+          <p className={styles.description}>
+            {team.description}
           </p>
         )}
       </div>

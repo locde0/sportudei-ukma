@@ -1,7 +1,7 @@
 .page {
   max-width: var(--max-content);
   margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
+  padding: 2rem 1.5rem 4rem;
 }
 
 .header {
@@ -30,14 +30,19 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
   font-size: 0.8125rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--color-text-muted);
   text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   transition: color 0.2s;
+  font-family: inherit;
 }
 
 .back:hover {
@@ -146,6 +151,25 @@ a.card:hover {
   aspect-ratio: 16 / 10;
   overflow: hidden;
   background: var(--color-muted-bg);
+  position: relative;
+}
+
+.coverWrap::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s;
+}
+
+:global(a.card):hover .coverWrap::after,
+a[class*="card"]:hover .coverWrap::after {
+  transform: scaleX(1);
 }
 
 .cover {

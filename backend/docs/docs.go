@@ -1628,6 +1628,9 @@ const docTemplate = `{
                 "is_published": {
                     "type": "boolean"
                 },
+                "photo_count": {
+                    "type": "integer"
+                },
                 "title": {
                     "type": "string"
                 }
@@ -1805,7 +1808,9 @@ const docTemplate = `{
                         "telegram",
                         "instagram",
                         "facebook",
-                        "email"
+                        "email",
+                        "tiktok",
+                        "whatsapp"
                     ]
                 },
                 "url": {
@@ -1965,6 +1970,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "photo_count": {
+                    "type": "integer"
+                },
                 "title": {
                     "type": "string"
                 }
@@ -2061,7 +2069,9 @@ const docTemplate = `{
                         "telegram",
                         "instagram",
                         "facebook",
-                        "email"
+                        "email",
+                        "tiktok",
+                        "whatsapp"
                     ]
                 },
                 "url": {

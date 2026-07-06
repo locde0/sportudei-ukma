@@ -79,13 +79,12 @@ export function AlbumCreateForm() {
   return (
     <div className={styles.page}>
       <button type="button" className={styles.back} onClick={() => navigate('/admin/gallery')}>
-        ← До галереї
+        ← До списку альбомів
       </button>
 
       <AdminPageHeader
         eyebrow="Галерея"
         title="Новий альбом"
-        description="Введіть назву та оберіть обкладинку для нового альбому. Додати більше фотографій можна після створення."
       />
 
       {error && <div className={styles.error}>{error}</div>}
@@ -120,14 +119,14 @@ export function AlbumCreateForm() {
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
               >
-                {previewUrl ? (
-                  <img src={previewUrl} alt="" className={styles.preview} />
-                ) : (
-                  <>
-                    <div className={styles.fileZoneIcon}>+</div>
-                    <p className={styles.fileZoneText}>Оберіть обкладинку</p>
-                    <p className={styles.fileZoneHint}>Перетягніть або натисніть</p>
-                  </>
+                <div className={styles.fileZoneIcon}>+</div>
+                <p className={styles.fileZoneText}>Додайте обкладинку</p>
+                <p className={styles.fileZoneHint}>Натисніть або перетягніть (PNG, JPEG, WebP, SVG)</p>
+
+                {previewUrl && (
+                  <div style={{ marginTop: '1rem' }}>
+                    <img src={previewUrl} alt="" className={styles.preview} />
+                  </div>
                 )}
                 <input
                   type="file"

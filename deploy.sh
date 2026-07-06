@@ -1,48 +1,36 @@
-#!/usr/bin/env bash
-# ============================================================================
-# sportudei — Production Deployment
-# Usage: ./deploy.sh
-# ============================================================================
 set -euo pipefail
 
 COMPOSE="docker compose -f docker-compose.prod.yml"
 
-echo "=========================================="
-echo "  sportudei — deploying to production"
-echo "=========================================="
+echo "[+] deploying to production"
 
 if [ ! -f ".env" ]; then
-    echo "ERROR: .env not found. Copy .env.production.example to .env and fill in values."
+    echo "[-] error: .env not found. copy .env.production.example to .env and fill in values"
     exit 1
 fi
 
 echo ""
-echo "Pulling latest code..."
-git pull origin main
-
-echo ""
-echo "Building..."
+echo "[+] building..."
 $COMPOSE build
 
 echo ""
-echo "Starting services..."
+echo "[+] starting services..."
 $COMPOSE up -d
 
 echo ""
-echo "Waiting for startup..."
+echo "[+] waiting for startup..."
 sleep 8
 
-# Health checks via docker exec (port 80 is closed externally)
 if docker compose -f docker-compose.prod.yml exec -T backend wget -qO- http://localhost:8000/api/health > /dev/null 2>&1; then
-    echo "  OK: backend"
+    echo "[+] ok: backend"
 else
-    echo "  FAIL: backend — check: $COMPOSE logs backend"
+    echo "[-] fail: backend (check: $COMPOSE logs backend)"
 fi
 
 if docker compose -f docker-compose.prod.yml exec -T nginx wget -qO- http://127.0.0.1/nginx-health > /dev/null 2>&1; then
-    echo "  OK: nginx"
+    echo "[+] ok: nginx"
 else
-    echo "  FAIL: nginx — check: $COMPOSE logs nginx"
+    echo "[-] fail: nginx (check: $COMPOSE logs nginx)"
 fi
 
 docker image prune -f > /dev/null 2>&1
@@ -50,4 +38,4 @@ docker image prune -f > /dev/null 2>&1
 echo ""
 $COMPOSE ps
 echo ""
-echo "Done. https://sportudei.com"
+echo "[+] https://sportudei.com"

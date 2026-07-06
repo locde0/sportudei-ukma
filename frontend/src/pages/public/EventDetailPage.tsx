@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { EventGallery } from '../../components/public/EventGallery';
 import { EventStatusBadge } from '../../components/ui/EventStatusBadge';
 import { fetchPublicEvent } from '../../api/events';
@@ -9,6 +9,7 @@ import styles from './EventDetailPage.module.css';
 
 export function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [event, setEvent] = useState<PublicEventDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -32,9 +33,9 @@ export function EventDetailPage() {
 
   return (
     <article className={styles.page}>
-      <Link to="/events" className={styles.back}>
-        ← Назад до каталогу
-      </Link>
+      <button onClick={() => navigate(-1)} className={styles.back}>
+        ← Назад
+      </button>
 
       {event.photos.length > 0 && (
         <EventGallery photos={event.photos} title={event.title} />
@@ -49,12 +50,6 @@ export function EventDetailPage() {
           <strong>Локація</strong>
           {event.location}
         </div>
-        {event.photos.length > 1 && (
-          <div className={styles.metaItem}>
-            <strong>Фото</strong>
-            {event.photos.length} знімків
-          </div>
-        )}
         <div className={`${styles.metaItem} ${styles.metaStatus}`}>
           <strong>Статус</strong>
           {event.status && <EventStatusBadge status={event.status} />}

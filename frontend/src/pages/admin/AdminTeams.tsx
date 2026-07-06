@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { deleteTeam, fetchAdminTeams } from '../../api/teams';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { Badge } from '../../components/ui/Badge';
@@ -7,9 +7,14 @@ import { resolveImageUrl } from '../../utils/imageUrl';
 import type { Team } from '../../types/team';
 import styles from './AdminListLayout.module.css';
 
+const PAGE_SIZE = 10;
+
 export function AdminTeams() {
   const [teams, setTeams] = useState<Team[]>([]);
+  const [displayedCount, setDisplayedCount] = useState(PAGE_SIZE);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState('');
   const [confirmId, setConfirmId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -18,7 +23,10 @@ export function AdminTeams() {
   const load = useCallback(() => {
     setLoading(true);
     fetchAdminTeams()
-      .then(setTeams)
+      .then((data) => {
+        setTeams(data);
+        setDisplayedCount(PAGE_SIZE);
+      })
       .catch(() => setError('Не вдалося завантажити команди'))
       .finally(() => setLoading(false));
   }, []);
@@ -26,6 +34,27 @@ export function AdminTeams() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const loadMoreRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (loadingMore) return;
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && displayedCount < teams.length) {
+          setLoadingMore(true);
+          // Simulate a small network delay for smooth UI
+          setTimeout(() => {
+            setDisplayedCount((prev) => prev + PAGE_SIZE);
+            setLoadingMore(false);
+          }, 300);
+        }
+      }, { rootMargin: '200px' });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loadingMore, displayedCount, teams.length],
+  );
 
   useEffect(() => {
     if (confirmId === null) return;
@@ -81,7 +110,7 @@ export function AdminTeams() {
         <div className={styles.stateBox}>
           <div className={styles.emptyIcon}>⬢</div>
           <p className={styles.emptyTitle}>Команд ще немає</p>
-          <p>Додайте першу команду — вона зʼявиться тут і на головній сторінці.</p>
+          <p>Додайте першу команду — введіть назву та оберіть логотип.</p>
           <div style={{ marginTop: '1.25rem' }}>
             <LinkButton to="/admin/teams/new">Створити команду</LinkButton>
           </div>
@@ -89,7 +118,7 @@ export function AdminTeams() {
       )}
       {!loading && !error && teams.length > 0 && (
         <div className={styles.list}>
-          {teams.map((team) => {
+          {teams.slice(0, displayedCount).map((team) => {
             const isConfirming = confirmId === team.id;
             return (
             <article
@@ -171,6 +200,28 @@ export function AdminTeams() {
               )}
             </article>
           )})}
+        </div>
+      )}
+
+      {!loading && !error && teams.length > 0 && displayedCount < teams.length && (
+        <div
+          ref={loadMoreRef}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginTop: '2rem',
+            color: 'var(--color-text-muted)',
+            fontSize: '0.875rem'
+          }}
+        >
+          {loadingMore && (
+            <>
+              <span className={styles.spinner} style={{ width: '1rem', height: '1rem', borderTopColor: 'var(--color-text-muted)' }} />
+              Завантаження...
+            </>
+          )}
         </div>
       )}
     </div>

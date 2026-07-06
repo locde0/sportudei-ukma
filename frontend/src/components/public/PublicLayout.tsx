@@ -105,11 +105,20 @@ export function PublicLayout() {
     [isHome],
   );
 
+  const handleLogoClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isHome) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.history.pushState(null, '', '/');
+      setActiveHash('');
+    }
+  }, [isHome]);
+
   return (
     <div className={styles.layout}>
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <Logo size={42} />
+          <Logo size={42} onClick={handleLogoClick} />
 
           <div className={styles.headerRight}>
             <nav className={styles.nav}>
@@ -141,7 +150,7 @@ export function PublicLayout() {
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <div className={styles.footerBrandRow}>
-            <Logo size={36} showText={false} to="/" />
+            <Logo size={36} showText={false} to="/" onClick={handleLogoClick} />
             <span className={styles.footerBrand}>Спортудей</span>
           </div>
           {isHome && visibleNav.length > 0 && (

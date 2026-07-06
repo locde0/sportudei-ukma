@@ -21,13 +21,13 @@ export function ContactsPage() {
     <div className={page.page}>
       <header className={page.header}>
         <h1 className={page.title}>Контакти</h1>
-        <p className={page.subtitle}>Звʼяжіться з командою Sportudei</p>
+        <p className={page.subtitle}>Звʼяжіться з нами</p>
       </header>
 
       {loading && <p className={page.state}>Завантаження...</p>}
       {error && <p className={page.error}>{error}</p>}
       {!loading && !error && contacts.length === 0 && (
-        <p className={page.state}>Контактів поки немає</p>
+        <p className={page.empty}>Контактів наразі немає</p>
       )}
       {!loading && !error && contacts.length > 0 && (
         <div className={styles.chips}>

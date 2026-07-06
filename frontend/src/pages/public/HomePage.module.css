@@ -132,6 +132,7 @@
   font-size: 1rem;
   line-height: 1.8;
   color: var(--color-text-muted);
+  margin-top: 1.25rem;
 }
 
 @media (max-width: 768px) {
@@ -232,10 +233,18 @@
 }
 
 .chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-flow: dense;
+  gap: 1.25rem;
+  width: 100%;
+  justify-items: start;
+}
+
+@media (max-width: 600px) {
+  .chips {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 600px) {

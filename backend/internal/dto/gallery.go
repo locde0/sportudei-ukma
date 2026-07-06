@@ -34,6 +34,7 @@ type BaseGalleryAlbumResponse struct {
 	ID             int32   `json:"id"`
 	Title          string  `json:"title"`
 	CoverImagePath *string `json:"cover_image_path"`
+	PhotoCount     int32   `json:"photo_count"`
 }
 
 type PublicGalleryAlbumResponse struct {

@@ -275,6 +275,7 @@ func (h *GalleryHandler) ListAdminAlbums(w http.ResponseWriter, r *http.Request)
 			ID:             album.ID,
 			Title:          album.Title,
 			CoverImagePath: album.CoverImagePath,
+			PhotoCount:     album.PhotoCount,
 		}
 		list = append(list, dto.AdminGalleryAlbumResponse{
 			BaseGalleryAlbumResponse: base,
@@ -309,6 +310,7 @@ func (h *GalleryHandler) ListPublicAlbums(w http.ResponseWriter, r *http.Request
 			ID:             album.ID,
 			Title:          album.Title,
 			CoverImagePath: album.CoverImagePath,
+			PhotoCount:     album.PhotoCount,
 		}
 		list = append(list, dto.PublicGalleryAlbumResponse{
 			BaseGalleryAlbumResponse: base,

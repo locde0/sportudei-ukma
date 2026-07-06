@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { LinkButton, Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { EventStatusBadge } from '../../components/ui/EventStatusBadge';
@@ -9,26 +9,57 @@ import { formatEventDate } from '../../utils/date';
 import { resolveImageUrl } from '../../utils/imageUrl';
 import styles from './AdminListLayout.module.css';
 
+const PAGE_SIZE = 10;
+
 export function AdminEvents() {
   const [events, setEvents] = useState<EventListItem[]>([]);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [error, setError] = useState('');
   const [confirmId, setConfirmId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deleteErrorId, setDeleteErrorId] = useState<number | null>(null);
 
-  const loadEvents = useCallback(() => {
-    setLoading(true);
-    setError('');
-    fetchAdminEvents()
-      .then(setEvents)
-      .catch(() => setError('Не вдалося завантажити події'))
-      .finally(() => setLoading(false));
+  const loadPage = useCallback(async (offset: number, append: boolean) => {
+    const batch = await fetchAdminEvents(PAGE_SIZE, offset);
+    setEvents((prev) => (append ? [...prev, ...batch] : batch));
+    setHasMore(batch.length === PAGE_SIZE);
   }, []);
 
   useEffect(() => {
-    loadEvents();
-  }, [loadEvents]);
+    let ignore = false;
+    loadPage(0, false)
+      .catch(() => {
+        if (!ignore) setError('Не вдалося завантажити події');
+      })
+      .finally(() => {
+        if (!ignore) setLoading(false);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [loadPage]);
+
+  const loadMoreRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (loadingMore) return;
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setLoadingMore(true);
+          loadPage(events.length, true)
+            .catch(() => setError('Не вдалося завантажити ще події'))
+            .finally(() => setLoadingMore(false));
+        }
+      }, { rootMargin: '200px' });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loadingMore, hasMore, loadPage, events.length],
+  );
   useEffect(() => {
     if (confirmId === null) return;
     const handleClickOutside = () => {
@@ -86,7 +117,7 @@ export function AdminEvents() {
         <div className={styles.stateBox}>
           <div className={styles.emptyIcon}>◎</div>
           <p className={styles.emptyTitle}>Подій ще немає</p>
-          <p>Створіть першу подію — вона зʼявиться тут і на головній сторінці.</p>
+          <p>Створіть першу подію — введіть назву та оберіть дату.</p>
           <div style={{ marginTop: '1.25rem' }}>
             <LinkButton to="/admin/events/new">Створити подію</LinkButton>
           </div>
@@ -189,6 +220,28 @@ export function AdminEvents() {
             </article>
             );
           })}
+        </div>
+      )}
+
+      {!loading && !error && events.length > 0 && hasMore && (
+        <div
+          ref={loadMoreRef}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginTop: '2rem',
+            color: 'var(--color-text-muted)',
+            fontSize: '0.875rem'
+          }}
+        >
+          {loadingMore && (
+            <>
+              <span className={styles.spinner} style={{ width: '1rem', height: '1rem', borderTopColor: 'var(--color-text-muted)' }} />
+              Завантаження...
+            </>
+          )}
         </div>
       )}
     </div>

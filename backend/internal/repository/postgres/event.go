@@ -197,6 +197,7 @@ func (r *EventRepo) toEventListItemDomain(row *gen.GetEventsListRow) domain.Even
 		EventDate:   row.Event.EventDate,
 		Location:    row.Event.Location,
 		Status:      domain.EventStatus(row.Event.Status),
+		IsPublished: row.Event.IsPublished,
 	}
 
 	if row.MainImagePath != nil {

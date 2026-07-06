@@ -134,9 +134,12 @@ func (q *Queries) GetAlbumByID(ctx context.Context, arg GetAlbumByIDParams) (Gal
 }
 
 const getAlbumsList = `-- name: GetAlbumsList :many
-select id, title, cover_image_path, is_published, created_at from gallery_albums
-where (is_published = true or $3::bool = true)
-order by created_at asc
+select
+    ga.id, ga.title, ga.cover_image_path, ga.is_published, ga.created_at,
+    (select count(*)::int from gallery_photos gp where gp.album_id = ga.id) as photo_count
+from gallery_albums ga
+where (ga.is_published = true or $3::bool = true)
+order by ga.created_at asc
 limit $1 offset $2
 `
 
@@ -146,21 +149,27 @@ type GetAlbumsListParams struct {
 	ShowAll bool
 }
 
-func (q *Queries) GetAlbumsList(ctx context.Context, arg GetAlbumsListParams) ([]GalleryAlbum, error) {
+type GetAlbumsListRow struct {
+	GalleryAlbum GalleryAlbum
+	PhotoCount   int32
+}
+
+func (q *Queries) GetAlbumsList(ctx context.Context, arg GetAlbumsListParams) ([]GetAlbumsListRow, error) {
 	rows, err := q.db.Query(ctx, getAlbumsList, arg.Limit, arg.Offset, arg.ShowAll)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []GalleryAlbum{}
+	items := []GetAlbumsListRow{}
 	for rows.Next() {
-		var i GalleryAlbum
+		var i GetAlbumsListRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.Title,
-			&i.CoverImagePath,
-			&i.IsPublished,
-			&i.CreatedAt,
+			&i.GalleryAlbum.ID,
+			&i.GalleryAlbum.Title,
+			&i.GalleryAlbum.CoverImagePath,
+			&i.GalleryAlbum.IsPublished,
+			&i.GalleryAlbum.CreatedAt,
+			&i.PhotoCount,
 		); err != nil {
 			return nil, err
 		}

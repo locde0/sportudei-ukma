@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { fetchTeam } from '../../api/teams';
 import { resolveImageUrl } from '../../utils/imageUrl';
 import type { Team } from '../../types/team';
@@ -8,6 +8,7 @@ import styles from './TeamDetailPage.module.css';
 
 export function TeamDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [team, setTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,22 +34,21 @@ export function TeamDetailPage() {
 
   return (
     <article className={page.page}>
-      <Link to="/teams" className={page.back}>
-        ← Назад до команд
-      </Link>
+      <button onClick={() => navigate(-1)} className={page.back}>
+        ← Назад
+      </button>
 
-      <div className={styles.header}>
+      <div className={styles.hero}>
         <div className={styles.logoWrapper}>
           <img src={resolveImageUrl(team.logo_url)} alt={team.name} className={styles.logo} />
         </div>
-        <h1 className={styles.title}>{team.name}</h1>
-      </div>
-
-      {team.description && (
-        <div className={styles.contentWrapper}>
-          <div className={styles.content}>{team.description}</div>
+        <div className={styles.info}>
+          <h1 className={styles.title}>{team.name}</h1>
+          {team.description && (
+            <div className={styles.content}>{team.description}</div>
+          )}
         </div>
-      )}
+      </div>
     </article>
   );
 }

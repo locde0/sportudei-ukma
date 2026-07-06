@@ -3,6 +3,7 @@ export interface GalleryAlbum {
   title: string;
   cover_photo_url: string | null;
   is_published: boolean;
+  photo_count: number;
 }
 
 export interface GalleryPhoto {

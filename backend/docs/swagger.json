@@ -1621,6 +1621,9 @@
                 "is_published": {
                     "type": "boolean"
                 },
+                "photo_count": {
+                    "type": "integer"
+                },
                 "title": {
                     "type": "string"
                 }
@@ -1798,7 +1801,9 @@
                         "telegram",
                         "instagram",
                         "facebook",
-                        "email"
+                        "email",
+                        "tiktok",
+                        "whatsapp"
                     ]
                 },
                 "url": {
@@ -1958,6 +1963,9 @@
                 "id": {
                     "type": "integer"
                 },
+                "photo_count": {
+                    "type": "integer"
+                },
                 "title": {
                     "type": "string"
                 }
@@ -2054,7 +2062,9 @@
                         "telegram",
                         "instagram",
                         "facebook",
-                        "email"
+                        "email",
+                        "tiktok",
+                        "whatsapp"
                     ]
                 },
                 "url": {

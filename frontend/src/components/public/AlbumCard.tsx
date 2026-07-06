@@ -24,6 +24,9 @@ export function AlbumCard({ album }: AlbumCardProps) {
       </div>
       <div className={page.cardBody}>
         <h3 className={page.cardTitle}>{album.title}</h3>
+        <p style={{ marginTop: '0.25rem', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+          {album.photo_count} фото
+        </p>
       </div>
     </Link>
   );

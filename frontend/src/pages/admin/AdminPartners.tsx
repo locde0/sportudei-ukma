@@ -79,6 +79,7 @@ export function AdminPartners() {
   };
 
   const startEdit = (partner: Partner) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setEditingId(partner.id);
     setName(partner.name);
     setLinkUrl(partner.link_url ?? '');
@@ -182,7 +183,7 @@ export function AdminPartners() {
       <AdminPageHeader
         eyebrow="Управління"
         title="Партнери"
-        description="Керуйте списком партнерів. Перетягніть для зміни порядку."
+        description="Керуйте списком партнерів."
       />
 
       {error && <div className={styles.error}>{error}</div>}

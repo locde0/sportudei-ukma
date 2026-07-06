@@ -5,106 +5,167 @@
   padding: 2rem 1.5rem;
   background: var(--color-bg);
   position: relative;
+  overflow: hidden;
 }
 
-.wrapper::before {
+.wrapper::before,
+.wrapper::after {
   content: '';
   position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 50% 40% at 90% 10%, var(--color-accent-subtle) 0%, transparent 55%);
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  filter: blur(140px);
+  opacity: 0.15;
   pointer-events: none;
+  animation: floatBg 20s infinite ease-in-out alternate;
 }
 
-.themeSlot {
+.wrapper::after {
+  background: var(--color-success);
+  width: 400px;
+  height: 400px;
+  right: -100px;
+  bottom: -100px;
+  animation-delay: -10s;
+  animation-duration: 25s;
+}
+
+@keyframes floatBg {
+  0% { transform: translate(-10%, -10%) scale(1); }
+  50% { transform: translate(20%, 20%) scale(1.1); }
+  100% { transform: translate(10%, -20%) scale(0.9); }
+}
+
+.topBar {
   position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  z-index: 1;
+  top: 1.5rem;
+  left: 2rem;
+  right: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.backLink {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+  background: var(--color-glass);
+  backdrop-filter: blur(10px);
+  border: var(--glass-border);
+}
+
+.backLink:hover {
+  color: var(--color-text);
+  background: var(--color-surface);
+  transform: translateX(-2px);
 }
 
 .panel {
   position: relative;
+  z-index: 2;
   width: 100%;
   max-width: 400px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  padding: 2.5rem 2rem;
-  box-shadow: var(--shadow-md);
+  background: var(--color-glass);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: var(--glass-border);
+  border-radius: 32px;
+  padding: 3rem 2.5rem;
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   text-align: center;
 }
 
-[data-theme='light'] .panel {
-  background: #ffffff;
-}
-
 .title {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
   color: var(--color-text);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--color-text-muted);
-  margin-bottom: 1.75rem;
+  margin-bottom: 2rem;
+  line-height: 1.5;
   word-break: break-all;
 }
 
 .codeInput {
   width: 100%;
-  padding: 1.1rem;
+  padding: 1.125rem;
   border: 1px solid var(--color-border);
   border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: 0.45em;
   text-align: center;
-  background: var(--color-bg);
   outline: none;
   margin-bottom: 1.25rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
 }
 
 [data-theme='light'] .codeInput {
-  background: #f8f9f6;
+  background: rgba(255, 255, 255, 0.8);
+}
+[data-theme='dark'] .codeInput {
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .codeInput:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--color-accent-muted);
+  box-shadow: 0 0 0 4px var(--color-accent-subtle);
+  background: var(--color-surface);
 }
 
 .submit {
   width: 100%;
-  padding: 0.9rem;
+  padding: 1rem;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--color-accent);
   color: var(--color-text-inverse);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .submit:hover:not(:disabled) {
   background: var(--color-accent-hover);
-  box-shadow: var(--glow-green);
+  transform: translateY(-2px);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .submit:disabled {
-  opacity: 0.45;
+  opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .error {
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
   background: var(--color-danger-bg);
+  border: 1px solid rgba(211, 47, 47, 0.2);
   color: var(--color-danger);
   font-size: 0.875rem;
   margin-bottom: 1rem;
+  font-weight: 500;
 }

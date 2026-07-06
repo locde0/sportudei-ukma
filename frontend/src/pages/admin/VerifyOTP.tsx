@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { verifyOTP } from '../../api/auth';
 import { setAccessToken } from '../../api/client';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
@@ -38,7 +38,10 @@ export function VerifyOTP() {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.themeSlot}>
+      <div className={styles.topBar}>
+        <Link to="/admin/login" className={styles.backLink}>
+          ← Назад
+        </Link>
         <ThemeToggle />
       </div>
 

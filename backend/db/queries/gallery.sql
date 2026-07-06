@@ -20,9 +20,12 @@ where id = $1 and (is_published = true or sqlc.arg('show_all')::bool = true)
 limit 1;
 
 -- name: GetAlbumsList :many
-select * from gallery_albums
-where (is_published = true or sqlc.arg('show_all')::bool = true)
-order by created_at asc
+select
+    sqlc.embed(ga),
+    (select count(*)::int from gallery_photos gp where gp.album_id = ga.id) as photo_count
+from gallery_albums ga
+where (ga.is_published = true or sqlc.arg('show_all')::bool = true)
+order by ga.created_at asc
 limit $1 offset $2;
 
 

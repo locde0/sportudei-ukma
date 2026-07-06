@@ -1,4 +1,4 @@
-import { useRef, useState, type DragEvent } from 'react';
+import { useCallback, useRef, useState, type DragEvent } from 'react';
 import type { EventPhoto, LocalGalleryItem } from '../../types/event';
 import { resolveImageUrl } from '../../utils/imageUrl';
 import styles from './EventGalleryEditor.module.css';
@@ -25,17 +25,38 @@ interface EditGalleryProps {
   photos: EventPhoto[];
   onChange: (photos: EventPhoto[]) => void;
   onUpload: (file: File) => Promise<EventPhoto>;
+  hasMore?: boolean;
+  loadingMore?: boolean;
+  onLoadMore?: () => void;
 }
 
 type EventGalleryEditorProps = CreateGalleryProps | EditGalleryProps;
 
 export function EventGalleryEditor(props: EventGalleryEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const [isDraggingFiles, setIsDraggingFiles] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+
+  const loadMoreRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (props.mode !== 'edit') return;
+      if (props.loadingMore) return;
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && props.hasMore && props.onLoadMore) {
+          props.onLoadMore();
+        }
+      }, { rootMargin: '200px' });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [props],
+  );
 
   const count =
     props.mode === 'create' ? props.items.length : props.photos.length;
@@ -266,7 +287,7 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
         <div className={styles.zoneIcon}>+</div>
         <p className={styles.zoneText}>Додати фотографії</p>
         <p className={styles.zoneHint}>
-          Перетягніть файли сюди або натисніть · PNG, JPEG, WebP
+          Натисніть або перетягніть (PNG, JPEG, WebP, SVG)
         </p>
         <input
           ref={fileInputRef}
@@ -295,6 +316,27 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
               ? props.items.map(renderCreateCard)
               : props.photos.map(renderEditCard)}
           </div>
+          {props.mode === 'edit' && props.hasMore && (
+            <div
+              ref={loadMoreRef}
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginTop: '2rem',
+                color: 'var(--color-text-muted)',
+                fontSize: '0.875rem'
+              }}
+            >
+              {props.loadingMore && (
+                <>
+                  <span className={styles.spinner} style={{ width: '1rem', height: '1rem', borderTopColor: 'var(--color-text-muted)' }} />
+                  Завантаження...
+                </>
+              )}
+            </div>
+          )}
 
           <div className={styles.footer}>
             <span className={styles.count}>{count} фото</span>

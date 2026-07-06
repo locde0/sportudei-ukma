@@ -7,7 +7,7 @@ type UpdateContactOrderRequest struct {
 type BaseContactRequest struct {
 	Platform string `json:"platform" validate:"required,oneof=telegram instagram facebook email tiktok whatsapp"`
 	Name     string `json:"name" validate:"required,max=50"`
-	URL      string `json:"url" validate:"required,url"`
+	URL      string `json:"url" validate:"required"`
 }
 
 type CreateContactRequest struct {
