@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchTeams } from '../../api/teams';
 import { TeamCard } from '../../components/public/TeamCard';
+import { IconArrowLeft } from '../../components/ui/Icons';
 import type { Team } from '../../types/team';
 import page from '../../styles/publicPage.module.css';
 
@@ -19,9 +20,9 @@ export function TeamsPage() {
 
   return (
     <div className={page.page}>
-      <Link to="/#teams" className={page.back}>
-        ← На головну
-      </Link>
+        <Link to="/" className={page.back} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+          <IconArrowLeft size={16} /> На головну
+        </Link>
       <header className={page.header}>
         <h1 className={page.title}>Команди</h1>
       </header>

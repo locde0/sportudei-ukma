@@ -10,6 +10,7 @@ import { AdminField } from '../../components/admin/AdminField';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { AdminSection } from '../../components/admin/AdminSection';
 import { Button, LinkButton } from '../../components/ui/Button';
+import { IconArrowLeft, IconText } from '../../components/ui/Icons';
 import { resolveVariantUrl } from '../../utils/imageUrl';
 import styles from './AdminFormLayout.module.css';
 
@@ -91,7 +92,7 @@ export function PartnerForm() {
   return (
     <div className={styles.page}>
       <button type="button" className={styles.back} onClick={() => navigate('/admin/partners')}>
-        ← До списку
+        <IconArrowLeft size={16} /> До списку
       </button>
 
       <AdminPageHeader
@@ -103,7 +104,7 @@ export function PartnerForm() {
 
       <form onSubmit={handleSubmit} className={styles.grid}>
         <div className={styles.mainCol}>
-          <AdminSection icon="✦" title="Дані партнера">
+          <AdminSection icon={<IconText />} title="Дані партнера">
             <AdminField
               id="name"
               label="Назва"

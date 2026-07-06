@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { EventGallery } from '../../components/public/EventGallery';
 import { EventStatusBadge } from '../../components/ui/EventStatusBadge';
+import { IconArrowLeft } from '../../components/ui/Icons';
 import { fetchPublicEvent } from '../../api/events';
 import type { PublicEventDetail } from '../../types/event';
 import { formatEventDateTime } from '../../utils/date';
@@ -9,7 +10,6 @@ import styles from './EventDetailPage.module.css';
 
 export function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [event, setEvent] = useState<PublicEventDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,9 +33,9 @@ export function EventDetailPage() {
 
   return (
     <article className={styles.page}>
-      <button onClick={() => navigate(-1)} className={styles.back}>
-        ← Назад
-      </button>
+      <Link to="/events" className={styles.back} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+        <IconArrowLeft size={16} /> Назад
+      </Link>
 
       {event.photos.length > 0 && (
         <EventGallery photos={event.photos} title={event.title} viewerVariant="full" />

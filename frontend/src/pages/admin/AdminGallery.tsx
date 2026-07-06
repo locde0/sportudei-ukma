@@ -3,6 +3,7 @@ import { deleteAlbum, fetchAdminAlbums } from '../../api/gallery';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { Badge } from '../../components/ui/Badge';
 import { LinkButton, Button } from '../../components/ui/Button';
+import { IconPhoto } from '../../components/ui/Icons';
 import { resolveVariantUrl } from '../../utils/imageUrl';
 import type { GalleryAlbum } from '../../types/gallery';
 import styles from './AdminListLayout.module.css';
@@ -116,7 +117,7 @@ export function AdminGallery() {
       )}
       {!loading && !error && albums.length === 0 && (
         <div className={styles.stateBox}>
-          <div className={styles.emptyIcon}>▣</div>
+          <div className={styles.emptyIcon}><IconPhoto size={24} /></div>
           <p className={styles.emptyTitle}>Альбомів ще немає</p>
           <p>Створіть перший альбом — введіть назву та оберіть обкладинку.</p>
           <div style={{ marginTop: '1.25rem' }}>
@@ -143,7 +144,7 @@ export function AdminGallery() {
                     className={styles.thumb}
                   />
                 ) : (
-                  <div className={styles.thumbEmpty}>◎</div>
+                  <div className={styles.thumbEmpty}><IconPhoto size={18} /></div>
                 )}
               </div>
               <div className={styles.body}>

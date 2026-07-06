@@ -10,6 +10,32 @@ definitions:
     - EventStatusPlanned
     - EventStatusInProgress
     - EventStatusCompleted
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminDashboardResponse:
+    properties:
+      recent_in_progress_events:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse'
+        type: array
+      recent_planned_events:
+        items:
+          $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse'
+        type: array
+      stats:
+        $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminDashboardStatsResponse'
+    type: object
+  github_com_locde0_sportudei-ukma_backend_internal_dto.AdminDashboardStatsResponse:
+    properties:
+      events_completed:
+        type: integer
+      events_in_progress:
+        type: integer
+      events_planned:
+        type: integer
+      teams_active:
+        type: integer
+      teams_total:
+        type: integer
+    type: object
   github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventResponse:
     properties:
       content:
@@ -602,6 +628,21 @@ paths:
       summary: Update contact order
       tags:
       - admin-contacts
+  /api/admin/dashboard:
+    get:
+      description: Get aggregated stats and recent events for admin dashboard
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminDashboardResponse'
+      security:
+      - BearerAuth: []
+      summary: Get dashboard stats
+      tags:
+      - admin-dashboard
   /api/admin/events:
     get:
       description: List all events for admin view with pagination

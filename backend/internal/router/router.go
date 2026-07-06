@@ -24,6 +24,7 @@ func New(
 	teamHandler *handler.TeamHandler,
 	mohylaGameHandler *handler.MohylaGameHandler,
 	settingsHandler *handler.SettingsHandler,
+	dashboardHandler *handler.DashboardHandler,
 ) chi.Router {
 	r := chi.NewRouter()
 
@@ -58,6 +59,8 @@ func New(
 
 	r.Route("/api/admin", func(r chi.Router) {
 		r.Use(authMw)
+
+		r.Get("/dashboard", dashboardHandler.GetDashboard)
 
 		r.Route("/events", func(r chi.Router) {
 			r.Post("/", eventHandler.CreateEvent)

@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { verifyOTP } from '../../api/auth';
 import { setAccessToken } from '../../api/client';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
+import { IconArrowLeft } from '../../components/ui/Icons';
 import styles from './VerifyOTP.module.css';
 
 export function VerifyOTP() {
@@ -39,8 +40,8 @@ export function VerifyOTP() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.topBar}>
-        <Link to="/admin/login" className={styles.backLink}>
-          ← Назад
+        <Link to="/admin/login" className={styles.backLink} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+          <IconArrowLeft size={16} /> Назад
         </Link>
         <ThemeToggle />
       </div>

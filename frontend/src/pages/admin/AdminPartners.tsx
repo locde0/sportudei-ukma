@@ -13,6 +13,7 @@ import { AdminSection } from '../../components/admin/AdminSection';
 import { SortableList } from '../../components/admin/SortableList';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
+import { IconHandshake, IconPlus, IconEdit } from '../../components/ui/Icons';
 import { resolveVariantUrl } from '../../utils/imageUrl';
 import type { Partner } from '../../types/partner';
 import styles from './AdminCrudList.module.css';
@@ -189,7 +190,7 @@ export function AdminPartners() {
       {error && <div className={styles.error}>{error}</div>}
       {successMsg && <div className={styles.success}>{successMsg}</div>}
 
-      <AdminSection icon={editingId ? '✎' : '+'} title={editingId ? 'Редагування партнера' : 'Новий партнер'}>
+      <AdminSection icon={editingId ? <IconEdit /> : <IconPlus />} title={editingId ? 'Редагування партнера' : 'Новий партнер'}>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formRow}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -250,7 +251,7 @@ export function AdminPartners() {
               tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
             >
-              <div className={styles.fileZoneIcon}>+</div>
+              <div className={styles.fileZoneIcon}><IconPlus size={24} /></div>
               <p className={styles.fileZoneText}>Додати логотип</p>
               <p className={styles.fileZoneHint}>Натисніть або перетягніть (PNG, JPEG, WebP)</p>
               
@@ -293,14 +294,14 @@ export function AdminPartners() {
       )}
       {!loading && partners.length === 0 && (
         <div className={listStyles.stateBox}>
-          <div className={listStyles.emptyIcon}>◆</div>
+          <div className={listStyles.emptyIcon}><IconHandshake size={24} /></div>
           <p className={listStyles.emptyTitle}>Партнерів ще немає</p>
           <p>Додайте першого партнера через форму вище.</p>
         </div>
       )}
       {!loading && partners.length > 0 && (
         <AdminSection
-          icon="⠿"
+          icon={<IconHandshake />}
           title="Список"
           description={savingOrder ? 'Зберігаємо порядок…' : 'Перетягніть для сортування'}
         >

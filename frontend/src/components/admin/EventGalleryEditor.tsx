@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState, type DragEvent } from 'react';
 import type { EventPhoto, LocalGalleryItem } from '../../types/event';
 import { resolveVariantUrl } from '../../utils/imageUrl';
+import { IconStar, IconX } from '../ui/Icons';
 import styles from './EventGalleryEditor.module.css';
 
 function reorder<T>(list: T[], from: number, to: number): T[] {
@@ -213,7 +214,7 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
           aria-label="Зробити обкладинкою"
           title="Обкладинка"
         >
-          ★
+          <IconStar size={16} />
         </button>
         <button
           type="button"
@@ -222,7 +223,7 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
           aria-label="Видалити"
           title="Видалити"
         >
-          ×
+          <IconX size={16} />
         </button>
       </div>
       {item.isMain && <span className={styles.mainLabel}>обкладинка</span>}
@@ -260,7 +261,7 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
           aria-label="Зробити обкладинкою"
           title="Обкладинка"
         >
-          ★
+          <IconStar size={16} />
         </button>
         <button
           type="button"
@@ -269,7 +270,7 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
           aria-label="Видалити"
           title="Видалити"
         >
-          ×
+          <IconX size={16} />
         </button>
       </div>
       {photo.is_main && <span className={styles.mainLabel}>обкладинка</span>}
@@ -357,7 +358,7 @@ export function EventGalleryEditor(props: EventGalleryEditorProps) {
           <div className={styles.footer}>
             <span className={styles.count}>{count} фото</span>
             <span className={styles.hint}>
-              Перетягніть картки для зміни порядку · ★ — обкладинка
+              Перетягніть картки для зміни порядку · <IconStar size={12} className={styles.inlineIcon} /> — обкладинка
             </span>
           </div>
         </>

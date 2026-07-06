@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchPublicAlbums } from '../../api/gallery';
 import { AlbumCard } from '../../components/public/AlbumCard';
+import { IconArrowLeft } from '../../components/ui/Icons';
 import type { GalleryAlbum } from '../../types/gallery';
 import page from '../../styles/publicPage.module.css';
 
@@ -61,8 +62,8 @@ export function GalleryCatalog() {
 
   return (
     <div className={page.page}>
-      <Link to="/#gallery" className={page.back}>
-        ← На головну
+      <Link to="/#gallery" className={page.back} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+        <IconArrowLeft size={16} /> На головну
       </Link>
       <header className={page.header}>
         <h1 className={page.title}>Галерея</h1>

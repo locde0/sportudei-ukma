@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import styles from './AdminSection.module.css';
 
 interface AdminSectionProps {
-  icon?: string;
+  icon?: ReactNode;
   title: string;
   description?: string;
   children: ReactNode;
@@ -10,7 +10,7 @@ interface AdminSectionProps {
 }
 
 export function AdminSection({
-  icon = '•',
+  icon,
   title,
   description,
   children,

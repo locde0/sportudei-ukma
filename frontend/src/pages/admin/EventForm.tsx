@@ -13,6 +13,7 @@ import { AdminSection } from '../../components/admin/AdminSection';
 import { EventGalleryEditor } from '../../components/admin/EventGalleryEditor';
 import { EventDateTimePicker } from '../../components/admin/EventDateTimePicker';
 import { Button, LinkButton } from '../../components/ui/Button';
+import { IconArrowLeft, IconText, IconImage } from '../../components/ui/Icons';
 import type { EventPhoto, EventStatus, LocalGalleryItem } from '../../types/event';
 import { toDatetimeLocalValue } from '../../utils/date';
 import { EVENT_STATUS_OPTIONS } from '../../components/ui/EventStatusBadge';
@@ -169,7 +170,7 @@ export function EventForm() {
   return (
     <div className={styles.page}>
       <button type="button" className={styles.back} onClick={() => navigate('/admin/events')}>
-        ← До списку подій
+        <IconArrowLeft size={16} /> До списку подій
       </button>
 
       <AdminPageHeader
@@ -182,7 +183,7 @@ export function EventForm() {
       <form onSubmit={handleSubmit} className={styles.grid}>
         <div className={styles.mainCol}>
           <AdminSection
-            icon="✦"
+            icon={<IconText />}
             title="Заголовок і превʼю"
             description="Те, що побачать відвідувачі в каталозі"
           >
@@ -281,7 +282,7 @@ export function EventForm() {
             )}
 
             <AdminSection
-              icon="▣"
+              icon={<IconImage />}
               title="Галерея"
             description="Перетягніть картки для зміни порядку"
           >

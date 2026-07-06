@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { fetchTeam } from '../../api/teams';
 import { resolveImageUrl } from '../../utils/imageUrl';
 import type { Team } from '../../types/team';
+import { IconArrowLeft } from '../../components/ui/Icons';
 import page from '../../styles/publicPage.module.css';
 import styles from './TeamDetailPage.module.css';
 
 export function TeamDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [team, setTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -34,9 +34,9 @@ export function TeamDetailPage() {
 
   return (
     <article className={page.page}>
-      <button onClick={() => navigate(-1)} className={page.back}>
-        ← Назад
-      </button>
+      <Link to="/teams" className={page.back} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+        <IconArrowLeft size={16} /> Назад
+      </Link>
 
       <div className={styles.hero}>
         <div className={styles.logoWrapper}>

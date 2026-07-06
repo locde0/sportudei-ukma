@@ -11,6 +11,7 @@ import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { AdminSection } from '../../components/admin/AdminSection';
 import { SortableList } from '../../components/admin/SortableList';
 import { Button } from '../../components/ui/Button';
+import { IconEdit, IconPlus, IconPhone } from '../../components/ui/Icons';
 import type { Contact, ContactPlatform } from '../../types/contact';
 import styles from './AdminCrudList.module.css';
 import listStyles from './AdminListLayout.module.css';
@@ -169,7 +170,7 @@ export function AdminContacts() {
       {error && <div className={styles.error}>{error}</div>}
       {successMsg && <div className={styles.success}>{successMsg}</div>}
 
-      <AdminSection icon={editingId ? '✎' : '+'} title={editingId ? 'Редагування' : 'Новий контакт'}>
+      <AdminSection icon={editingId ? <IconEdit /> : <IconPlus />} title={editingId ? 'Редагування' : 'Новий контакт'}>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formRow}>
             <AdminField
@@ -233,14 +234,14 @@ export function AdminContacts() {
       )}
       {!loading && contacts.length === 0 && (
         <div className={listStyles.stateBox}>
-          <div className={listStyles.emptyIcon}>☎</div>
+          <div className={listStyles.emptyIcon}><IconPhone size={24} /></div>
           <p className={listStyles.emptyTitle}>Контактів ще немає</p>
           <p>Додайте перший контакт через форму вище.</p>
         </div>
       )}
       {!loading && contacts.length > 0 && (
         <AdminSection
-          icon="⠿"
+          icon={<IconPhone />}
           title="Список"
           description={savingOrder ? 'Зберігаємо порядок…' : 'Перетягніть для сортування'}
         >

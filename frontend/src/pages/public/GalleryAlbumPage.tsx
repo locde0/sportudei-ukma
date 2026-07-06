@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchAlbum, fetchAlbumPhotos } from '../../api/gallery';
 import { EventGallery } from '../../components/public/EventGallery';
+import { IconArrowLeft } from '../../components/ui/Icons';
 import type { EventPhoto } from '../../types/event';
 import page from '../../styles/publicPage.module.css';
 
@@ -95,8 +96,8 @@ export function GalleryAlbumPage() {
 
   return (
     <article className={page.page}>
-      <button onClick={() => navigate(-1)} className={page.back}>
-        ← Назад
+      <button onClick={() => navigate(-1)} className={page.back} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+        <IconArrowLeft size={16} /> Назад
       </button>
       <header className={page.header}>
         <h1 className={page.title}>{title}</h1>

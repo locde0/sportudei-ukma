@@ -4,6 +4,7 @@ import { login } from '../../api/auth';
 import { getAccessToken } from '../../api/client';
 import { Logo } from '../../components/brand/Logo';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
+import { IconArrowLeft } from '../../components/ui/Icons';
 import styles from './Login.module.css';
 
 export function Login() {
@@ -35,8 +36,8 @@ export function Login() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.topBar}>
-        <Link to="/" className={styles.backLink}>
-          ← На головну
+        <Link to="/" className={styles.backLink} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+          <IconArrowLeft size={16} /> На головну
         </Link>
         <ThemeToggle />
       </div>

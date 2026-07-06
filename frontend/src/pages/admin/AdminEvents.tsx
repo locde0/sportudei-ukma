@@ -4,6 +4,7 @@ import { Badge } from '../../components/ui/Badge';
 import { EventStatusBadge } from '../../components/ui/EventStatusBadge';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { deleteEvent, fetchAdminEvents } from '../../api/events';
+import { IconCalendar } from '../../components/ui/Icons';
 import type { EventListItem } from '../../types/event';
 import { formatEventDate } from '../../utils/date';
 import { resolveVariantUrl } from '../../utils/imageUrl';
@@ -115,7 +116,7 @@ export function AdminEvents() {
 
       {!loading && !error && events.length === 0 && (
         <div className={styles.stateBox}>
-          <div className={styles.emptyIcon}>◎</div>
+          <div className={styles.emptyIcon}><IconCalendar size={24} /></div>
           <p className={styles.emptyTitle}>Подій ще немає</p>
           <p>Створіть першу подію — введіть назву та оберіть дату.</p>
           <div style={{ marginTop: '1.25rem' }}>
@@ -143,7 +144,7 @@ export function AdminEvents() {
                     className={styles.thumb}
                   />
                 ) : (
-                  <div className={styles.thumbEmpty}>◎</div>
+                  <div className={styles.thumbEmpty}><IconCalendar size={18} /></div>
                 )}
               </div>
 

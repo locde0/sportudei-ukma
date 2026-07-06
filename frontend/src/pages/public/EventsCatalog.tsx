@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { fetchPublicEvents } from '../../api/events';
 import { EventCard } from '../../components/public/EventCard';
 import { Button } from '../../components/ui/Button';
+import { IconArrowLeft } from '../../components/ui/Icons';
 import type { PublicEventListItem } from '../../types/event';
 import page from '../../styles/publicPage.module.css';
 
@@ -73,8 +74,8 @@ export function EventsCatalog() {
 
   return (
     <div className={page.page}>
-      <Link to="/#events" className={page.back}>
-        ← На головну
+      <Link to="/" className={page.back} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+        <IconArrowLeft size={16} /> На головну
       </Link>
       <header className={page.header}>
         <h1 className={page.title}>Каталог подій</h1>

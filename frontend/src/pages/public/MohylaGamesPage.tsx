@@ -5,7 +5,9 @@ import { fetchTeams } from '../../api/teams';
 import { TeamCard } from '../../components/public/TeamCard';
 import type { MohylaGame } from '../../types/game';
 import type { Team } from '../../types/team';
+import { IconArrowLeft } from '../../components/ui/Icons';
 import page from '../../styles/publicPage.module.css';
+import pageStyles from '../../styles/publicPage.module.css';
 import styles from './MohylaGamesPage.module.css';
 
 export function MohylaGamesPage() {
@@ -29,9 +31,9 @@ export function MohylaGamesPage() {
 
   return (
     <article className={page.page}>
-      <Link to="/#mohyla-games" className={page.back}>
-        ← На головну
-      </Link>
+        <Link to="/" className={pageStyles.back} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+          <IconArrowLeft size={16} /> На головну
+        </Link>
 
       <header className={page.header}>
         <h1 className={page.title}>{game.title}</h1>

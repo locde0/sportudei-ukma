@@ -166,6 +166,31 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/dashboard": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get aggregated stats and recent events for admin dashboard",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-dashboard"
+                ],
+                "summary": "Get dashboard stats",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminDashboardResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/events": {
             "get": {
                 "security": [
@@ -1537,6 +1562,46 @@ const docTemplate = `{
                 "EventStatusInProgress",
                 "EventStatusCompleted"
             ]
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminDashboardResponse": {
+            "type": "object",
+            "properties": {
+                "recent_in_progress_events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse"
+                    }
+                },
+                "recent_planned_events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventsListItemResponse"
+                    }
+                },
+                "stats": {
+                    "$ref": "#/definitions/github_com_locde0_sportudei-ukma_backend_internal_dto.AdminDashboardStatsResponse"
+                }
+            }
+        },
+        "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminDashboardStatsResponse": {
+            "type": "object",
+            "properties": {
+                "events_completed": {
+                    "type": "integer"
+                },
+                "events_in_progress": {
+                    "type": "integer"
+                },
+                "events_planned": {
+                    "type": "integer"
+                },
+                "teams_active": {
+                    "type": "integer"
+                },
+                "teams_total": {
+                    "type": "integer"
+                }
+            }
         },
         "github_com_locde0_sportudei-ukma_backend_internal_dto.AdminEventResponse": {
             "type": "object",

@@ -142,7 +142,7 @@
   border: var(--glass-border);
   border-radius: var(--radius-lg);
   padding: 1.75rem;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s;
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color 0.4s;
   box-shadow: var(--shadow-sm);
 }
 
@@ -151,7 +151,7 @@
 }
 
 .statCard:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-4px);
   border-color: rgba(138, 224, 40, 0.5);
   box-shadow: var(--shadow-hover);
 }

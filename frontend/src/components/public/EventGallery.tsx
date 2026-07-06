@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { EventPhoto } from '../../types/event';
 import { resolveImageUrl, resolveVariantUrl } from '../../utils/imageUrl';
+import { IconX, IconArrowLeft, IconArrowRight } from '../ui/Icons';
 import styles from './EventGallery.module.css';
 
 interface EventGalleryProps {
@@ -129,7 +130,7 @@ export function EventGallery({ photos, title, layout = 'default', viewerVariant 
               }}
               aria-label="Попереднє фото"
             >
-              ‹
+              <IconArrowLeft size={32} />
             </button>
             <button
               type="button"
@@ -140,7 +141,7 @@ export function EventGallery({ photos, title, layout = 'default', viewerVariant 
               }}
               aria-label="Наступне фото"
             >
-              ›
+              <IconArrowRight size={32} />
             </button>
           </>
         )}
@@ -192,7 +193,7 @@ export function EventGallery({ photos, title, layout = 'default', viewerVariant 
               onClick={() => setLightboxOpen(false)}
               aria-label="Закрити"
             >
-              ×
+              <IconX size={32} />
             </button>
 
             {hasMultiple && (
@@ -205,7 +206,7 @@ export function EventGallery({ photos, title, layout = 'default', viewerVariant 
                 }}
                 aria-label="Попереднє"
               >
-                ‹
+                <IconArrowLeft size={36} />
               </button>
             )}
 
@@ -226,7 +227,7 @@ export function EventGallery({ photos, title, layout = 'default', viewerVariant 
                 }}
                 aria-label="Наступне"
               >
-                ›
+                <IconArrowRight size={36} />
               </button>
             )}
 

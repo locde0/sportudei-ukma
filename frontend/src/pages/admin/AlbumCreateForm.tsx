@@ -5,6 +5,7 @@ import { AdminField } from '../../components/admin/AdminField';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { AdminSection } from '../../components/admin/AdminSection';
 import { Button, LinkButton } from '../../components/ui/Button';
+import { IconArrowLeft, IconText, IconImage } from '../../components/ui/Icons';
 import styles from './AdminFormLayout.module.css';
 
 export function AlbumCreateForm() {
@@ -79,7 +80,7 @@ export function AlbumCreateForm() {
   return (
     <div className={styles.page}>
       <button type="button" className={styles.back} onClick={() => navigate('/admin/gallery')}>
-        ← До списку альбомів
+        <IconArrowLeft size={16} /> До списку альбомів
       </button>
 
       <AdminPageHeader
@@ -91,7 +92,7 @@ export function AlbumCreateForm() {
 
       <form onSubmit={handleSubmit} className={styles.grid}>
         <div className={styles.mainCol}>
-          <AdminSection icon="✦" title="Альбом">
+          <AdminSection icon={<IconText />} title="Альбом">
             <AdminField
               id="title"
               label="Назва"
@@ -101,7 +102,7 @@ export function AlbumCreateForm() {
             />
           </AdminSection>
 
-          <AdminSection icon="▣" title="Обкладинка">
+          <AdminSection icon={<IconImage />} title="Обкладинка">
             <div className={styles.fileField}>
               <span className={styles.fileLabel}>
                 Фото обкладинки<span className={styles.required}>*</span>

@@ -5,6 +5,7 @@ import { AdminField } from '../../components/admin/AdminField';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { AdminSection } from '../../components/admin/AdminSection';
 import { Button, LinkButton } from '../../components/ui/Button';
+import { IconArrowLeft, IconText } from '../../components/ui/Icons';
 import { resolveVariantUrl } from '../../utils/imageUrl';
 import styles from './AdminFormLayout.module.css';
 
@@ -86,7 +87,7 @@ export function TeamForm() {
   return (
     <div className={styles.page}>
       <button type="button" className={styles.back} onClick={() => navigate('/admin/teams')}>
-        ← До списку команд
+        <IconArrowLeft size={16} /> До списку команд
       </button>
 
       <AdminPageHeader
@@ -98,7 +99,7 @@ export function TeamForm() {
 
       <form onSubmit={handleSubmit} className={styles.grid}>
         <div className={styles.mainCol}>
-          <AdminSection icon="✦" title="Дані команди">
+          <AdminSection icon={<IconText />} title="Дані команди">
             <AdminField
               id="name"
               label="Назва"

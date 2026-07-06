@@ -13,6 +13,7 @@ import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { AdminSection } from '../../components/admin/AdminSection';
 import { EventGalleryEditor } from '../../components/admin/EventGalleryEditor';
 import { Button, LinkButton } from '../../components/ui/Button';
+import { IconArrowLeft, IconText, IconImage } from '../../components/ui/Icons';
 import type { EventPhoto } from '../../types/event';
 import styles from './AdminFormLayout.module.css';
 
@@ -117,7 +118,7 @@ export function AlbumForm() {
   return (
     <div className={styles.page}>
       <button type="button" className={styles.back} onClick={() => navigate('/admin/gallery')}>
-        ← До списку альбомів
+        <IconArrowLeft size={16} /> До списку альбомів
       </button>
 
       <AdminPageHeader
@@ -129,7 +130,7 @@ export function AlbumForm() {
 
       <form onSubmit={handleSubmit} className={styles.grid}>
         <div className={styles.mainCol}>
-          <AdminSection icon="✦" title="Альбом">
+          <AdminSection icon={<IconText />} title="Альбом">
             <AdminField
               id="title"
               label="Назва"
@@ -139,7 +140,7 @@ export function AlbumForm() {
             />
           </AdminSection>
 
-          <AdminSection icon="▣" title="Фотографії">
+          <AdminSection icon={<IconImage />} title="Фотографії">
             {id && (
               <EventGalleryEditor
                 mode="edit"

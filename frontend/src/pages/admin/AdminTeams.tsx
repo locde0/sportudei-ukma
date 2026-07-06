@@ -3,6 +3,7 @@ import { deleteTeam, fetchAdminTeams } from '../../api/teams';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { Badge } from '../../components/ui/Badge';
 import { Button, LinkButton } from '../../components/ui/Button';
+import { IconUsers } from '../../components/ui/Icons';
 import { resolveVariantUrl } from '../../utils/imageUrl';
 import type { Team } from '../../types/team';
 import styles from './AdminListLayout.module.css';
@@ -108,7 +109,7 @@ export function AdminTeams() {
       )}
       {!loading && !error && teams.length === 0 && (
         <div className={styles.stateBox}>
-          <div className={styles.emptyIcon}>⬢</div>
+          <div className={styles.emptyIcon}><IconUsers size={24} /></div>
           <p className={styles.emptyTitle}>Команд ще немає</p>
           <p>Додайте першу команду — введіть назву та оберіть логотип.</p>
           <div style={{ marginTop: '1.25rem' }}>
@@ -129,7 +130,7 @@ export function AdminTeams() {
                 {team.logo_url ? (
                   <img src={resolveVariantUrl(team.logo_url, 'sm')} alt="" className={styles.thumb} />
                 ) : (
-                  <div className={styles.thumbEmpty}>◎</div>
+                  <div className={styles.thumbEmpty}><IconUsers size={18} /></div>
                 )}
               </div>
               <div className={styles.body}>

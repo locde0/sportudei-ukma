@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/locde0/sportudei-ukma/backend/db/gen"
 	rdb "github.com/locde0/sportudei-ukma/backend/db"
 	"github.com/locde0/sportudei-ukma/backend/internal/auth"
 	"github.com/locde0/sportudei-ukma/backend/internal/config"
@@ -97,6 +98,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	teamService := service.NewTeamService(teamRepo, storage, logger)
 	mohylaGameService := service.NewMohylaGameService(mohylaGameRepo)
 	settingsService := service.NewSettingsService(settingsRepo)
+	dashboardService := service.NewDashboardService(gen.New(pool))
 
 	authHandler := handler.NewAuthHandler(authService, cfg.JWTRefreshExpDays, cfg.IsProd())
 	eventHandler := handler.NewEventHandler(eventService)
@@ -106,6 +108,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	teamHandler := handler.NewTeamHandler(teamService)
 	mohylaGameHandler := handler.NewMohylaGameHandler(mohylaGameService)
 	settingsHandler := handler.NewSettingsHandler(settingsService)
+	dashboardHandler := handler.NewDashboardHandler(dashboardService)
 
 	authMw := middleware.Auth(tokenProvider)
 
@@ -122,6 +125,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		teamHandler,
 		mohylaGameHandler,
 		settingsHandler,
+		dashboardHandler,
 	)
 
 	var httpHandler http.Handler = mux

@@ -4,39 +4,50 @@ import { Logo } from '../components/brand/Logo';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
 import styles from './AdminLayout.module.css';
 
+import {
+  IconDashboard,
+  IconFlag,
+  IconCalendar,
+  IconUsers,
+  IconPhoto,
+  IconHandshake,
+  IconPhone,
+  IconSettings,
+} from '../components/ui/Icons';
+
 type NavItem = {
   to: string;
   end?: boolean;
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   match?: (path: string) => boolean;
 };
 
 const navItems: NavItem[] = [
-  { to: '/admin', end: true, icon: '◈', label: 'Огляд' },
-  { to: '/admin/mohyla-games', end: true, icon: '⚑', label: 'Могилянські ігри' },
+  { to: '/admin', end: true, icon: <IconDashboard />, label: 'Огляд' },
+  { to: '/admin/mohyla-games', end: true, icon: <IconFlag />, label: 'Могилянські ігри' },
   {
     to: '/admin/events',
-    icon: '◎',
+    icon: <IconCalendar />,
     label: 'Події',
     match: (path) => path === '/admin/events' || path.startsWith('/admin/events/'),
   },
   {
     to: '/admin/teams',
-    icon: '⬢',
+    icon: <IconUsers />,
     label: 'Команди',
     match: (path) => path === '/admin/teams' || path.startsWith('/admin/teams/'),
   },
   {
     to: '/admin/gallery',
-    icon: '▣',
+    icon: <IconPhoto />,
     label: 'Галерея',
     match: (path) =>
       path === '/admin/gallery' || path.startsWith('/admin/gallery/'),
   },
-  { to: '/admin/partners', end: true, icon: '◆', label: 'Партнери' },
-  { to: '/admin/contacts', end: true, icon: '☎', label: 'Контакти' },
-  { to: '/admin/settings', end: true, icon: '⚙', label: 'Налаштування' },
+  { to: '/admin/partners', end: true, icon: <IconHandshake />, label: 'Партнери' },
+  { to: '/admin/contacts', end: true, icon: <IconPhone />, label: 'Контакти' },
+  { to: '/admin/settings', end: true, icon: <IconSettings />, label: 'Налаштування' },
 ];
 
 export function AdminLayout() {

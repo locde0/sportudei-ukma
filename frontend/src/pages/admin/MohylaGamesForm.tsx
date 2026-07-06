@@ -4,6 +4,7 @@ import { AdminField } from '../../components/admin/AdminField';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { AdminSection } from '../../components/admin/AdminSection';
 import { Button, LinkButton } from '../../components/ui/Button';
+import { IconText } from '../../components/ui/Icons';
 import styles from './AdminFormLayout.module.css';
 
 export function MohylaGamesForm() {
@@ -82,7 +83,7 @@ export function MohylaGamesForm() {
 
       <form onSubmit={handleSubmit} className={styles.grid}>
         <div className={styles.mainCol}>
-          <AdminSection icon="✦" title="Заголовок і превʼю">
+          <AdminSection icon={<IconText />} title="Заголовок і превʼю">
             <AdminField
               id="title"
               label="Назва"
@@ -101,7 +102,7 @@ export function MohylaGamesForm() {
             />
           </AdminSection>
 
-          <AdminSection icon="¶" title="Повний текст">
+          <AdminSection icon={<IconText />} title="Повний текст">
             <AdminField
               as="textarea"
               id="content"
