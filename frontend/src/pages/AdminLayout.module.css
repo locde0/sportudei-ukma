@@ -189,3 +189,34 @@
     padding: 1.25rem 1rem 2rem;
   }
 }
+
+@media (max-width: 600px) {
+  .nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+  }
+
+  .navLink {
+    min-width: unset;
+    flex: unset;
+    font-size: 0.75rem;
+    padding: 0.6rem 0.5rem;
+    flex-direction: column;
+    gap: 0.35rem;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .navIcon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 400px) {
+  .navLink {
+    font-size: 0.6875rem;
+    padding: 0.5rem 0.35rem;
+  }
+}

@@ -30,9 +30,11 @@
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.masonryItem:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+@media (hover: hover) {
+  .masonryItem:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
 }
 
 .masonryItem img {
@@ -178,8 +180,10 @@
   transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
 }
 
-.thumb:hover {
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .thumb:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .thumbActive {

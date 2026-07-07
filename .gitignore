@@ -28,3 +28,6 @@ tmp
 
 # Frontend build
 frontend/dist/
+
+# Backend uploads
+backend/uploads/

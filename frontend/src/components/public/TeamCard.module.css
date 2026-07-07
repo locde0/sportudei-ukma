@@ -27,8 +27,10 @@
   transition: transform 0.25s;
 }
 
-:global(a):hover .logoWrapper::after {
-  transform: scaleX(1);
+@media (hover: hover) {
+  :global(a):hover .logoWrapper::after {
+    transform: scaleX(1);
+  }
 }
 
 .logo {
@@ -38,8 +40,10 @@
   transition: transform 0.3s ease;
 }
 
-:global(.card):hover .logo {
-  transform: scale(1.05);
+@media (hover: hover) {
+  :global(.card):hover .logo {
+    transform: scale(1.05);
+  }
 }
 
 .description {

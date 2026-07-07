@@ -37,3 +37,23 @@
 .error {
   color: var(--color-danger);
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 1.25rem 1rem 2.5rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+}

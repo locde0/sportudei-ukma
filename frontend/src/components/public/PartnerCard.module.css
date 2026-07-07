@@ -16,12 +16,14 @@ a.item {
   cursor: pointer;
 }
 
-a.item:hover {
-  transform: translateY(-6px);
-  background: var(--color-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-sm);
+@media (hover: hover) {
+  a.item:hover {
+    transform: translateY(-6px);
+    background: var(--color-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-sm);
+  }
 }
 
 .logoWrapper {
@@ -40,9 +42,11 @@ a.item:hover {
 }
 
 /* Grayscale turns to full color on hover */
-.item:hover .logo {
-  filter: grayscale(0%) opacity(1);
-  transform: scale(1.05);
+@media (hover: hover) {
+  .item:hover .logo {
+    filter: grayscale(0%) opacity(1);
+    transform: scale(1.05);
+  }
 }
 
 .name {
@@ -57,9 +61,11 @@ a.item:hover {
 }
 
 /* Name appears smoothly on hover */
-.item:hover .name {
-  opacity: 1;
-  transform: translateY(0);
+@media (hover: hover) {
+  .item:hover .name {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 600px) {

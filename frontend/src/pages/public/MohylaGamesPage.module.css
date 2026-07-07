@@ -74,3 +74,15 @@
   color: var(--color-text-muted);
   margin-bottom: 1.5rem;
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 2rem 1.25rem 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 1.5rem 1rem 2.5rem;
+  }
+}

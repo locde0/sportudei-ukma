@@ -260,3 +260,65 @@
 .contactsSection {
   padding-top: 1.5rem;
 }
+
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem 1.25rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.5rem;
+  }
+
+  .gameBannerTitle {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
+
+  .gameBannerExcerpt {
+    font-size: 1rem;
+  }
+
+  .gameBannerLead {
+    margin-bottom: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 2.25rem 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.25rem;
+  }
+
+  .sectionHeader {
+    margin-bottom: 1.5rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .gameBanner {
+    padding: 2rem 1.25rem;
+    border-radius: 16px;
+  }
+
+  .gameBannerTitle {
+    font-size: clamp(1.25rem, 6vw, 1.75rem);
+  }
+
+  .missionInner {
+    padding: 2rem 1rem 2rem 1.25rem;
+  }
+
+  .missionTitle {
+    font-size: 1.25rem;
+  }
+
+  .cloud {
+    gap: 1rem;
+  }
+}

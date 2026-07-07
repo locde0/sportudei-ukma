@@ -102,10 +102,12 @@
   background: rgba(255, 255, 255, 0.65);
 }
 
-a.card:hover {
-  border-color: rgba(138, 224, 40, 0.5);
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-8px);
+@media (hover: hover) {
+  a.card:hover {
+    border-color: rgba(138, 224, 40, 0.5);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-8px);
+  }
 }
 
 .cardBody {
@@ -167,9 +169,11 @@ a.card:hover {
   transition: transform 0.25s;
 }
 
-:global(a.card):hover .coverWrap::after,
-a[class*="card"]:hover .coverWrap::after {
-  transform: scaleX(1);
+@media (hover: hover) {
+  :global(a.card):hover .coverWrap::after,
+  a[class*="card"]:hover .coverWrap::after {
+    transform: scaleX(1);
+  }
 }
 
 .cover {

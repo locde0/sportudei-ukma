@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
   const targetHost = env.HOST || 'localhost'
 
   return {
+    envDir: '../',
     plugins: [react()],
     server: {
       proxy: {

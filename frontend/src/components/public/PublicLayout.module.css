@@ -14,6 +14,17 @@
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.headerMenuOpen {
+  background: var(--color-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+[data-theme='light'] .headerMenuOpen {
+  background: #ffffff;
 }
 
 .headerInner {
@@ -139,5 +150,169 @@
   .navLink {
     padding: 0.5rem 0.65rem;
     font-size: 0.75rem;
+  }
+}
+
+/* ── Hamburger button ── */
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+@media (hover: hover) {
+  .burger:hover {
+    border-color: var(--color-accent);
+    background: var(--color-accent-muted);
+  }
+}
+
+.burgerLine {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--color-text);
+  border-radius: 2px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+  transform-origin: center;
+}
+
+.burgerLineTop { transform: translateY(7px) rotate(45deg); }
+.burgerLineMid { opacity: 0; transform: scaleX(0); }
+.burgerLineBot { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── Mobile overlay ── */
+.mobileOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 98;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  animation: overlayFadeIn 0.2s ease;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Mobile nav dropdown (slides from top) ── */
+.mobileNav {
+  display: none;
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  z-index: 99;
+  background: var(--color-surface);
+  border-top: 3px solid var(--color-accent);
+  border-bottom: 1px solid var(--color-border);
+  padding: 1.25rem 1.5rem 1.5rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transform: translateY(-110%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease;
+  opacity: 0;
+}
+
+.mobileNavOpen {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.mobileNavLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 1rem;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: var(--radius-md);
+  transition: color 0.2s, background 0.2s;
+  border: 1px solid transparent;
+  text-align: center;
+}
+
+/* First item spans full width (for long labels like "Могилянські ігри") */
+.mobileNavLinkWide {
+  grid-column: 1 / -1;
+}
+
+.mobileNavLink:hover {
+  color: var(--color-text);
+  background: var(--color-muted-bg);
+}
+
+.mobileNavLinkActive {
+  color: var(--color-accent);
+  background: var(--color-accent-muted);
+  border-color: rgba(138, 224, 40, 0.25);
+}
+
+/* ── Show on mobile ── */
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+
+  .mobileOverlay {
+    display: block;
+  }
+
+  .mobileNav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .footerNav {
+    display: none;
+  }
+
+  .footerInner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+
+  .footerCopy {
+    flex-basis: 100%;
+    order: 10;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerInner {
+    padding: 0 1rem;
+  }
+
+  .footer {
+    padding: 1.25rem 1rem;
   }
 }

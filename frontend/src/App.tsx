@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ScrollToTop } from './components/ScrollToTop';
 import { PublicLayout } from './components/public/PublicLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { HomePage } from './pages/public/HomePage';
@@ -29,6 +30,7 @@ import { TeamForm } from './pages/admin/TeamForm';
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route element={<PublicLayout />}>
           <Route index element={<HomePage />} />

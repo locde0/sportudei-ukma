@@ -103,3 +103,36 @@
 .error {
   color: var(--color-danger);
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .metaStatus {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 1.25rem 1rem 2.5rem;
+  }
+
+  .title {
+    font-size: 1.375rem;
+  }
+
+  .meta {
+    gap: 1rem;
+  }
+
+  .cta {
+    width: 100%;
+    justify-content: center;
+  }
+}

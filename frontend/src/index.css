@@ -112,3 +112,28 @@ textarea::placeholder {
 .brand-accent {
   color: var(--color-accent);
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Touch device: remove sticky hover, add brief tap feedback
+   @media (hover: none)  → true on phones/tablets (no mouse)
+   @media (hover: hover) → true only on real pointer devices
+   ───────────────────────────────────────────────────────────── */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove the default blue flash on tap */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /*
+    When a user taps any link or button, give a brief visual
+    press response (scale + opacity) that auto-reverses when
+    the finger lifts, thanks to the transition.
+  */
+  a:active,
+  button:active,
+  [role="button"]:active {
+    opacity: 0.72;
+    transform: scale(0.97);
+    transition: opacity 0.08s ease-out, transform 0.08s ease-out;
+  }
+}

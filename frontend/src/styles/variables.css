@@ -15,6 +15,12 @@
   --header-height: 88px;
 }
 
+@media (max-width: 768px) {
+  :root {
+    --header-height: 64px;
+  }
+}
+
 /* Світла тема (за замовчуванням) */
 :root,
 [data-theme='light'] {

@@ -20,7 +20,12 @@
 .card:hover {
   border-color: rgba(138, 224, 40, 0.5);
   box-shadow: var(--shadow-hover);
-  transform: translateY(-8px);
+}
+
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-8px);
+  }
 }
 
 .preview {

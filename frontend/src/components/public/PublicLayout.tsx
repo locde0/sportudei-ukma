@@ -10,6 +10,7 @@ const NAV_ITEMS = [
     hash: 'mohyla-games',
     label: 'Могилянські ігри',
     flag: 'is_mohyla_game_enabled' as const,
+    wide: true,
   },
   { hash: 'events', label: 'Події', flag: 'is_events_enabled' as const },
   { hash: 'teams', label: 'Команди', flag: 'is_teams_enabled' as const },
@@ -32,10 +33,35 @@ export function PublicLayout() {
   const isHome = pathname === '/';
   const [activeHash, setActiveHash] = useState(hash);
   const isScrollSpyActive = useRef(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add('public-no-scrollbar');
     return () => document.documentElement.classList.remove('public-no-scrollbar');
+  }, []);
+
+  // Close menu on route/hash change
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname, hash]);
+
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
+  // Close on Escape
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
   }, []);
 
   useEffect(() => {
@@ -92,6 +118,7 @@ export function PublicLayout() {
 
   const handleSectionClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, sectionHash: string) => {
+      setMenuOpen(false);
       const target = `#${sectionHash}`;
       if (isHome) {
         e.preventDefault();
@@ -120,11 +147,12 @@ export function PublicLayout() {
 
   return (
     <div className={styles.layout}>
-      <header className={styles.header}>
+      <header className={`${styles.header} ${menuOpen ? styles.headerMenuOpen : ''}`}>
         <div className={styles.headerInner}>
           <Logo size={42} onClick={handleLogoClick} />
 
           <div className={styles.headerRight}>
+            {/* Desktop nav */}
             <nav className={styles.nav}>
               {visibleNav.map((item) => {
                 const href = `/#${item.hash}`;
@@ -143,9 +171,48 @@ export function PublicLayout() {
               })}
             </nav>
             <ThemeToggle />
+            {/* Mobile hamburger */}
+            <button
+              className={styles.burger}
+              aria-label={menuOpen ? 'Закрити меню' : 'Відкрити меню'}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((v) => !v)}
+            >
+              <span className={`${styles.burgerLine} ${menuOpen ? styles.burgerLineTop : ''}`} />
+              <span className={`${styles.burgerLine} ${menuOpen ? styles.burgerLineMid : ''}`} />
+              <span className={`${styles.burgerLine} ${menuOpen ? styles.burgerLineBot : ''}`} />
+            </button>
           </div>
         </div>
       </header>
+
+      {/* Mobile drawer overlay */}
+      {menuOpen && (
+        <div
+          className={styles.mobileOverlay}
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+      <nav
+        className={`${styles.mobileNav} ${menuOpen ? styles.mobileNavOpen : ''}`}
+        aria-label="Мобільна навігація"
+      >
+        {visibleNav.map((item) => {
+          const href = `/#${item.hash}`;
+          const isActive = isHome && activeHash === `#${item.hash}`;
+          return (
+          <a
+              key={item.hash}
+              href={href}
+              className={`${styles.mobileNavLink} ${isActive ? styles.mobileNavLinkActive : ''} ${'wide' in item && item.wide ? styles.mobileNavLinkWide : ''}`}
+              onClick={(e) => handleSectionClick(e, item.hash)}
+            >
+              {item.label}
+            </a>
+          );
+        })}
+      </nav>
 
       <main className={styles.main}>
         <Outlet />
