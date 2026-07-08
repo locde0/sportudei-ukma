@@ -3,12 +3,12 @@ import type { SiteSettings, UpdateSiteSettingsPayload } from '../types/settings'
 import { bool } from '../utils/normalizeApi';
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  is_mohyla_game_enabled: true,
-  is_events_enabled: true,
-  is_teams_enabled: true,
-  is_partners_enabled: true,
-  is_gallery_enabled: true,
-  is_contacts_enabled: true,
+  is_mohyla_game_enabled: false,
+  is_events_enabled: false,
+  is_teams_enabled: false,
+  is_partners_enabled: false,
+  is_gallery_enabled: false,
+  is_contacts_enabled: false,
 };
 
 function mapSiteSettings(raw: Record<string, unknown>): SiteSettings {
@@ -33,7 +33,15 @@ export async function fetchSiteSettings(): Promise<SiteSettings> {
     const { data } = await apiClient.get<Record<string, unknown>>('/settings');
     return mapSiteSettings(data ?? {});
   } catch {
-    return DEFAULT_SITE_SETTINGS;
+    // If the API is unreachable, show everything rather than hiding the entire site
+    return {
+      is_mohyla_game_enabled: true,
+      is_events_enabled: true,
+      is_teams_enabled: true,
+      is_partners_enabled: true,
+      is_gallery_enabled: true,
+      is_contacts_enabled: true,
+    };
   }
 }
 
