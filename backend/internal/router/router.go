@@ -43,13 +43,13 @@ func New(
 	if !isProd {
 		fileServer := http.FileServer(http.Dir(uploadDir))
 		r.Handle("/uploads/*", http.StripPrefix("/uploads/", fileServer))
+		
+		r.Get("/swagger/*", httpSwagger.Handler(
+			httpSwagger.URL("/swagger/doc.json"),
+		))
 	}
 
 	r.Get("/api/health", HealthCheck)
-
-	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("/swagger/doc.json"),
-	))
 
 	r.Route("/api/auth", func(r chi.Router) {
 		r.Post("/login", authHandler.Login)
