@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { clearAccessToken } from '../api/client';
+import { logout } from '../api/auth';
 import { Logo } from '../components/brand/Logo';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
 import styles from './AdminLayout.module.css';
@@ -54,9 +55,15 @@ export function AdminLayout() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const handleLogout = () => {
-    clearAccessToken();
-    navigate('/admin/login');
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      clearAccessToken();
+      navigate('/admin/login');
+    }
   };
 
   return (

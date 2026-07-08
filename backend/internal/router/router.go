@@ -55,6 +55,7 @@ func New(
 		r.Post("/login", authHandler.Login)
 		r.Post("/verify", authHandler.VerifyOTP)
 		r.Post("/refresh", authHandler.Refresh)
+		r.Post("/logout", authHandler.Logout)
 	})
 
 	r.Route("/api/admin", func(r chi.Router) {

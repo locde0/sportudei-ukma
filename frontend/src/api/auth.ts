@@ -9,3 +9,7 @@ export async function verifyOTP(data: VerifyOTPRequest): Promise<TokenResponse> 
   const { data: response } = await apiClient.post<TokenResponse>('/auth/verify', data);
   return response;
 }
+
+export async function logout(): Promise<void> {
+  await apiClient.post('/auth/logout');
+}

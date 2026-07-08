@@ -114,6 +114,18 @@ func (h *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Logout godoc
+// @Summary      User logout
+// @Description  Logs out the user by clearing the refresh token cookie
+// @Tags         auth
+// @Produce      json
+// @Success      200 "OK"
+// @Router       /api/auth/logout [post]
+func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
+	h.clearRefreshCookie(w)
+	httputil.JSON(w, http.StatusOK, nil)
+}
+
 func (h *AuthHandler) setRefreshCookie(w http.ResponseWriter, refreshToken string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "refresh_token",
