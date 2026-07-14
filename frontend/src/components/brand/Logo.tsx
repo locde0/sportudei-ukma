@@ -36,7 +36,7 @@ export function Logo({ size = 40, showText = true, to = '/', className = '', onC
       {showText && (
         <span className={styles.textBlock}>
           <span className={styles.name}>Спортудей</span>
-          <span className={styles.sub}>НаУКМА</span>
+          <span className={styles.sub}>СО НаУКМА</span>
         </span>
       )}
     </>

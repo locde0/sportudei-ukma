@@ -25,9 +25,9 @@ export function HeroSection() {
                 Події
               </a>
             )}
-            {settings.is_mohyla_game_enabled && (
-              <a href="/#mohyla-games" className={styles.ctaSecondary}>
-                Могилянські ігри
+            {settings.is_contacts_enabled && (
+              <a href="/#contacts" className={styles.ctaSecondary}>
+                Контакти
               </a>
             )}
           </div>

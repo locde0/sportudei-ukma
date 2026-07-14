@@ -244,7 +244,7 @@ export function PublicLayout() {
             </Link>
           )}
           <span className={styles.footerCopy}>
-            © {new Date().getFullYear()} Спортудей. Студентська спільнота НаУКМА
+            © {new Date().getFullYear()} Спортудей. Студентська організація НаУКМА
           </span>
         </div>
       </footer>
